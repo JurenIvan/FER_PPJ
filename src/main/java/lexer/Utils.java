@@ -1,27 +1,21 @@
 package lexer;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.List;
-import java.util.Map.Entry;
-
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 
+import java.io.*;
+import java.util.List;
+import java.util.Map.Entry;
+
 @SuppressWarnings("javadoc")
 public class Utils {
 	
 	public static <T> void serializeObject(String name, T object) throws IOException {
-		FileOutputStream fos = new FileOutputStream("serialized.test.ser");
-		ObjectOutputStream oos = new ObjectOutputStream(fos);
+		ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("serialized.test.ser"));
 		oos.writeObject(object);
 		oos.close();
-		fos.close();
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -70,7 +64,7 @@ public class Utils {
 		graph.addNode(x.getName());
 		for (Entry<Character, List<EnkaState>> t : x.getAllTransitions().entrySet()) {
 			for (EnkaState e : t.getValue()) {
-				if (graph.getNode(e.name) == null) {
+				if (graph.getNode(e.getName()) == null) {
 					addToGraph(e, graph);
 				}
 				if (!x.getName().equals(e.getName())) {
