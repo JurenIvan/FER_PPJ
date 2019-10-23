@@ -11,8 +11,8 @@ public class EnkaAutomata {
     private Set<EnkaState> currentStates;
     private EnkaGraph enkaGraph;
 
-    public EnkaAutomata(String regex) {
-        enkaGraph = new EnkaGraph(regex);
+    public EnkaAutomata(EnkaGraph enkaGraph) {
+       this.enkaGraph = enkaGraph;
     }
 
     public void reset() {
@@ -30,7 +30,6 @@ public class EnkaAutomata {
                 nextStates.addAll(e.getTransitions(symbol));
             }
         }
-
         currentStates = nextStates;
 
         doEpsilonTransitions();

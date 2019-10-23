@@ -51,6 +51,7 @@ public class EnkaGraph implements Serializable {
      * @throws IllegalArgumentException if invalid index or string given
      */
     private static String getStringBetweenParentheses(String s, int index) {
+
         if (s.length() <= index + 1) {
             throw new IllegalArgumentException("Invalid index given");
         }
@@ -60,6 +61,11 @@ public class EnkaGraph implements Serializable {
 
         int parenthesesCounter = 1;
         for (int i = index + 1; i < s.length(); i++) {
+            if (s.charAt(i) == '\\') {
+                i++;
+                continue;
+            }
+
             if (s.charAt(i) == '(') {
                 parenthesesCounter++;
             } else if (s.charAt(i) == ')') {
@@ -100,8 +106,6 @@ public class EnkaGraph implements Serializable {
     }
 
     private void addTransition(final EnkaState from, final EnkaState to, String t) {
-//		System.out.println(String.format("%2s,%2s,%2s", from.getName(), to.getName(), t)); // TODO remove debug
-
         if (t.length() == 0) {
             throw new IllegalArgumentException("Empty string given.");
         }
@@ -112,7 +116,7 @@ public class EnkaGraph implements Serializable {
                 // TODO $ and EPSILON should not be the same character in the graph
                 from.addTransition(EPSILON, to);
             } else {
-                from.addTransition(t.charAt(0), to);
+                from.addTransition(c, to);
             }
             return;
         }
@@ -163,13 +167,13 @@ public class EnkaGraph implements Serializable {
                 lastState = from;
                 previous = "";
                 continue;
-            } else {
-                if (!previous.isEmpty()) {
-                    EnkaState nextState = getNextState();
-                    addTransition(lastState, nextState, previous);
-                    lastState = nextState;
-                    previous = "";
-                }
+            }
+
+            if (!previous.isEmpty()) {
+                EnkaState nextState = getNextState();
+                addTransition(lastState, nextState, previous);
+                lastState = nextState;
+                previous = "";
             }
 
             if (t.charAt(i) == '\\') {
@@ -194,14 +198,18 @@ public class EnkaGraph implements Serializable {
                     default:
                         previous = String.valueOf(succeedingChar);
                 }
-            } else if (t.charAt(i) == '(') {
+                continue;
+            }
+
+            if (t.charAt(i) == '(') {
                 String betweenParentheses = getStringBetweenParentheses(t, i);
                 previous = betweenParentheses;
 
                 i += betweenParentheses.length() + 1;
-            } else {
-                previous = String.valueOf(t.charAt(i));
+                continue;
             }
+
+            previous = String.valueOf(t.charAt(i));
         }
 
         if (!previous.isEmpty()) {

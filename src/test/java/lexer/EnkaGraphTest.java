@@ -2,6 +2,8 @@ package lexer;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("javadoc")
@@ -66,8 +68,22 @@ class EnkaGraphTest {
 
     }
 
+
     private void runTest(StringTest test, String regex) {
-        EnkaAutomata auto = new EnkaAutomata(regex);
+        MEA mea = new MEA(List.of(new EnkaGraph(regex)));
+
+		System.out.println(test);
+
+        mea.reset();
+        int last = -1;
+        for (char c : test.value.toCharArray()) {
+            last = mea.parseNext(c);
+        }
+        assertEquals(test.acceptable, last != -1);
+    }
+
+    private void runTest2(StringTest test, String regex) {
+        EnkaAutomata auto = new EnkaAutomata(new EnkaGraph(regex));
 
 //		System.out.println(test);
 //		System.out.println(" --> " + graph.simulate(test.value));
