@@ -244,17 +244,23 @@ public class EnkaGraph implements Serializable, EnkaAutomata {
     }
 
     private void doEpsilonTransitions() {
-        Set<EnkaState> nextStates = new HashSet<>();
+        Set<EnkaState> lastDeltaStates = currentStates;
+        boolean proceed;
+        do {
+            Set<EnkaState> deltaStates = new HashSet<>();
 
-        for (EnkaState e : currentStates) {
-            if (e.hasTransition(EPSILON)) {
-                nextStates.addAll(e.getTransitions(EPSILON));
+            for (EnkaState e : lastDeltaStates) {
+                if (e.hasTransition(EPSILON)) {
+                    e.getTransitions(EPSILON).forEach(state -> {
+                        if (!currentStates.contains(state)) {
+                            deltaStates.add(state);
+                        }
+                    });
+                }
             }
-        }
-
-        if (currentStates.addAll(nextStates)) {
-            doEpsilonTransitions();
-        }
+            lastDeltaStates = deltaStates;
+            proceed = currentStates.addAll(deltaStates);
+        } while (proceed);
     }
 
     @Override
