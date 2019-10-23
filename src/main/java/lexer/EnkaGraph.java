@@ -9,24 +9,23 @@ import java.util.Set;
 @SuppressWarnings("javadoc")
 public class EnkaGraph implements Serializable, EnkaAutomata {
 
+	public final static char EPSILON = '\r';
+	public final static char EMPTY = '#';
+	public static final String startNodeName = "S";
+	public static final String endNodeName = "F";
 	private static final long serialVersionUID = -140750338988255786L;
-
-	public final static char EPSILON = '$';
-//	public final static char EMPTY = '#';
-
-	private Map<String, EnkaState> states = new HashMap<>();
+	public int nextStateNumber = 1;
+	Set<EnkaState> currentStates;
+	private Map<String, EnkaState> states;
 	private EnkaState startState;
 	private EnkaState endState;
 
-	public static final String startNodeName = "S";
-	public static final String endNodeName = "F";
-
 	public EnkaGraph() {
+		states = new HashMap<>();
 		startState = new EnkaState(startNodeName);
 		endState = new EnkaState(endNodeName);
 
-		addNode(startState);
-		addNode(endState);
+		this.addNode(startState).addNode(endState);
 	}
 
 	public EnkaGraph(String regex) {
@@ -34,13 +33,49 @@ public class EnkaGraph implements Serializable, EnkaAutomata {
 		addTransition(startState, endState, regex);
 	}
 
-	public void addNode(EnkaState node) {
+	/**
+	 * Help method to get the first string inside respective parentheses, starting
+	 * from given index. For example, "(123(456)789)" would return "456" if called
+	 * with starting index 4. Note that the starting index needs to be at an opening
+	 * parentheses symbol and the given string needs to have an respective closing
+	 * parentheses symbol.
+	 *
+	 * @param s     the string with parentheses
+	 * @param index the index of an opening parentheses symbol
+	 * @return the string between parentheses starting at index
+	 * @throws IllegalArgumentException if invalid index or string given
+	 */
+	private static String getStringBetweenParentheses(String s, int index) {
+		if (s.length() <= index + 1) {
+			throw new IllegalArgumentException("Invalid index given");
+		}
+		if (s.charAt(index) != '(') {
+			throw new IllegalArgumentException("String must start with an opening parentheses.");
+		}
+
+		int parenthesesCounter = 1;
+		for (int i = index + 1; i < s.length(); i++) {
+			if (s.charAt(i) == '(') {
+				parenthesesCounter++;
+			} else if (s.charAt(i) == ')') {
+				parenthesesCounter--;
+				if (parenthesesCounter == 0) {
+					return s.substring(index + 1, i);
+				}
+			}
+		}
+
+		throw new IllegalArgumentException("Could not find an respective closing parentheses.");
+	}
+
+	public EnkaGraph addNode(EnkaState node) {
 		if (states.containsKey(node.getName())) {
 			throw new IllegalArgumentException(
 					"Node with name " + node.getName() + " has already been added to graph nodes.");
 		}
 
 		states.put(node.getName(), node);
+		return this;
 	}
 
 	public Map<String, EnkaState> getStates() {
@@ -75,7 +110,13 @@ public class EnkaGraph implements Serializable, EnkaAutomata {
 		}
 
 		if (t.length() == 1) {
-			from.addTransition(t.charAt(0), to);
+			char c = t.charAt(0);
+			if(c == '$') {
+				// TODO $ and EPSILON should not be the same character in the graph
+				from.addTransition(EPSILON, to);
+			} else {
+				from.addTransition(t.charAt(0), to);				
+			}
 			return;
 		}
 
@@ -85,7 +126,6 @@ public class EnkaGraph implements Serializable, EnkaAutomata {
 		}
 
 		String previous = "";
-//		int backslashCounter = 0; // TODO add escape support
 		EnkaState lastState = from;
 		for (int i = 0; i < t.length(); i++) {
 
@@ -136,7 +176,27 @@ public class EnkaGraph implements Serializable, EnkaAutomata {
 			}
 
 			if (t.charAt(i) == '\\') {
-				previous = String.valueOf(t.charAt(++i));
+				char succeedingChar = t.charAt(++i);
+				switch (succeedingChar) {
+				case '\\':
+					previous = "\\";
+					break;
+
+				case 'n':
+					previous = "\n";
+					break;
+
+				case 't':
+					previous = "\t";
+					break;
+
+				case '_':
+					previous = " ";
+					break;
+
+				default:
+					previous = String.valueOf(succeedingChar);
+				}
 			} else if (t.charAt(i) == '(') {
 				String betweenParentheses = getStringBetweenParentheses(t, i);
 				previous = betweenParentheses;
@@ -152,55 +212,16 @@ public class EnkaGraph implements Serializable, EnkaAutomata {
 		}
 	}
 
-	public int nextStateNumber = 1;
-
 	private EnkaState getNextState() {
 		return new EnkaState("q" + nextStateNumber++);
 	}
-
-	/**
-	 * Help method to get the first string inside respective parentheses, starting
-	 * from given index. For example, "(123(456)789)" would return "456" if called
-	 * with starting index 4. Note that the starting index needs to be at an opening
-	 * parentheses symbol and the given string needs to have an respective closing
-	 * parentheses symbol.
-	 * 
-	 * @param s     the string with parentheses
-	 * @param index the index of an opening parentheses symbol
-	 * @return the string between parentheses starting at index
-	 * @throws IllegalArgumentException if invalid index or string given
-	 */
-	private static String getStringBetweenParentheses(String s, int index) {
-		if (s.length() <= index + 1) {
-			throw new IllegalArgumentException("Invalid index given");
-		}
-		if (s.charAt(index) != '(') {
-			throw new IllegalArgumentException("String must start with an opening parentheses.");
-		}
-
-		int parenthesesCounter = 1;
-		for (int i = index + 1; i < s.length(); i++) {
-			if (s.charAt(i) == '(') {
-				parenthesesCounter++;
-			} else if (s.charAt(i) == ')') {
-				parenthesesCounter--;
-				if (parenthesesCounter == 0) {
-					return s.substring(index + 1, i);
-				}
-			}
-		}
-
-		throw new IllegalArgumentException("Could not find an respective closing parentheses.");
-	}
-
-	Set<EnkaState> currentStates;
 
 	String simulate(String input) {
 		if (startState == null) {
 			throw new IllegalStateException("Simulation cannot be started if there is no starting state");
 		}
 
-		currentStates = new HashSet<>();
+		currentStates = new HashSet<>(64, 0.5f);
 		currentStates.add(startState);
 		doEpsilonTransitions();
 
@@ -248,22 +269,24 @@ public class EnkaGraph implements Serializable, EnkaAutomata {
 	}
 
 	private void doEpsilonTransitions() {
-		Set<EnkaState> nextStates = new HashSet<>();
+        Set<EnkaState> lastDeltaStates = currentStates;
+        boolean proceed;
+        do {
+            Set<EnkaState> deltaStates = new HashSet<>();
 
-		for (EnkaState e : currentStates) {
-			if (e.hasTransition(EPSILON)) {
-				nextStates.addAll(e.getTransitions(EPSILON));
-			}
-		}
-
-		nextStates.addAll(currentStates);
-		if (currentStates.size() == nextStates.size()) {
-			currentStates = nextStates;
-		} else {
-			currentStates = nextStates;
-			doEpsilonTransitions();
-		}
-	}
+            for (EnkaState e : lastDeltaStates) {
+                if (e.hasTransition(EPSILON)) {
+                    e.getTransitions(EPSILON).forEach(state -> {
+                        if (!currentStates.contains(state)) {
+                            deltaStates.add(state);
+                        }
+                    });
+                }
+            }
+            lastDeltaStates = deltaStates;
+            proceed = currentStates.addAll(deltaStates);
+        } while (proceed);
+    }
 
 	@Override
 	public Set<EnkaState> getCurrentStates() {
@@ -277,7 +300,6 @@ public class EnkaGraph implements Serializable, EnkaAutomata {
 				return true;
 			}
 		}
-
 		return false;
 	}
 
