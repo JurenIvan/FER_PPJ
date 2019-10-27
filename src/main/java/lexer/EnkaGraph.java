@@ -121,11 +121,6 @@ public class EnkaGraph implements Serializable {
             return;
         }
 
-        if (t.startsWith("(") && t.endsWith(")")) {
-            addTransition(from, to, t.substring(1, t.length() - 1));
-            return;
-        }
-
         String previous = "";
         EnkaState lastState = from;
         for (int i = 0; i < t.length(); i++) {

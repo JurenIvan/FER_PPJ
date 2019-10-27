@@ -10,8 +10,7 @@ public class RegexResolver {
     HashMap<String, String> definitions = new HashMap<>();
 
     public RegexResolver(List<String> inputLines) {
-
-        Set<String> keys = fillHashMap(inputLines);
+        Set<String> keys = fillHashSet(inputLines);
         for (var key : keys) {
             resolveRegex(key);
         }
@@ -21,7 +20,7 @@ public class RegexResolver {
         return definitions;
     }
 
-    public Set<String> fillHashMap(List<String> inputLine) {
+    public Set<String> fillHashSet(List<String> inputLine) {
         for (var line : inputLine) {
             String[] splitted = line.split(" ");
             definitions.put(splitted[0], splitted[1]);
@@ -36,6 +35,14 @@ public class RegexResolver {
         for (var toReplace : unresolved) {
             value = value.replace(toReplace, String.format("(%s)", resolveRegex(toReplace)));
             definitions.put(key, value);
+        }
+        return value;
+    }
+
+    public String resolveRegexValue(String value) {
+        List<String> unresolved = returnForeignDependenciesFromProduction(value);
+        for (var toReplace : unresolved) {
+            value = value.replace(toReplace, String.format("(%s)", resolveRegex(toReplace)));
         }
         return value;
     }
