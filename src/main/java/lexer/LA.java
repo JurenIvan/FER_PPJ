@@ -26,15 +26,27 @@ public class LA {
         stateToMEA.get(currentState).reset();
 
         int lineCount = 1;
-        int lastResult = -1;
-        int result;
-        int lastI = 0;
-        for (int i = 0; i < input.length(); i++) {
+        for (int i = 0; i < input.length();) {
             MEA mea = stateToMEA.get(currentState);
-            while (-1 != (result = mea.parseNext(input.charAt(i++)))) lastResult = result;
+            
+            
+            int lastI = i;
+            int lastResult = -1;
+            int lastResultIndex = -1;
+            int result;
+//            System.out.println("BEFORE:\t" + currentState + " " + i + " " + lastI + " " + lineCount + " " + lastResult);
+            while (i<input.length() && (-1 != (result = mea.parseNext(input.charAt(i++))) || lastResult == -2)) {
+            	lastResult = result;
+            	lastResultIndex = i;
+            }
+            
+//            System.out.println("AFTER:\t" + currentState + " " + i + " " + lastI + " " + lineCount + " " + lastResult);
+            
             if (lastResult == -1) {
-
+            	i = lastI+1;
+            	System.out.println("######### POKUSAVAM POPRAVITI POGRESKU #########");
             } else {
+            	i = lastResultIndex;
                 Rule rule = stateRulesMap.get(currentState).get(lastResult);
                 int captureLineCount = lineCount;
                 for (String command : rule.getCommands()) {
@@ -44,7 +56,7 @@ public class LA {
                             lineCount++;
                             break;
                         case "VRATI_SE":
-                            i -= Integer.valueOf(parts[1]); // TODO
+                            i = lastI + Integer.valueOf(parts[1]); // TODO
                             break;
                         case "UDJI_U_STANJE":
                             if (!currentState.equals(parts[1])) {
@@ -53,13 +65,13 @@ public class LA {
                             currentState = parts[1];
                             break;
                         default:
-                            throw new IllegalArgumentException("Unknown rule command");
+                            throw new IllegalArgumentException("Unknown rule command --> " + parts[0]);
                     }
                 }
 
 
                 if (!"-".equals(rule.getTokenType())) {
-                    String value = "value";
+                    String value = input.substring(lastI, i);
                     lastI = i; // TODO
 
                     sb.append(rule.getTokenType());
@@ -69,12 +81,15 @@ public class LA {
                     sb.append(value);
                     sb.append("\n");
                     
-                    System.out.println(sb.toString());
+                    System.out.print(sb.toString());
                     sb.setLength(0);
                 }
 
             }
-
+            
+//            System.out.println("BOTTOM:\t" + currentState + " " + i + " " + lastI + " " + lineCount + " " + lastResult);
+//            System.out.println();
+            
             mea.reset();
         }
 

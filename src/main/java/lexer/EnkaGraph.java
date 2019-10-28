@@ -213,7 +213,9 @@ public class EnkaGraph implements Serializable {
     }
 
     private EnkaState getNextState() {
-        return new EnkaState("q" + nextStateNumber++);
+		EnkaState enkaState = new EnkaState("q" + nextStateNumber++);
+		addNode(enkaState);
+		return enkaState;
     }
 
 
