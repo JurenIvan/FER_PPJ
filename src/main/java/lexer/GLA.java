@@ -13,33 +13,26 @@ public class GLA {
     private static HashMap<String, List<Rule>> stateRulesMap;
     private static RegexResolver regexResolver;
 
-    public static void main(String[] args) throws IOException {
-//		String regex1 = "a|b|c(a|b*|c)(a|b*|(c|d))*|d";
-//		String regex2 = "aaaa|aaaab|abaaaac|(((c)))|(d|ee*)|f";
-//		String regex3 = "(\\)a|b)\\|\\(|x*|y*";
-//
-//		EnkaGraph graph = new EnkaGraph(regex3);
-//		Utils.runGraph(graph);
-//
-//		Utils.serializeObject("test.ser", graph);
-//		EnkaGraph deserialized = Utils.deserializeObject("test.ser");
-//		Utils.runGraph(deserialized);
-
-        Scanner sc = new Scanner(input);
-        while (sc.hasNextLine()) lines.add(sc.nextLine());
-        int definitionLinesCount = howManyDefinitionLines(lines);
-        regexResolver = new RegexResolver(lines.subList(0, definitionLinesCount));
-
-        states = Arrays.asList(lines.get(definitionLinesCount).substring(3).split(" "));
-        tokenTypes = Arrays.asList(lines.get(definitionLinesCount + 1).substring(3).split(" ")).stream().collect(Collectors.toSet());
-
-
-        stateRulesMap = fillStateRulesMap(lines.subList(definitionLinesCount + 2, lines.size()), states);
-
-
-//		Utils.serializeObject("test.ser", graph);
-        LA.fakeMain(stateRulesMap, tokenTypes, states);
-    }
+	public static void main(String[] args) throws IOException {
+		Scanner sc = new Scanner(System.in);
+//		Scanner sc = new Scanner(input);
+		while (sc.hasNextLine()){
+			lines.add(sc.nextLine());
+		}
+		sc.close();
+		
+		int definitionLinesCount = howManyDefinitionLines(lines);
+		regexResolver = new RegexResolver(lines.subList(0, definitionLinesCount));
+		
+		states = Arrays.asList(lines.get(definitionLinesCount).substring(3).split(" "));
+		tokenTypes = Arrays.asList(lines.get(definitionLinesCount + 1).substring(3).split(" ")).stream()
+				.collect(Collectors.toSet());
+		stateRulesMap = fillStateRulesMap(lines.subList(definitionLinesCount + 2, lines.size()), states);
+		
+		Utils.serializeObject("states.ser", states);
+		Utils.serializeObject("token_types.ser", tokenTypes);
+		Utils.serializeObject("state_rules_map.ser", stateRulesMap);
+	}
 
     private static HashMap<String, List<Rule>> fillStateRulesMap(List<String> subList, List<String> states) {
         HashMap<String, List<Rule>> mapOfRules = new HashMap<>();
@@ -47,15 +40,24 @@ public class GLA {
 
         for (int i = 0; i < subList.size(); i++) {
             String firstLine = subList.get(i);
-            String[] spllited = firstLine.split(">", 2);
+            String[] splitted = firstLine.split(">", 2);
             Rule rule = new Rule();
-            rule.setRegex(regexResolver.resolveRegexValue(spllited[1]));
+            rule.setRegex(regexResolver.resolveRegexValue(splitted[1]));
             rule.setTokenType(subList.get(i + 2));
             i += 3;
             while (!subList.get(i).startsWith("}")) {
                 rule.addCommand(subList.get(i++));
             }
-            mapOfRules.get(spllited[0].substring(1)).add(rule);
+            mapOfRules.get(splitted[0].substring(1)).add(rule);
+
+//            if("'{sveOsimJednostrukogNavodnikaNovogRedaITaba}'".equals(splitted[1])) {
+//				try {
+//					GraphUtils.runGraph(rule.getEnkaGraph());
+//				} catch (IOException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				} // TODO remove
+//            }
         }
         return mapOfRules;
     }
