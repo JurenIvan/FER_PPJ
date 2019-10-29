@@ -112,8 +112,7 @@ public class EnkaGraph implements Serializable {
 
         if (t.length() == 1) {
             char c = t.charAt(0);
-            if (c == '$') {
-                // TODO $ and EPSILON should not be the same character in the graph
+            if (c == EPSILON) {
                 from.addTransition(EPSILON, to);
             } else {
                 from.addTransition(c, to);
@@ -171,6 +170,10 @@ public class EnkaGraph implements Serializable {
                 previous = "";
             }
 
+            if(t.charAt(i) == '$') {
+            	previous = String.valueOf(EPSILON);
+            }
+            
             if (t.charAt(i) == '\\') {
                 char succeedingChar = t.charAt(++i);
                 switch (succeedingChar) {
@@ -189,7 +192,7 @@ public class EnkaGraph implements Serializable {
                     case '_':
                         previous = " ";
                         break;
-
+                    
                     default:
                         previous = String.valueOf(succeedingChar);
                 }
