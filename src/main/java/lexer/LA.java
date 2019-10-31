@@ -38,7 +38,7 @@ public class LA {
 		List<String> states = Utils.deserializeObject("states.ser");
 		Set<String> tokenTypes = Utils.deserializeObject("token_types.ser");
 		HashMap<String, List<Rule>> stateRulesMap = Utils.deserializeObject("state_rules_map.ser");
-
+		
 		LA la = new LA(states, tokenTypes, stateRulesMap);
 		System.out.print(la.run(sb.toString()));	
 	}
@@ -58,7 +58,7 @@ public class LA {
 			int lastAcceptableResult = -1;
 			int lastAcceptableResultIndex = -1;
 			int result = -1;
-			while (i < input.length() && ((result = mea.parseNext(input.charAt(i++))) > 0  || lastResult == -2)) {
+			while (i < input.length() && ((result = mea.parseNext(input.charAt(i++))) != -1  || lastResult == -2)) {
 				lastResult = result;
 				if(result>=0) {
 					lastAcceptableResult = result;
