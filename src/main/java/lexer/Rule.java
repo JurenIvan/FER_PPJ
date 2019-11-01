@@ -12,7 +12,6 @@ public class Rule implements Serializable {
 	 * Serialization
 	 */
 	private static final long serialVersionUID = 5880810685971608901L;
-	
 	private String regex;
 	private EnkaGraph enkaGraph;
 	private String tokenType;

@@ -40,7 +40,7 @@ public class EnkaGraph implements Serializable {
 				regexContent[i]=(char)0;
 			}
 		}
- 		
+
 		addNormalizedRegexTransition(startState, endState, new String(regexContent));
 	}
 

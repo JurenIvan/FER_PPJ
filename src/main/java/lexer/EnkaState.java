@@ -33,8 +33,6 @@ public class EnkaState implements Comparable<EnkaState>, Serializable {
 
     public List<EnkaState> getTransitions(char inputSymbol) {
         return transitions.get(inputSymbol);
-//		// TODO better to return null or Collections.EMPTY_LIST?
-//		// although nicer to read, initialization is expensive so null is better performance wise
     }
 
     public Map<Character, List<EnkaState>> getAllTransitions() {

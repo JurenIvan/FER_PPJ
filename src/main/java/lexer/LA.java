@@ -23,7 +23,7 @@ public class LA {
 		stateToMEA = stateRulesMap.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(),
 				e -> new MEA(e.getValue().stream().map(Rule::getEnkaGraph).collect(Collectors.toList()))));
 	}
-	
+
 	public static void main(String[] args) {
 		StringBuilder sb = new StringBuilder();
 		Scanner sc = new Scanner(System.in);
@@ -34,15 +34,15 @@ public class LA {
 			}
 		}
 		sc.close();
-		
+
 		List<String> states = Utils.deserializeObject("states.ser");
 		Set<String> tokenTypes = Utils.deserializeObject("token_types.ser");
 		HashMap<String, List<Rule>> stateRulesMap = Utils.deserializeObject("state_rules_map.ser");
-		
+
 		LA la = new LA(states, tokenTypes, stateRulesMap);
-		System.out.print(la.run(sb.toString()));	
+		System.out.print(la.run(sb.toString()));
 	}
-	
+
 	private String run(String input) {
 		StringBuilder sb = new StringBuilder();
 
@@ -53,7 +53,7 @@ public class LA {
 		for (int i = 0; i < input.length();) {
 			MEA mea = stateToMEA.get(currentState);
 			int lastI = i;
-			
+
 			int lastResult = -1;
 			int lastAcceptableResult = -1;
 			int lastAcceptableResultIndex = -1;
@@ -95,7 +95,6 @@ public class LA {
 				if (!"-".equals(rule.getTokenType())) {
 					String value = input.substring(lastI, i);
 					lastI = i;
-
 					sb.append(rule.getTokenType());
 					sb.append(" ");
 					sb.append(captureLineCount);
@@ -103,13 +102,10 @@ public class LA {
 					sb.append(value);
 					sb.append("\n");
 				}
-
 			}
-
 			mea.reset();
 		}
 
 		return sb.toString();
 	}
-	
 }

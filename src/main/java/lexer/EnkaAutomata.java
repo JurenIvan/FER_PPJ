@@ -12,7 +12,7 @@ public class EnkaAutomata {
     private final EnkaGraph enkaGraph;
 
     public EnkaAutomata(EnkaGraph enkaGraph) {
-       this.enkaGraph = enkaGraph;
+        this.enkaGraph = enkaGraph;
     }
 
     public void reset() {
@@ -25,7 +25,7 @@ public class EnkaAutomata {
     public void doTransitions(char symbol) {
         Set<EnkaState> nextStates = new HashSet<>();
 
-        if(currentStates == null){
+        if (currentStates == null) {
             System.out.println("dummy");
         }
 

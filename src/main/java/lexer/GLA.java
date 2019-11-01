@@ -19,15 +19,15 @@ public class GLA {
 			lines.add(sc.nextLine());
 		}
 		sc.close();
-		
+
 		int definitionLinesCount = howManyDefinitionLines(lines);
 		regexResolver = new RegexResolver(lines.subList(0, definitionLinesCount));
-		
+
 		states = Arrays.asList(lines.get(definitionLinesCount).substring(3).split(" "));
 		tokenTypes = Arrays.asList(lines.get(definitionLinesCount + 1).substring(3).split(" ")).stream()
 				.collect(Collectors.toSet());
 		stateRulesMap = fillStateRulesMap(lines.subList(definitionLinesCount + 2, lines.size()), states);
-		
+
 		Utils.serializeObject("states.ser", states);
 		Utils.serializeObject("token_types.ser", tokenTypes);
 		Utils.serializeObject("state_rules_map.ser", stateRulesMap);
