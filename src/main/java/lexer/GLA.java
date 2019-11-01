@@ -7,31 +7,47 @@ import java.util.stream.Collectors;
 @SuppressWarnings("javadoc")
 public class GLA {
 
-    private static List<String> lines = new ArrayList<>();
-    private static List<String> states = new ArrayList<>();
-    private static Set<String> tokenTypes = new HashSet<>();
-    private static HashMap<String, List<Rule>> stateRulesMap;
+    private List<String> lines;
+    private List<String> states;
+    private Set<String> tokenTypes;
+    private HashMap<String, List<Rule>> stateRulesMap;
     private static RegexResolver regexResolver;
 
-	public static void main(String[] args) throws IOException {
-		Scanner sc = new Scanner(System.in);
-		while (sc.hasNextLine()){
-			lines.add(sc.nextLine());
-		}
-		sc.close();
+    public static void main(String[] args) throws IOException {
+        GLA gla = new GLA();
+        gla.run();
+    }
 
-		int definitionLinesCount = howManyDefinitionLines(lines);
-		regexResolver = new RegexResolver(lines.subList(0, definitionLinesCount));
+    public GLA() {
+        lines = new ArrayList<>();
+        states = new ArrayList<>();
+        tokenTypes = new HashSet<>();
+    }
 
-		states = Arrays.asList(lines.get(definitionLinesCount).substring(3).split(" "));
-		tokenTypes = Arrays.asList(lines.get(definitionLinesCount + 1).substring(3).split(" ")).stream()
-				.collect(Collectors.toSet());
-		stateRulesMap = fillStateRulesMap(lines.subList(definitionLinesCount + 2, lines.size()), states);
+    public void run() throws IOException {
+        lines = getInput();
 
-		Utils.serializeObject("states.ser", states);
-		Utils.serializeObject("token_types.ser", tokenTypes);
-		Utils.serializeObject("state_rules_map.ser", stateRulesMap);
-	}
+        int definitionLinesCount = howManyDefinitionLines(lines);
+        regexResolver = new RegexResolver(lines.subList(0, definitionLinesCount));
+
+        states = Arrays.asList(lines.get(definitionLinesCount).substring(3).split(" "));
+        tokenTypes = Arrays.asList(lines.get(definitionLinesCount + 1).substring(3).split(" ")).stream()
+                .collect(Collectors.toSet());
+        stateRulesMap = fillStateRulesMap(lines.subList(definitionLinesCount + 2, lines.size()), states);
+
+        Utils.serializeObject("states.ser", states);
+        Utils.serializeObject("token_types.ser", tokenTypes);
+        Utils.serializeObject("state_rules_map.ser", stateRulesMap);
+    }
+
+    public List<String> getInput() {
+        List<String> list = new ArrayList<>();
+        Scanner sc = new Scanner(System.in);
+        while (sc.hasNextLine()) {
+            list.add(sc.nextLine());
+        }
+        return list;
+    }
 
     private static HashMap<String, List<Rule>> fillStateRulesMap(List<String> subList, List<String> states) {
         HashMap<String, List<Rule>> mapOfRules = new HashMap<>();
