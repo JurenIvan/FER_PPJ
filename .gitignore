@@ -1,6 +1,6 @@
 .vscode
 *.ser
-*.out
+output.out
 
 # Compiled class file
 *.class
