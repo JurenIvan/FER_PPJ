@@ -230,5 +230,4 @@ public class EnkaGraph implements Serializable {
 		addNode(enkaState);
 		return enkaState;
 	}
-
 }

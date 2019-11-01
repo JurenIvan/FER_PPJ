@@ -94,12 +94,10 @@ public class LA {
             }
             mea.reset();
         }
-
         return sb.toString();
     }
 
     public void setInputter(Inputter inputter) {
         this.inputter = inputter;
     }
-
 }

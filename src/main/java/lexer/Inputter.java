@@ -6,7 +6,6 @@ import java.util.Scanner;
 
 public class Inputter {
 
-
     public String outputString() {
         StringBuilder sb = new StringBuilder();
         Scanner sc = new Scanner(System.in);
@@ -27,5 +26,4 @@ public class Inputter {
         }
         return list;
     }
-
 }

@@ -67,9 +67,7 @@ public class GLA {
         return -1;
     }
 
-
     public void setInputter(Inputter inputter) {
         this.inputter = inputter;
     }
-
 }

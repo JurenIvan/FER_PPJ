@@ -59,7 +59,6 @@ public class EnkaAutomata {
         return currentStates.stream().map(EnkaState::getName).reduce((x, y) -> (x + "," + y)).get();
     }
 
-
     private void doEpsilonTransitions() {
         Set<EnkaState> lastDeltaStates = currentStates;
         boolean proceed;
@@ -79,5 +78,4 @@ public class EnkaAutomata {
             proceed = currentStates.addAll(deltaStates);
         } while (proceed);
     }
-
 }
