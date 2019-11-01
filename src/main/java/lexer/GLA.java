@@ -15,8 +15,7 @@ public class GLA {
     private Inputter inputter;
 
     public static void main(String[] args) throws IOException {
-        GLA gla = new GLA();
-        gla.run();
+        new GLA().run();
     }
 
     public GLA() {

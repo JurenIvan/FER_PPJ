@@ -21,6 +21,7 @@ public class LA {
         this.tokenTypes = Utils.deserializeObject("token_types.ser");
         this.states = Utils.deserializeObject("states.ser");
         inputter = new Inputter();
+
         stateToMEA = stateRulesMap.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(),
                 e -> new MEA(e.getValue().stream().map(Rule::getEnkaGraph).collect(Collectors.toList()))));
     }

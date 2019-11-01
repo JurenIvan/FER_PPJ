@@ -1,6 +1,5 @@
 package lexer;
 
-
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.mockito.Mockito;
@@ -12,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IntegrationTest {
+
+    private static String concatStringsWithNewLine(String s, String s2) {
+        return s + '\n' + s2;
+    }
 
     @Test
     public void test_minusLang() throws IOException {
@@ -161,7 +164,7 @@ public class IntegrationTest {
     private void executeIntegrationTest(List<List<String>> data) throws IOException {
         Inputter inputter = Mockito.mock(Inputter.class);
         Mockito.when(inputter.outputListString()).thenReturn(data.get(0));
-        Mockito.when(inputter.outputString()).thenReturn(String.valueOf(data.get(1).stream().reduce(((s, s2) -> s + '\n' + s2))));
+        Mockito.when(inputter.outputString()).thenReturn(data.get(1).stream().reduce(((s, s2) -> s + '\n' + s2)).get());
 
         GLA gla = new GLA();
         gla.setInputter(inputter);
@@ -170,7 +173,7 @@ public class IntegrationTest {
         LA la = new LA();
         la.setInputter(inputter);
 
-        Assertions.assertEquals((data.get(2).stream().reduce((s, s2) -> s + '\n' + s2).get() + '\n' ), la.run());
+        Assertions.assertEquals(data.get(2).stream().reduce(IntegrationTest::concatStringsWithNewLine).get() + '\n', la.run());
     }
 
     private List<List<String>> readFolder(Path path) throws IOException {
