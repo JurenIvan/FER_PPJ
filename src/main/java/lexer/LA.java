@@ -1,6 +1,9 @@
 package lexer;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("javadoc")
@@ -11,12 +14,13 @@ public class LA {
     private Map<String, MEA> stateToMEA;
     private final HashMap<String, List<Rule>> stateRulesMap;
     public static LA la;
+    public Inputter inputter;
 
     public LA() {
         this.stateRulesMap = Utils.deserializeObject("state_rules_map.ser");
         this.tokenTypes = Utils.deserializeObject("token_types.ser");
         this.states = Utils.deserializeObject("states.ser");
-
+        inputter = new Inputter();
         stateToMEA = stateRulesMap.entrySet().stream().collect(Collectors.toMap(e -> e.getKey(),
                 e -> new MEA(e.getValue().stream().map(Rule::getEnkaGraph).collect(Collectors.toList()))));
     }
@@ -25,20 +29,9 @@ public class LA {
         System.out.print(new LA().run());
     }
 
-    public String getInput() {
-        StringBuilder sb = new StringBuilder();
-        Scanner sc = new Scanner(System.in);
-        while(sc.hasNext()) {
-            sb.append(sc.nextLine());
-            if(sc.hasNext()) {
-                sb.append("\n");
-            }
-        }
-        return sb.toString();
-    }
 
     public String run() {
-        String input=getInput();
+        String input = inputter.outputString();
         StringBuilder sb = new StringBuilder();
 
         String currentState = states.get(0);
@@ -103,4 +96,9 @@ public class LA {
 
         return sb.toString();
     }
+
+    public void setInputter(Inputter inputter) {
+        this.inputter = inputter;
+    }
+
 }

@@ -12,6 +12,7 @@ public class GLA {
     private Set<String> tokenTypes;
     private HashMap<String, List<Rule>> stateRulesMap;
     private static RegexResolver regexResolver;
+    private Inputter inputter;
 
     public static void main(String[] args) throws IOException {
         GLA gla = new GLA();
@@ -22,10 +23,11 @@ public class GLA {
         lines = new ArrayList<>();
         states = new ArrayList<>();
         tokenTypes = new HashSet<>();
+        inputter = new Inputter();
     }
 
     public void run() throws IOException {
-        lines = getInput();
+        lines = inputter.outputListString();
 
         int definitionLinesCount = howManyDefinitionLines(lines);
         regexResolver = new RegexResolver(lines.subList(0, definitionLinesCount));
@@ -38,15 +40,6 @@ public class GLA {
         Utils.serializeObject("states.ser", states);
         Utils.serializeObject("token_types.ser", tokenTypes);
         Utils.serializeObject("state_rules_map.ser", stateRulesMap);
-    }
-
-    public List<String> getInput() {
-        List<String> list = new ArrayList<>();
-        Scanner sc = new Scanner(System.in);
-        while (sc.hasNextLine()) {
-            list.add(sc.nextLine());
-        }
-        return list;
     }
 
     private static HashMap<String, List<Rule>> fillStateRulesMap(List<String> subList, List<String> states) {
@@ -73,6 +66,11 @@ public class GLA {
             if (lines.get(i).startsWith("%X")) return i;
         }
         return -1;
+    }
+
+
+    public void setInputter(Inputter inputter) {
+        this.inputter = inputter;
     }
 
 }
