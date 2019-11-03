@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("javadoc")
 public class IntegrationTest {
 
     private static String concatStringsWithNewLine(String s, String s2) {
@@ -172,7 +173,12 @@ public class IntegrationTest {
 
         LA la = new LA();
         la.setInputter(inputter);
-
+        Assertions.assertEquals(data.get(2).stream().reduce(IntegrationTest::concatStringsWithNewLine).get() + '\n', la.run());
+        Assertions.assertEquals(data.get(2).stream().reduce(IntegrationTest::concatStringsWithNewLine).get() + '\n', la.run());        
+        
+        la = new LA();
+        la.setInputter(inputter);
+        Assertions.assertEquals(data.get(2).stream().reduce(IntegrationTest::concatStringsWithNewLine).get() + '\n', la.run());
         Assertions.assertEquals(data.get(2).stream().reduce(IntegrationTest::concatStringsWithNewLine).get() + '\n', la.run());
     }
 

@@ -9,8 +9,9 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
 
+@SuppressWarnings("javadoc")
 public class GraphUtils {
-	
+
 	public static void runGraph(EnkaGraph enkaGraph) throws IOException {
 		System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		Graph graph = new SingleGraph("Tutorial 1");

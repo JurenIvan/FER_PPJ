@@ -10,12 +10,12 @@ public class EnkaGraph implements Serializable {
 	private static final long serialVersionUID = -140750338988255786L;
 	private int nextStateNumber = 1;
 
-	public static final String startNodeName = "S";
-	public static final String endNodeName = "F";
+	public static final String START_NODE_NAME = "S";
+	public static final String END_NODE_NAME = "F";
 	public final static char EPSILON = (char) 0;
 
-	private final EnkaState startState = new EnkaState(startNodeName);
-	private final EnkaState endState = new EnkaState(endNodeName);
+	private final EnkaState startState = new EnkaState(START_NODE_NAME);
+	private final EnkaState endState = new EnkaState(END_NODE_NAME);
 	private Map<String, EnkaState> states;
 
 	public EnkaGraph() {
@@ -45,11 +45,11 @@ public class EnkaGraph implements Serializable {
 	}
 
 	public static String getStartNodeName() {
-		return startNodeName;
+		return START_NODE_NAME;
 	}
 
 	public static String getEndNodeName() {
-		return endNodeName;
+		return END_NODE_NAME;
 	}
 
 	/**

@@ -4,7 +4,15 @@ import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 
-public class MEA {
+import java.io.Serializable;
+
+@SuppressWarnings("javadoc")
+public class MEA implements Serializable {
+
+	/**
+	 * Serialization
+	 */
+	private static final long serialVersionUID = 1733977515060192487L;
 
 	private List<EnkaAutomata> enkaAutomataList;
 

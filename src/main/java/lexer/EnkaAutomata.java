@@ -1,81 +1,79 @@
 package lexer;
 
+import static lexer.EnkaGraph.EPSILON;
+
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import static lexer.EnkaGraph.EPSILON;
-
 @SuppressWarnings("javadoc")
-public class EnkaAutomata {
+public class EnkaAutomata implements Serializable {
 
-    private Set<EnkaState> currentStates;
-    private final EnkaGraph enkaGraph;
+	/**
+	 * Serializable
+	 */
+	private static final long serialVersionUID = -5386476726898513120L;
 
-    public EnkaAutomata(EnkaGraph enkaGraph) {
-        this.enkaGraph = enkaGraph;
-    }
+	private Set<EnkaState> currentStates;
+	private final EnkaGraph enkaGraph;
 
-    public void reset() {
-        currentStates = new HashSet<>();
-        currentStates.add(enkaGraph.getStartState());
-        doEpsilonTransitions();
-    }
+	public EnkaAutomata(EnkaGraph enkaGraph) {
+		this.enkaGraph = enkaGraph;
+	}
 
+	public void reset() {
+		currentStates = new HashSet<>();
+		currentStates.add(enkaGraph.getStartState());
+		doEpsilonTransitions();
+	}
 
-    public void doTransitions(char symbol) {
-        Set<EnkaState> nextStates = new HashSet<>();
+	public void doTransitions(char symbol) {
+		Set<EnkaState> nextStates = new HashSet<>();
 
-        if (currentStates == null) {
-            System.out.println("dummy");
-        }
+		if (currentStates == null) {
+			System.out.println("dummy");
+		}
 
-        for (EnkaState e : currentStates) {
-            if (e.hasTransition(symbol)) {
-                nextStates.addAll(e.getTransitions(symbol));
-            }
-        }
-        currentStates = nextStates;
+		for (EnkaState e : currentStates) {
+			if (e.hasTransition(symbol)) {
+				nextStates.addAll(e.getTransitions(symbol));
+			}
+		}
+		currentStates = nextStates;
 
-        doEpsilonTransitions();
-    }
+		doEpsilonTransitions();
+	}
 
-    public Set<EnkaState> getCurrentStates() {
-        return currentStates;
-    }
+	public Set<EnkaState> getCurrentStates() {
+		return currentStates;
+	}
 
-    public boolean isAnyStateAcceptable() {
-        for (EnkaState state : currentStates) {
-            if (state.isAcceptable()) {
-                return true;
-            }
-        }
-        return false;
-    }
+	public boolean isAnyStateAcceptable() {
+		for (EnkaState state : currentStates) {
+			if (state.isAcceptable()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    private String currentStatesString() {
-        if (currentStates.size() == 0)
-            return "";
+	private void doEpsilonTransitions() {
+		Set<EnkaState> lastDeltaStates = currentStates;
+		boolean proceed;
+		do {
+			Set<EnkaState> deltaStates = new HashSet<>();
 
-        return currentStates.stream().map(EnkaState::getName).reduce((x, y) -> (x + "," + y)).get();
-    }
-
-    private void doEpsilonTransitions() {
-        Set<EnkaState> lastDeltaStates = currentStates;
-        boolean proceed;
-        do {
-            Set<EnkaState> deltaStates = new HashSet<>();
-
-            for (EnkaState e : lastDeltaStates) {
-                if (e.hasTransition(EPSILON)) {
-                    e.getTransitions(EPSILON).forEach(state -> {
-                        if (!currentStates.contains(state)) {
-                            deltaStates.add(state);
-                        }
-                    });
-                }
-            }
-            lastDeltaStates = deltaStates;
-            proceed = currentStates.addAll(deltaStates);
-        } while (proceed);
-    }
+			for (EnkaState e : lastDeltaStates) {
+				if (e.hasTransition(EPSILON)) {
+					e.getTransitions(EPSILON).forEach(state -> {
+						if (!currentStates.contains(state)) {
+							deltaStates.add(state);
+						}
+					});
+				}
+			}
+			lastDeltaStates = deltaStates;
+			proceed = currentStates.addAll(deltaStates);
+		} while (proceed);
+	}
 }
