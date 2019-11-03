@@ -9,10 +9,10 @@ import static lexer.EnkaGraph.EPSILON;
 public class EnkaAutomata {
 
     private Set<EnkaState> currentStates;
-    private EnkaGraph enkaGraph;
+    private final EnkaGraph enkaGraph;
 
     public EnkaAutomata(EnkaGraph enkaGraph) {
-       this.enkaGraph = enkaGraph;
+        this.enkaGraph = enkaGraph;
     }
 
     public void reset() {
@@ -24,6 +24,10 @@ public class EnkaAutomata {
 
     public void doTransitions(char symbol) {
         Set<EnkaState> nextStates = new HashSet<>();
+
+        if (currentStates == null) {
+            System.out.println("dummy");
+        }
 
         for (EnkaState e : currentStates) {
             if (e.hasTransition(symbol)) {
@@ -55,7 +59,6 @@ public class EnkaAutomata {
         return currentStates.stream().map(EnkaState::getName).reduce((x, y) -> (x + "," + y)).get();
     }
 
-
     private void doEpsilonTransitions() {
         Set<EnkaState> lastDeltaStates = currentStates;
         boolean proceed;
@@ -75,5 +78,4 @@ public class EnkaAutomata {
             proceed = currentStates.addAll(deltaStates);
         } while (proceed);
     }
-
 }

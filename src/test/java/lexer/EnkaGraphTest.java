@@ -72,7 +72,7 @@ class EnkaGraphTest {
     private void runTest(StringTest test, String regex) {
         MEA mea = new MEA(List.of(new EnkaGraph(regex)));
 
-		System.out.println(test);
+        System.out.println(test);
 
         mea.reset();
         int last = -1;
