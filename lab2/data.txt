@@ -1,0 +1,55 @@
+<A>
+<B>
+##########
+a
+b
+##########
+b
+##########
+0, a, POMAKNI, 3
+0, b, POMAKNI, 4
+0, #, REDUCIRAJ, 1
+0, <%>, ODBACI
+0, <A>, STAVI, 1
+0, <B>, STAVI, 2
+1, a, ODBACI
+1, b, ODBACI
+1, #, PRIHVATI
+1, <%>, ODBACI
+1, <A>, ODBACI
+1, <B>, ODBACI
+2, a, POMAKNI, 3
+2, b, POMAKNI, 4
+2, #, REDUCIRAJ, 1
+2, <%>, ODBACI
+2, <A>, STAVI, 5
+2, <B>, STAVI, 2
+3, a, POMAKNI, 3
+3, b, POMAKNI, 4
+3, #, ODBACI
+3, <%>, ODBACI
+3, <A>, ODBACI
+3, <B>, STAVI, 6
+4, a, REDUCIRAJ, 2
+4, b, REDUCIRAJ, 2
+4, #, REDUCIRAJ, 2
+4, <%>, ODBACI
+4, <A>, ODBACI
+4, <B>, ODBACI
+5, a, ODBACI
+5, b, ODBACI
+5, #, REDUCIRAJ, 3
+5, <%>, ODBACI
+5, <A>, ODBACI
+5, <B>, ODBACI
+6, a, REDUCIRAJ, 4
+6, b, REDUCIRAJ, 4
+6, #, REDUCIRAJ, 4
+6, <%>, ODBACI
+6, <A>, ODBACI
+6, <B>, ODBACI
+##########
+<A> -> $
+<B> -> b
+<A> -> <B>, <A>
+<B> -> a, <B>
