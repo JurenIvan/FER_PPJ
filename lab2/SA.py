@@ -10,9 +10,36 @@ global productions
 global stack
 global data
 
+def checkPattern(right):
+	global stack
+	stackPattern = stack[:-1][::-2]
+	pattern = right[::-1]
+	
+	for i in range(len(pattern)):
+		sign = stackPattern[i].getIndex() if type(stackPattern[i]) is Node else stackPattern[i][0]
+		if type(sign) is list:
+			sign = sign[0]
+		if pattern[i] != sign:
+			return False
+
+	return True
+
 def move(node, value):
 	stack.append(node)
 	stack.append(value)
+
+def error():
+	global data
+	global syncCharacters
+	global actions
+	global stack
+	print('error', stack[-1].data)
+	while data[0][0] not in syncCharacters:
+		data = data[1:]
+
+	while actions[stack[-1].getIndex() if type(stack[-1]) is Node else stack[-1]][data[0][0]][0] == 'ODBACI':
+		stack = stack[:-2]
+
 
 def startParsing():
 	global terminalCharacters
@@ -22,11 +49,11 @@ def startParsing():
 	global productions
 	global stack
 	global data
-	counter = 0
 	while len(data) > 0:
 
 		character = data[0][0]
 		currentState = stack[-1]
+
 
 		# TODO OPORAVAK
 		action = actions[currentState.getIndex() if type(currentState) is Node else currentState][character]
@@ -34,7 +61,9 @@ def startParsing():
 		#print([i.getIndex() if type(i) is Node else i for i in stack])
 		#print(currentState.getIndex() if type(currentState) is Node else currentState)
 		#print(character)
-		if action[0] == 'POMAKNI':
+		if action[0] == 'ODBACI':
+			error()
+		elif action[0] == 'POMAKNI':
 			move(Node(data[0]), Node(action[1]))
 			data = data[1:]
 		elif action[0] == 'REDUCIRAJ':
@@ -45,6 +74,7 @@ def startParsing():
 
 			newNode = Node(left)
 			#print(right[0])
+
 			if right[0] == '$':
 				newNode.addChild(Node("$"))
 				stack.append(newNode)
@@ -52,6 +82,10 @@ def startParsing():
 				f = stack[-2].getIndex() if type(stack[-2]) is Node else stack[-2]
 				s = newNode.getIndex() if type(newNode) is Node else newNode
 				stack.append(actions[f][s][1])
+				continue
+		
+			if not checkPattern(right):
+				error()
 				continue
 
 			pattern = stack[-len(right)*2:]
@@ -64,9 +98,6 @@ def startParsing():
 				newNode.addChild(element)
 
 			stack.append(newNode)
-			if newNode.getIndex() not in nonTerminalCharacters:
-				remove()
-				continue
 			#STAVI
 			f = stack[-2].getIndex() if type(stack[-2]) is Node else stack[-2]
 			s = newNode.getIndex() if type(newNode) is Node else newNode
