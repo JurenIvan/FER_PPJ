@@ -1,18 +1,21 @@
-fajl = open("gramatikaPrimjer.txt")
+from funkcije import *
+
+
+fajl = open("test.txt")
 
 citaj = fajl.readlines()
 
-pocetniNezavrsniZnak = ""
+pocetni_nezavrsni_znak = ""
 tmp = citaj[0].split()
 
-nezavrsniZnakovi = tmp[1:]
-pocetniNezavrsniZnak = nezavrsniZnakovi[0]
+nezavrsni_znakovi = tmp[1:]
+pocetni_nezavrsni_znak = nezavrsni_znakovi[0]
 
 tmp = citaj[1].split()
 
-zavrsniZnakovi = set()
-zavrsniZnakovi.add("$")
-zavrsniZnakovi.update(tmp[1:])
+zavrsni_znakovi = set()
+zavrsni_znakovi.add("$")
+zavrsni_znakovi.update(tmp[1:])
 
 sinkronizacijskiZnakovi = []
 tmp = citaj[2].split()
@@ -26,7 +29,7 @@ stanje_na_produkcije = {}
 produkcije_tuple = []
 trenutniKljuc = ""
 citaj.insert(3, NNZ)
-citaj.insert(4, " " + pocetniNezavrsniZnak)
+citaj.insert(4, " " + pocetni_nezavrsni_znak)
 for x in citaj[3:]:
     if (x[0] == "<"):
         trenutniKljuc = x.strip("\n")
@@ -51,39 +54,100 @@ for x in citaj[3:]:
             stanje_na_produkcije[lijevaStrana] = []
         stanje_na_produkcije[lijevaStrana].append(len(produkcije_tuple) - 1)
 
-print(produkcije_tuple)
-print(stanje_na_produkcije)
+#print(produkcije_tuple)
+#print(stanje_na_produkcije)
 
-# gramatika[NNZ] = [[pocetniNezavrsniZnak]]
+# gramatika[NNZ] = [[pocetni_nezavrsni_znak]]
 
-brojacStanja = 0
+brojac_stanja = 0
+DKA = []
 stanje = []
 unikati = set()
 
-pocetnoStanje = (0, 0, "@")
-stanje.append(pocetnoStanje)
-unikati.add(pocetnoStanje)
 
-for x in stanje:
-    produkcija = produkcije_tuple[x[0]]
+pocetno_stanje = (0, 0, "@")
+stanje.append(pocetno_stanje)
+unikati.add(pocetno_stanje)
 
-    if (x[2] == len(produkcija[1])):
-        # TODO redukcija je ovo
-        continue
+znakovi = []
+for x in nezavrsni_znakovi:
+    znakovi.append(x)
+for x in zavrsni_znakovi:
+    if (x != "$"):
+        znakovi.append(x)
 
-    znak_iza_tocke = produkcija[1][x[1]]
-    if znak_iza_tocke in zavrsniZnakovi:
-        continue
+#print("znakovi su: ", end = "")
+#print(znakovi)
 
-    dohvati_produkcije = stanje_na_produkcije[znak_iza_tocke]
-    for k in dohvati_produkcije:
-        ntorka = (k, 0, "@@@")
-        if (ntorka not in unikati):
-            unikati.add(ntorka)
-            stanje.append(ntorka)
+#print(produkcije_tuple)
+#print(stanje)
+kreirano_je_novo_stanje = True
 
-print(stanje)
-print(unikati)
+neobradene_produkcije = [pocetno_stanje]
+
+while (neobradene_produkcije != []):
+
+    # ubaci u stanje sve epsilon prijelaze
+    for x in stanje:
+        produkcija = produkcije_tuple[x[0]]
+        #print("produkcije je {}".format(produkcija))
+        if (x[2] == len(produkcija[1])):
+            # TODO redukcija je ovo
+            continue
+
+        znak_iza_tocke = produkcija[1][x[1]]
+        if znak_iza_tocke in zavrsni_znakovi:
+            continue
+
+        dohvati_produkcije = stanje_na_produkcije[znak_iza_tocke]
+        for k in dohvati_produkcije:
+            ntorka = (k, 0, "@@@")
+            if (ntorka not in unikati):
+                unikati.add(ntorka)
+                stanje.append(ntorka)
+                neobradene_produkcije.append(ntorka)
+
+        stanje = sorted(stanje, key=lambda tup: (tup[0]))
+        #print(stanje)
+        #print(unikati)
+    del(neobradene_produkcije[0])
+        # prije DKA append ide provjera jel to stanje vec postoji 
+        # >> da prodes po tuple[1] i usporedis sa vec postojecima u DKA
+if (postoji_stanje_u_DKA(stanje, DKA) == False):
+    DKA.append((brojac_stanja, stanje))
+    brojac_stanja += 1
+    kreirano_je_novo_stanje = True
+    ### do ovdje je kreirano stanje
+
+for znak in zavrsni_znakovi - {"$"}:
+    for x in stanje:
+        #print("x je {}".format(x))
+        br_produkcije = x[0]
+        indeks_tocke = x[1]
+
+        produkcija_za_prijelaz = produkcije_tuple[br_produkcije]
+        iduci_znak_u_produkciji = produkcija_za_prijelaz[1][indeks_tocke]
+        #print("{} {}".format(produkcija_za_prijelaz, iduci_znak_u_produkciji))
+
+        novo_stanje = []
+        if (iduci_znak_u_produkciji == znak):
+            #print("jeste: {}".format(iduci_znak_u_produkciji))
+            #print("iduci znak: {}".format(iduci_znak_u_produkciji))
+            novo_stanje.append((br_produkcije, indeks_tocke + 1, "@@@"))
+    
+    if (postoji_stanje_u_DKA(novo_stanje, DKA) == False):
+        #print("NOVO STANJE!")
+        DKA.append((brojac_stanja, novo_stanje))
+        brojac_stanja += 1
+        kreirano_je_novo_stanje = True
+
+
+
+
+for x in DKA:
+    print(x)
+
+print(produkcije_tuple)
 
 
 def odredi_kontekst(ntorka):
@@ -104,7 +168,7 @@ def prazan_skup(alpha):
 
     prvi = alpha[0]
 
-    if(zavrsniZnakovi):
+    if(zavrsni_znakovi):
         pass
 
     # TODO
@@ -122,10 +186,10 @@ def zapocinje(alpha):
 # ispis
 out = open("out", "w")
 
-for x in nezavrsniZnakovi:
+for x in nezavrsni_znakovi:
     out.write(x + "\n")
 out.write("#" * 10 + "\n")
-for x in zavrsniZnakovi:
+for x in zavrsni_znakovi:
     out.write(x + "\n")
 out.write("#" * 10 + "\n")
 for x in sinkronizacijskiZnakovi:
