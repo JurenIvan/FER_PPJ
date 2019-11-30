@@ -129,8 +129,8 @@ for x in DKA:
 # for x in tablica:
 #     print(x)
 
-# ispis u datoteku "out"
-with open("out", "w") as out:
+# ispis u datoteku "data.txt"
+with open("data.txt", "w") as out:
     for x in gramatika.nezavrsni_znakovi:
         out.write(x + "\n")
     out.write("#" * 10 + "\n")
@@ -148,7 +148,7 @@ with open("out", "w") as out:
     out.close()
 
 if __name__ == '__main__':
-    with open("out", "r") as out:
+    with open("data.txt", "r") as out:
         print("\n\n")
         for line in out.readlines():
             print(line, end="")
