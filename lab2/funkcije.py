@@ -4,7 +4,7 @@ def postoji_stanje_u_DKA(stanje, DKA):
             return True
     return False
 
-def stvori_stanje(pocetno_stanje, produkcije_tuple, zavrsni_znakovi, stanje_na_produkcije, stanje):
+def stvori_stanje(gramatika, pocetno_stanje, produkcije_tuple, zavrsni_znakovi, stanje_na_produkcije, stanje):
     odvrti_produkcije = [pocetno_stanje]
     odradene_produkcije = set()
     while (odvrti_produkcije != []):
@@ -18,8 +18,22 @@ def stvori_stanje(pocetno_stanje, produkcije_tuple, zavrsni_znakovi, stanje_na_p
         if (dohvati_znak_u_produkciji in zavrsni_znakovi):
             del(odvrti_produkcije[0])
             continue
+        
+        kontekst = gramatika.odredi_kontekst_ntorke(odvrti_produkcije[0])
+        
+        kontekst = list(kontekst)
+        kontekst = sorted(kontekst)
+
+        kontekst_string = ""
+        cnt = 0
+        for k in kontekst:
+            kontekst_string += k
+            if (cnt < len(kontekst) - 1) :
+                kontekst_string += " "
+            cnt += 1
+
         for x in stanje_na_produkcije[dohvati_znak_u_produkciji]:
-            ntorka = (x, 0, "@")
+            ntorka = (x, 0, kontekst_string)
             if (ntorka not in odradene_produkcije):
                 odvrti_produkcije.append(ntorka)
                 odradene_produkcije.add(ntorka)

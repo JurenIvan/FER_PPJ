@@ -8,8 +8,8 @@ with open(filename) as f:
 
 znakovi = []
 for x in gramatika.nezavrsni_znakovi:
-    if (x != gramatika.pocetni_nezavrsni_znak):
-        znakovi.append(x)
+    #if (x != gramatika.pocetni_nezavrsni_znak):
+    znakovi.append(x)
 for x in gramatika.zavrsni_znakovi:
     if x != "$":
         znakovi.append(x)
@@ -26,17 +26,14 @@ stanje.append(pocetno_stanje)
 
 # exit()
 
-stvori_stanje(pocetno_stanje, gramatika.produkcije, gramatika.zavrsni_znakovi, gramatika.znak_na_produkcije, stanje)
+stvori_stanje(gramatika, pocetno_stanje, gramatika.produkcije, gramatika.zavrsni_znakovi, gramatika.znak_na_produkcije, stanje)
 
 print(stanje)
 # exit()
 
 # s iducom naredom zavrsava kreiranje stanja
 dodaj_stanje_u_DKA(stanje, DKA, brojac_stanja)
-
-for znak in znakovi:
-    print(znak, end=" ")
-
+print(gramatika.produkcije)
 for x in DKA:
     print(x)
 
@@ -55,8 +52,8 @@ with open("out", "w") as out:
         out.write(x[0] + " -> " + ", ".join(x[1]) + "\n")
     out.close()
 
-if __name__ == '__main__':
-    with open("out", "r") as out:
-        print("\n\n")
-        for line in out.readlines():
-            print(line, end="")
+# if __name__ == '__main__':
+#     with open("out", "r") as out:
+#         print("\n\n")
+#         for line in out.readlines():
+#             print(line, end="")
