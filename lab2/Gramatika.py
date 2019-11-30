@@ -134,7 +134,9 @@ class Gramatika:
                     self.__zapocinje[nezavrsni_znak].add(znak)
                     break
 
-                self.__zapocinje[nezavrsni_znak].update(self.__init_zapocinje(znak))
+                if znak != nezavrsni_znak:
+                    self.__zapocinje[nezavrsni_znak].update(self.__init_zapocinje(znak))
+
                 if znak not in self.__prazni_znakovi:
                     break
 
