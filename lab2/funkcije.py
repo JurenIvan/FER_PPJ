@@ -1,9 +1,3 @@
-def postoji_stanje_u_DKA(stanje, DKA):
-    for x in DKA:
-        if (stanje == x[1]):
-            return True
-    return False
-
 def stvori_stanje(gramatika, pocetno_stanje, produkcije_tuple, zavrsni_znakovi, stanje_na_produkcije, stanje):
     odvrti_produkcije = [pocetno_stanje]
     odradene_produkcije = set()
@@ -40,7 +34,15 @@ def stvori_stanje(gramatika, pocetno_stanje, produkcije_tuple, zavrsni_znakovi, 
                 stanje.append(ntorka)
         del(odvrti_produkcije[0])
 
+def postoji_stanje_u_DKA(stanje, DKA):
+    for x in DKA:
+        if (stanje == x[1]):
+            return True
+    return False
+
 def dodaj_stanje_u_DKA(stanje, DKA, brojac_stanja):
     if (postoji_stanje_u_DKA(stanje, DKA) == False):
         DKA.append((brojac_stanja, stanje))
-        brojac_stanja += 1
+        return True
+        #brojac_stanja += 1
+    return False
