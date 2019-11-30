@@ -193,7 +193,7 @@ class Gramatika:
         assert (self.produkcije[ntorka[0]][1][ntorka[1]] in self.nezavrsni_znakovi)
 
         alpha = desna_strana[ntorka[1] + 1:]
-        return self._kontekst(alpha, ntorka[2])
+        return self._kontekst(alpha, ntorka[2].split(" "))
 
 
 if __name__ == '__main__':

@@ -1,8 +1,8 @@
 from Gramatika import *
 from funkcije import *
 
-filename = "test.txt"
-# filename = "gramatikaPrimjer.txt"
+# filename = "test.txt"
+filename = "gramatikaPrimjer.txt"
 with open(filename) as f:
     gramatika = Gramatika(f.readlines())
 
@@ -20,65 +20,61 @@ nedovrseno_stanje = []
 stanje = []
 
 nedovrseno_stanje = [0]
-pocetno_stanje = (0, 0, "@")
-stanje.append(pocetno_stanje)
+pocetne_ntorke = [(0, 0, "@")]
+stanje.append(pocetne_ntorke)
 
-# exit()
-
-stvori_stanje(gramatika, pocetno_stanje, gramatika.produkcije, gramatika.zavrsni_znakovi, gramatika.znak_na_produkcije, stanje)
-
-#print(stanje)
-# exit()
-
-# s iducom naredom zavrsava kreiranje stanja
+stanje = stvori_stanje(gramatika, pocetne_ntorke, gramatika.produkcije, gramatika.zavrsni_znakovi,
+                       gramatika.znak_na_produkcije)
 dodaj_stanje_u_DKA(stanje, DKA, brojac_stanja)
 brojac_stanja += 1
 
-#print(radi_novo_stanje)
-#print(gramatika.znak_na_produkcije)
-#print(gramatika.produkcije)
-
 prijelazi_automata = {}
-for x in znakovi:
-    #a = 5
-    #print(x)
-    novo_stanje = []
-    stanje_za_obraditi = DKA[0][1]
-    #print(stanje_za_obraditi)
-    for k in stanje_za_obraditi:
-        #print("{} {}".format(k[0], k[1]))
-        #print(k)
-        produkcija = gramatika.produkcije[k[0]]
-        na_mjestu_tocke = produkcija[1][k[1]]
-        #print(indeks_tocke)
-        if (na_mjestu_tocke == x):
-            #print(x)
-            #print("k je: {}".format(k))
-            #print("jeste")
-            #print(na_mjestu_tocke)
-            novo_stanje.append((k[0], k[1] + 1, k[2]))
-            
-    # tu treba ici provjera postoji li vec to stanje ili je novo stanje
-    # pa s obzirom na to napraviti usmjeravanje u dictionaryju prijelaza stanja
-    if (dodaj_stanje_u_DKA(novo_stanje, DKA, brojac_stanja) == True):
-        prijelazi_automata[(nedovrseno_stanje[0], x)] = brojac_stanja
-        nedovrseno_stanje.append(brojac_stanja)
-        brojac_stanja += 1
-    else:
-        for k in DKA:
-            if (novo_stanje == k[1]):
-                prijelazi_automata[(nedovrseno_stanje[0], x)] = k[0]
-                break
+while (nedovrseno_stanje != []):
 
-print(nedovrseno_stanje)
+    nedovrseno_stanje_indeks = nedovrseno_stanje[0]
+    assert (nedovrseno_stanje_indeks == DKA[nedovrseno_stanje_indeks][
+        0])  # TODO ako dobro shvacam povezanost brojaca i stanja
+
+    nedovrseno_stanje_znakovi_prijelaza = {}
+    stanje_za_obraditi = DKA[nedovrseno_stanje_indeks][1]
+
+    for ntorka in stanje_za_obraditi:
+
+        ntorka_tocka = ntorka[1]
+        ntorka_produkcija = gramatika.produkcije[ntorka[0]]
+        ntorka_produkcija_desna_strana = ntorka_produkcija[1]
+        if ntorka_produkcija_desna_strana[0] == "$" or len(ntorka_produkcija_desna_strana) <= ntorka_tocka:
+            continue
+
+        ntorka_znak_iza_tocke = ntorka_produkcija_desna_strana[ntorka_tocka]
+        if ntorka_znak_iza_tocke not in nedovrseno_stanje_znakovi_prijelaza:
+            nedovrseno_stanje_znakovi_prijelaza[ntorka_znak_iza_tocke] = []
+
+        nedovrseno_stanje_znakovi_prijelaza[ntorka_znak_iza_tocke].append((ntorka[0], ntorka[1] + 1, ntorka[2]))
+
+    for znak, pocetne_ntorke in nedovrseno_stanje_znakovi_prijelaza.items():
+        stanje = stvori_stanje(gramatika, pocetne_ntorke, gramatika.produkcije, gramatika.zavrsni_znakovi,
+                               gramatika.znak_na_produkcije)
+
+        indeks_stanja = dodaj_stanje_u_DKA(stanje, DKA, brojac_stanja)
+        if indeks_stanja == brojac_stanja:
+            nedovrseno_stanje.append(brojac_stanja)
+            brojac_stanja += 1
+
+        prijelazi_automata[(nedovrseno_stanje_indeks, znak)] = indeks_stanja
+
+    del (nedovrseno_stanje[0])
+    print(nedovrseno_stanje)
 
 for x in DKA:
-    print(x)
+    print("Stanje ", x[0])
+    for ntorka in x[1]:
+        print(ntorka)
+    print()
 
-# print("PRIJELAZI AUTOMATA!")
-# for k, v in prijelazi_automata.items():
-#     #print(x)
-#     print("{} -> {}".format(k, v))
+print("PRIJELAZI AUTOMATA")
+for k, v in prijelazi_automata.items():
+    print("{} -> {}".format(k, v))
 
 # ispis u datoteku "out"
 with open("out", "w") as out:
@@ -95,8 +91,8 @@ with open("out", "w") as out:
         out.write(x[0] + " -> " + ", ".join(x[1]) + "\n")
     out.close()
 
-# if __name__ == '__main__':
-#     with open("out", "r") as out:
-#         print("\n\n")
-#         for line in out.readlines():
-#             print(line, end="")
+if __name__ == '__main__':
+    with open("out", "r") as out:
+        print("\n\n")
+        for line in out.readlines():
+            print(line, end="")

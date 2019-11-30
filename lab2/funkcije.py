@@ -1,48 +1,43 @@
-def stvori_stanje(gramatika, pocetno_stanje, produkcije_tuple, zavrsni_znakovi, stanje_na_produkcije, stanje):
-    odvrti_produkcije = [pocetno_stanje]
+def stvori_stanje(gramatika, pocetne_ntorke, produkcije, zavrsni_znakovi, znak_na_produkcije):
+    stanje = []
+
+    odvrti_produkcije = pocetne_ntorke.copy()
     odradene_produkcije = set()
-    while (odvrti_produkcije != []):
+    while odvrti_produkcije != []:
+        stanje.append(odvrti_produkcije[0])
 
         odradene_produkcije.add(odvrti_produkcije[0])
         obradi_produkciju = odvrti_produkcije[0][0]
+
         indeks_tocke = odvrti_produkcije[0][1]
-        #print("obradi_produkciju: {}".format(obradi_produkciju))
-        dohvati_znak_u_produkciji = produkcije_tuple[obradi_produkciju][1][indeks_tocke]
-        #print(dohvati_znak_u_produkciji)
-        if (dohvati_znak_u_produkciji in zavrsni_znakovi):
-            del(odvrti_produkcije[0])
+        desna_strana = produkcije[obradi_produkciju][1]
+        if desna_strana[0] == "$" or len(desna_strana) <= indeks_tocke or desna_strana[indeks_tocke] in zavrsni_znakovi:
+            del (odvrti_produkcije[0])
             continue
-        
-        kontekst = gramatika.odredi_kontekst_ntorke(odvrti_produkcije[0])
-        
-        kontekst = list(kontekst)
-        kontekst = sorted(kontekst)
 
-        kontekst_string = ""
-        cnt = 0
-        for k in kontekst:
-            kontekst_string += k
-            if (cnt < len(kontekst) - 1) :
-                kontekst_string += " "
-            cnt += 1
+        kontekst = sorted(list(gramatika.odredi_kontekst_ntorke(odvrti_produkcije[0])))
+        kontekst_string = " ".join(kontekst)
 
-        for x in stanje_na_produkcije[dohvati_znak_u_produkciji]:
+        for x in znak_na_produkcije[desna_strana[indeks_tocke]]:
             ntorka = (x, 0, kontekst_string)
-            if (ntorka not in odradene_produkcije):
+            if ntorka not in odradene_produkcije:
                 odvrti_produkcije.append(ntorka)
                 odradene_produkcije.add(ntorka)
-                stanje.append(ntorka)
-        del(odvrti_produkcije[0])
+        del (odvrti_produkcije[0])
+
+    return sorted(stanje)
+
 
 def postoji_stanje_u_DKA(stanje, DKA):
-    for x in DKA:
-        if (stanje == x[1]):
-            return True
-    return False
+    for i in range(len(DKA)):
+        if stanje == DKA[i][1]:  # TODO Pomocna struktura koja bi to radila u O(1)
+            return DKA[i][0]
+    return -1
+
 
 def dodaj_stanje_u_DKA(stanje, DKA, brojac_stanja):
-    if (postoji_stanje_u_DKA(stanje, DKA) == False):
+    postoji_li_stanje = postoji_stanje_u_DKA(stanje, DKA)
+    if (postoji_li_stanje == -1):
         DKA.append((brojac_stanja, stanje))
-        return True
-        #brojac_stanja += 1
-    return False
+        return brojac_stanja
+    return postoji_li_stanje
