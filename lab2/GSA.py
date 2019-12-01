@@ -146,10 +146,10 @@ with open("data.txt", "w") as out:
     iskoristeni_elementi = []
     for k, v in prijelazi_automata.items():
         if k[1] in gramatika.zavrsni_znakovi:
-            out.write("{}, {}, {}, {}\n".format(k[0], k[1], "STAVI", v))
+            out.write("{}, {}, {}, {}\n".format(k[0], k[1], "POMAKNI", v))
             iskoristeni_elementi.append((k[0], k[1]))
         else:
-            out.write("{}, {}, {}, {}\n".format(k[0], k[1], "POMAKNI", v))
+            out.write("{}, {}, {}, {}\n".format(k[0], k[1], "STAVI", v))
             iskoristeni_elementi.append((k[0], k[1]))
     for x in DKA:
         for ntorka in x[1]:
