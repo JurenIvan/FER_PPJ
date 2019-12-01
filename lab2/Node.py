@@ -19,4 +19,4 @@ class Node:
 		else:
 			print(spacing + str(self.name))
 		for child in reversed(self.children):
-			child.tree(spacing + "  ")
+			child.tree(spacing + " ")

@@ -1,11 +1,11 @@
 from Gramatika import *
 from funkcije import *
-
-filename = "tests/kanon_gramatika.san"
+import sys
+#filename = "tests/kanon_gramatika.san"
 # filename = "test.txt"
 # filename = "gramatikaPrimjer.txt"
-with open(filename) as f:
-    gramatika = Gramatika(f.readlines())
+inputLines = sys.stdin.read().splitlines()
+gramatika = Gramatika(inputLines)
 
 brojac_stanja = 0
 DKA = []
@@ -111,8 +111,3 @@ with open("data.txt", "w") as out:
         out.write(x[0] + " -> " + ", ".join(x[1]) + "\n")
     out.close()
 
-if __name__ == '__main__':
-    with open("data.txt", "r") as out:
-        print("\n\n")
-        for line in out.readlines():
-            print(line, end="")

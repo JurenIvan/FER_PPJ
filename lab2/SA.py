@@ -33,7 +33,7 @@ def error():
 	global syncCharacters
 	global actions
 	global stack
-	print('error', stack[-1].data)
+	#print('error', stack[-1].data)
 	while data[0][0] not in syncCharacters:
 		data = data[1:]
 
@@ -67,7 +67,7 @@ def startParsing():
 			move(Node(data[0]), Node(action[1]))
 			data = data[1:]
 		elif action[0] == 'REDUCIRAJ':
-			production = productions[action[1] - 1] ## Be careful with index
+			production = productions[action[1]] ## Be careful with index
 			#print(production)
 			[left, right] = production.split(' -> ')
 			right = right.split(', ')
@@ -103,6 +103,7 @@ def startParsing():
 			s = newNode.getIndex() if type(newNode) is Node else newNode
 			stack.append(actions[f][s][1])
 		elif action[0] == "PRIHVATI":
+			# TODO
 			return stack[-2]
 
 dataFile = open('data.txt', "r")
@@ -143,6 +144,6 @@ for d in inputLines:
 	line = d.split(" ")
 	data.append([line[0], line[1], line[2:]])
 
-data.append(["#", "#", "#"])
+data.append(["@", "@", "@"])
 
 startParsing().tree("")
