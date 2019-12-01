@@ -1,7 +1,8 @@
 from Gramatika import *
 from funkcije import *
 import sys
-#filename = "tests/kanon_gramatika.san"
+
+# filename = "tests/kanon_gramatika.san"
 # filename = "test.txt"
 # filename = "gramatikaPrimjer.txt"
 inputLines = sys.stdin.read().splitlines()
@@ -58,7 +59,6 @@ while (nedovrseno_stanje != []):
 
     del (nedovrseno_stanje[0])
 
-
 znakovi = []
 for x in gramatika.nezavrsni_znakovi:
     if (x != gramatika.stari_pocetni_nezavrsni_znak):
@@ -67,6 +67,7 @@ for x in gramatika.zavrsni_znakovi:
     if x != "$":
         znakovi.append(x)
 znakovi.append("@")
+znakovi.append(gramatika.stari_pocetni_nezavrsni_znak)
 znakovi.append(gramatika.novi_pocetni_nezavrsni_znak)
 
 # ispis u datoteku "data.txt"
@@ -80,7 +81,7 @@ with open("data.txt", "w") as out:
     for x in gramatika.sinkronizacijski_znakovi:
         out.write(x + "\n")
     out.write("#" * 10 + "\n")
-    
+
     iskoristeni_elementi = []
     for k, v in prijelazi_automata.items():
         if k[1] in gramatika.zavrsni_znakovi:
@@ -90,16 +91,27 @@ with open("data.txt", "w") as out:
             out.write("{}, {}, {}, {}\n".format(k[0], k[1], "STAVI", v))
             iskoristeni_elementi.append((k[0], k[1]))
     for x in DKA:
+        redukcije_za_stanje = {}
         for ntorka in x[1]:
             produkcija = gramatika.produkcije[ntorka[0]]
             if produkcija[1][0] == "$" or len(produkcija[1]) == ntorka[1]:
                 for znak in ntorka[2].split():
+                    if (x[0], znak) in prijelazi_automata:
+                        # print("Postoji POMAKNI za ", (x[0], znak), "pa ga necemo reducirati..")
+                        continue
                     if ntorka[0] == 0:
                         out.write("{}, {}, {}\n".format(x[0], znak, "PRIHVATI"))
                         iskoristeni_elementi.append((x[0], znak))
                     else:
-                        out.write("{}, {}, {}, {}\n".format(x[0], znak, "REDUCIRAJ", ntorka[0]))
-                        iskoristeni_elementi.append((x[0], znak))
+                        if znak not in redukcije_za_stanje:
+                            redukcije_za_stanje[znak] = ntorka[0]
+                        else:
+                            # print("REDUCIRAJ/REDUCIRAJ razrjesen kod ", (x[0], znak), " i produkcija ", redukcije_za_stanje[znak], " ", ntorka[0])
+                            redukcije_za_stanje[znak] = min(redukcije_za_stanje[znak], ntorka[0])
+
+        for k, v in redukcije_za_stanje.items():
+            out.write("{}, {}, {}, {}\n".format(x[0], k, "REDUCIRAJ", v))
+            iskoristeni_elementi.append((x[0], k))
 
     for x in DKA:
         for y in znakovi:
@@ -110,4 +122,3 @@ with open("data.txt", "w") as out:
     for x in gramatika.produkcije:
         out.write(x[0] + " -> " + ", ".join(x[1]) + "\n")
     out.close()
-
