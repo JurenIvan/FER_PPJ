@@ -1,18 +1,11 @@
 from Gramatika import *
 from funkcije import *
 
-filename = "test.txt"
+filename = "tests/kanon_gramatika.san"
+# filename = "test.txt"
 # filename = "gramatikaPrimjer.txt"
 with open(filename) as f:
     gramatika = Gramatika(f.readlines())
-
-znakovi = []
-for x in gramatika.nezavrsni_znakovi:
-    if (x != gramatika.pocetni_nezavrsni_znak):
-        znakovi.append(x)
-for x in gramatika.zavrsni_znakovi:
-    if x != "$":
-        znakovi.append(x)
 
 brojac_stanja = 0
 DKA = []
@@ -64,73 +57,18 @@ while (nedovrseno_stanje != []):
         prijelazi_automata[(nedovrseno_stanje_indeks, znak)] = indeks_stanja
 
     del (nedovrseno_stanje[0])
-    #print(nedovrseno_stanje)
 
-# for x in DKA:
-#     print("Stanje ", x[0])
-#     for ntorka in x[1]:
-#         print(ntorka)
-#     print()
 
-# print("PRIJELAZI AUTOMATA")
-# for k, v in prijelazi_automata.items():
-#     print("{} -> {}".format(k, v))
-
-tablica = []
+znakovi = []
+for x in gramatika.nezavrsni_znakovi:
+    if (x != gramatika.stari_pocetni_nezavrsni_znak):
+        znakovi.append(x)
+for x in gramatika.zavrsni_znakovi:
+    if x != "$":
+        znakovi.append(x)
 znakovi.append("@")
-znakovi.append(gramatika.pocetni_nezavrsni_znak)
-# print(znakovi)
+znakovi.append(gramatika.novi_pocetni_nezavrsni_znak)
 
-# konacno_stanje_automata = prijelazi_automata[(0, gramatika.pocetni_nezavrsni_znak)]
-
-# for x in DKA:
-#     dohvati_stanje = x[0]
-
-#     for znak in znakovi:
-#         if ((dohvati_stanje, znak) in prijelazi_automata.keys()):
-#             if (znak in gramatika.zavrsni_znakovi):
-#                 dohvati_prijelaz = prijelazi_automata[(dohvati_stanje, znak)]
-#                 tablica.append(str(dohvati_stanje) + ", " + znak + ", POMAKNI, " + str(dohvati_prijelaz))    
-#             elif (znak in gramatika.nezavrsni_znakovi):
-#                 dohvati_prijelaz = prijelazi_automata[(dohvati_stanje, znak)]
-#                 tablica.append(str(dohvati_stanje) + ", " + znak + ", STAVI, " + str(dohvati_prijelaz))
-                
-#         elif (dohvati_stanje == konacno_stanje_automata and znak == "@"):
-#             tablica.append(str(dohvati_stanje) + ", " + znak + ", PRIHVATI")
-#         else:
-#             # provjeri ima li mozda redukcija za taj znak, 
-#             #   tj. je li koja produkcija u stanju na kraju i da ima znak u kontekstu
-#             # ako nema, samo odbaci NIZ
-#             # print("jeste", znak, dohvati_stanje)
-#             produkcije_stanja = DKA[dohvati_stanje][1]
-#             mogu_reducirati = False
-#             print(produkcije_stanja)
-#             print(znak)
-            
-#             if (znak in gramatika.nezavrsni_znakovi or znak == "@"):
-#                 #print("ETO ME")
-#                 for k in produkcije_stanja:
-#                     # je li na kraju produkcija
-#                     pozicija_tocke = k[1]
-#                     kontekst = k[2].split()
-#                     print("produkcija jeste: ", gramatika.produkcije[k[0]][1])
-#                     print("len jeste: ", len(gramatika.produkcije[k[0]][1]))
-#                     #exit()
-#                     if (pozicija_tocke == len(gramatika.produkcije[k[0]]) - 1):
-#                         if (znak in kontekst):
-#                             #print("JESTE")
-#                             tablica.append(str(dohvati_stanje) + ", " + znak + ", REDUCIRAJ, " + str(k[0]))
-#                             mogu_reducirati = True
-#                             break
-#             if (mogu_reducirati == False):
-#                 tablica.append(str(dohvati_stanje) + ", " + znak + ", ODBACI")
-#             #exit()
-
-
-for x in tablica:
-    print(x)
-
-#print(znakovi)
 # ispis u datoteku "data.txt"
 with open("data.txt", "w") as out:
     for x in gramatika.nezavrsni_znakovi:
@@ -162,7 +100,7 @@ with open("data.txt", "w") as out:
                     else:
                         out.write("{}, {}, {}, {}\n".format(x[0], znak, "REDUCIRAJ", ntorka[0]))
                         iskoristeni_elementi.append((x[0], znak))
-    #print(iskoristeni_elementi)
+
     for x in DKA:
         for y in znakovi:
             if ((x[0], y) not in iskoristeni_elementi):
@@ -173,8 +111,8 @@ with open("data.txt", "w") as out:
         out.write(x[0] + " -> " + ", ".join(x[1]) + "\n")
     out.close()
 
-# if __name__ == '__main__':
-#     with open("data.txt", "r") as out:
-#         print("\n\n")
-#         for line in out.readlines():
-#             print(line, end="")
+if __name__ == '__main__':
+    with open("data.txt", "r") as out:
+        print("\n\n")
+        for line in out.readlines():
+            print(line, end="")

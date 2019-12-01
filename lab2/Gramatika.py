@@ -18,7 +18,7 @@ class Gramatika:
         :param lines: lines containing the definition of the grammar
         """
         self.nezavrsni_znakovi = lines[0].split()[1:]
-        self.pocetni_nezavrsni_znak = self.nezavrsni_znakovi[0]
+        self.stari_pocetni_nezavrsni_znak = self.nezavrsni_znakovi[0]
 
         self.zavrsni_znakovi = set()
         self.zavrsni_znakovi.add("$")
@@ -33,19 +33,19 @@ class Gramatika:
         self.__init_prazni_znakovi(self)
 
         self.__zapocinje = {}
-        self.__init_zapocinje(self.pocetni_nezavrsni_znak)
+        self.__init_zapocinje(self.stari_pocetni_nezavrsni_znak)
         for nezavrsni_znak in self.nezavrsni_znakovi:
             if nezavrsni_znak not in self.__zapocinje:
                 self.__init_zapocinje(nezavrsni_znak)
 
     def __init_productions(self, lines):
-        self._novi_pocetni_nezavrsni_znak = "<Novo@Pocetno@Stanje>"
+        self.novi_pocetni_nezavrsni_znak = "<Novo@Pocetno@Stanje>"
         self.znak_na_produkcije = {}
         self.produkcije = []
 
         trenutni_kljuc = ""
-        lines.insert(3, self._novi_pocetni_nezavrsni_znak)
-        lines.insert(4, " " + self.pocetni_nezavrsni_znak)
+        lines.insert(3, self.novi_pocetni_nezavrsni_znak)
+        lines.insert(4, " " + self.stari_pocetni_nezavrsni_znak)
         for x in lines[3:]:
             if x[0] == "<":
                 trenutni_kljuc = x.strip("\n")
