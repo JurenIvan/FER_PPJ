@@ -8,15 +8,12 @@ class Node:
 		return self.name
 
 	def addChild(self, child):
-		self.children.append(child)
-
-	def __str__(self):
-		return " ".join(self.data)
+		self.children.insert(0, child)
 		
 	def tree(self, spacing):
 		if isinstance(self.name, list):
 			print(spacing + self.name[0] + " " + self.name[1] + " " + ' '.join(self.name[2]))
 		else:
 			print(spacing + str(self.name))
-		for child in reversed(self.children):
+		for child in self.children:
 			child.tree(spacing + " ")
