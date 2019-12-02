@@ -70,8 +70,8 @@ znakovi.append("@")
 znakovi.append(gramatika.stari_pocetni_nezavrsni_znak)
 znakovi.append(gramatika.novi_pocetni_nezavrsni_znak)
 
-# ispis u datoteku "data.txt"
-with open("data.txt", "w") as out:
+# ispis u datoteku "analizator/data.txt"
+with open("analizator/data.txt", "w") as out:
     for x in gramatika.nezavrsni_znakovi:
         out.write(x + "\n")
     out.write("#" * 10 + "\n")
@@ -97,7 +97,7 @@ with open("data.txt", "w") as out:
             if produkcija[1][0] == "$" or len(produkcija[1]) == ntorka[1]:
                 for znak in ntorka[2].split():
                     if (x[0], znak) in prijelazi_automata:
-                        # print("Postoji POMAKNI za ", (x[0], znak), "pa ga necemo reducirati..")
+                        print("Postoji POMAKNI za ", (x[0], znak), "pa ga necemo reducirati..")
                         continue
                     if ntorka[0] == 0:
                         out.write("{}, {}, {}\n".format(x[0], znak, "PRIHVATI"))
@@ -106,7 +106,7 @@ with open("data.txt", "w") as out:
                         if znak not in redukcije_za_stanje:
                             redukcije_za_stanje[znak] = ntorka[0]
                         else:
-                            # print("REDUCIRAJ/REDUCIRAJ razrjesen kod ", (x[0], znak), " i produkcija ", redukcije_za_stanje[znak], " ", ntorka[0])
+                            print("REDUCIRAJ/REDUCIRAJ razrjesen kod ", (x[0], znak), " i produkcija ", redukcije_za_stanje[znak], " ", ntorka[0])
                             redukcije_za_stanje[znak] = min(redukcije_za_stanje[znak], ntorka[0])
 
         for k, v in redukcije_za_stanje.items():

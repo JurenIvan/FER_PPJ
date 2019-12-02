@@ -7,6 +7,8 @@ Foreach ($dir in $dir_array)
     $current = ".\tests\" + $dir + "\test"
     $current
     Get-Content ($current+".san") | python GSA.py
-    Get-Content ($current+".in") | python SA.py > output.out
-    Compare-Object (Get-Content output.out) (Get-Content ($current+".out"))
+    cd analizator
+    Get-Content ("..\"+$current+".in") | python SA.py > output.out
+    cd ..
+    Compare-Object (Get-Content "analizator\output.out") (Get-Content ($current+".out"))
 }
