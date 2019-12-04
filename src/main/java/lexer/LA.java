@@ -52,7 +52,7 @@ public class LA {
 			}
 
 			if (lastAcceptableResult == -1) {
-				// popravljanje pogreske
+				System.err.print(input.substring(lastI, lastI+1));
 				i = lastI + 1;
 			} else {
 				i = lastAcceptableResultIndex;
