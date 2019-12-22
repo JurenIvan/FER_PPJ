@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class PrijevodnaJedinica extends Node {
-	public PrijevodnaJedinica(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.PRIJEVODNA_JEDINICA;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class PrijevodnaJedinica extends Node {
+
+    public PrijevodnaJedinica(Node parent) {
+        super(parent, PRIJEVODNA_JEDINICA);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

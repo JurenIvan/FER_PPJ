@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class JednakosniIzraz extends Node {
-	public JednakosniIzraz(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.JEDNAKOSNI_IZRAZ;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class JednakosniIzraz extends Node {
+
+    public JednakosniIzraz(Node parent) {
+        super(parent, JEDNAKOSNI_IZRAZ);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

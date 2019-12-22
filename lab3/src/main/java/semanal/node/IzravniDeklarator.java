@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class IzravniDeklarator extends Node {
-	public IzravniDeklarator(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.IZRAVNI_DEKLARATOR;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class IzravniDeklarator extends Node {
+
+    public IzravniDeklarator(Node parent) {
+        super(parent, IZRAVNI_DEKLARATOR);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

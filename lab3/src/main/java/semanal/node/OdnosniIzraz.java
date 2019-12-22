@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class OdnosniIzraz extends Node {
-	public OdnosniIzraz(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.ODNOSNI_IZRAZ;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class OdnosniIzraz extends Node {
+
+    public OdnosniIzraz(Node parent) {
+        super(parent, ODNOSNI_IZRAZ);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class Izraz extends Node {
-	public Izraz(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.IZRAZ;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class Izraz extends Node {
+
+    public Izraz(Node parent) {
+        super(parent, IZRAZ);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class DeklaracijaParametra extends Node {
-	public DeklaracijaParametra(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.DEKLARACIJA_PARAMETRA;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class DeklaracijaParametra extends Node {
+
+    public DeklaracijaParametra(Node parent) {
+        super(parent, DEKLARACIJA_PARAMETRA);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

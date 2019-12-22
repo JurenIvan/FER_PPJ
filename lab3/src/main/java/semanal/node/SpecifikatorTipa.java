@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class SpecifikatorTipa extends Node {
-	public SpecifikatorTipa(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.SPECIFIKATOR_TIPA;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class SpecifikatorTipa extends Node {
+
+    public SpecifikatorTipa(Node parent) {
+        super(parent, SPECIFIKATOR_TIPA);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class ListaDeklaracija extends Node {
-	public ListaDeklaracija(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.LISTA_DEKLARACIJA;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class ListaDeklaracija extends Node {
+
+    public ListaDeklaracija(Node parent) {
+        super(parent, LISTA_DEKLARACIJA);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

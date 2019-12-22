@@ -2,14 +2,18 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class AditivniIzraz extends Node{
-	public AditivniIzraz(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.ADITIVNI_IZRAZ;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class AditivniIzraz extends Node {
+
+    public AditivniIzraz(Node parent) {
+        super(parent, ADITIVNI_IZRAZ);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }
 
 

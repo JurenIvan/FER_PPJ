@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class Naredba extends Node {
-	public Naredba(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.NAREDBA;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class Naredba extends Node {
+
+    public Naredba(Node parent) {
+        super(parent, NAREDBA);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

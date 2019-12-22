@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class BinXiliIzraz extends Node {
-	public BinXiliIzraz(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.BIN_XILI_IZRAZ;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class BinXiliIzraz extends Node {
+
+    public BinXiliIzraz(Node parent) {
+        super(parent, BIN_XILI_IZRAZ);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

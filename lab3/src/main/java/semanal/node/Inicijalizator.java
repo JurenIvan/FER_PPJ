@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class Inicijalizator extends Node {
-	public Inicijalizator(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.INICIJALIZATOR;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class Inicijalizator extends Node {
+
+    public Inicijalizator(Node parent) {
+        super(parent, INICIJALIZATOR);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }

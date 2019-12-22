@@ -2,12 +2,16 @@ package semanal.node;
 
 import java.util.ArrayList;
 
-public class PostfiksIzraz extends Node {
-	public PostfiksIzraz(Node parent) {
-		super(parent);
-	}
+import static semanal.NodeType.POSTFIKS_IZRAZ;
 
-	@Override void initializeTasks() {
-		tasks = new ArrayList<>();
-	}
+public class PostfiksIzraz extends Node {
+
+    public PostfiksIzraz(Node parent) {
+        super(parent, POSTFIKS_IZRAZ);
+    }
+
+    @Override
+    void initializeTasks() {
+        tasks = new ArrayList<>();
+    }
 }
