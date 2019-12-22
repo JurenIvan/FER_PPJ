@@ -7,7 +7,7 @@ import java.util.Scanner;
 @SuppressWarnings("javadoc")
 public class Inputter {
 
-	public String outputString() {
+	public static String outputString() {
 		StringBuilder sb = new StringBuilder();
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNext()) {
@@ -20,7 +20,7 @@ public class Inputter {
 		return sb.toString();
 	}
 
-	public List<String> outputListString() {
+	public static List<String> outputListString() {
 		List<String> list = new ArrayList<>();
 		Scanner sc = new Scanner(System.in);
 		while (sc.hasNextLine()) {

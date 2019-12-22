@@ -14,7 +14,7 @@ public abstract class Node {
 		return children.add(child);
 	}
 
-	public SemantickiAnalizator.NodeType type;
+ //   public NodeType type; //todo is this necessery now ?
 
 	public int currentTask = 0;
 	public List<Supplier<Node>> tasks;
