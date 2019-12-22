@@ -47,22 +47,20 @@ public class SemantickiAnalizator {
             int deltaDepth = currentDepth - lastDepth;
             lastDepth = currentDepth;
 
-            if(deltaDepth>1)
+            if (deltaDepth > 1)
                 throw new IllegalStateException("Depth can only increase by one step, not " + deltaDepth);
 
-            while(deltaDepth < 0){
+            while (deltaDepth <= 0) {
                 currentNode = currentNode.parent;
                 deltaDepth++;
             }
 
-            if (deltaDepth == 1 || deltaDepth == 0) {
-                if (ltrim.startsWith("<")) {
-                    Node newNode = NodeFactory.create(ltrim, currentNode);
-                    currentNode.addChild(newNode);
-                    currentNode = newNode;
-                } else {
-                    System.out.println("terminal --> " + ltrim); // TODO terminal
-                }
+            if (ltrim.startsWith("<")) {
+                Node newNode = NodeFactory.create(ltrim, currentNode);
+                currentNode.addChild(newNode);
+                currentNode = newNode;
+            } else {
+                System.out.println("terminal --> " + ltrim); // TODO terminal
             }
         }
         currentNode = rootNode;
