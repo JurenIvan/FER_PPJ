@@ -8,7 +8,7 @@ import java.util.function.Function;
 
 public class NodeFactory {
 
-    private static final Map<String, Function<Node, Node>> nodes = new HashMap<>();;
+    private static final Map<String, Function<Node, Node>> nodes = new HashMap<>();
 
     static {
 
@@ -53,7 +53,7 @@ public class NodeFactory {
     }
 
     static Node create(String input, Node parent) {
-            return nodes.get(input).apply(parent);
+        return nodes.get(input).apply(parent);
     }
 }
 

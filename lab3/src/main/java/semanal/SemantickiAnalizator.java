@@ -12,24 +12,24 @@ public class SemantickiAnalizator {
         System.out.print(new SemantickiAnalizator().run());
     }
 
-	public static Node nextTask(Node node) {
-		if (node.tasks == null || node.tasks.isEmpty()) {
-			return null;
-		}
+    public static Node nextTask(Node node) {
+        if (node.tasks == null || node.tasks.isEmpty()) {
+            return null;
+        }
 
-		if (node.currentTask == node.tasks.size()) {
-			return node.parent;
-		}
+        if (node.currentTask == node.tasks.size()) {
+            return node.parent;
+        }
 
-		node = node.tasks.get(node.currentTask).get();
-		node.currentTask++;
-		return node;
-	}
+        node = node.tasks.get(node.currentTask).get();
+        node.currentTask++;
+        return node;
+    }
 
-	public static Node pogreska(Node node) {
-		System.out.println("Pogreska na produkciji kod ovog cvora: " + node);
-		return null;
-	}
+    public static Node pogreska(Node node) {
+        System.out.println("Pogreska na produkciji kod ovog cvora: " + node);
+        return null;
+    }
 
     public String run() {
         StringBuilder sb = new StringBuilder();
@@ -37,17 +37,17 @@ public class SemantickiAnalizator {
 
         rootNode = NodeFactory.create(lines.get(0), null);
 
-		int lastDepth = 0;
-		Node currentNode = rootNode;
-		for (int i = 1, nlines = lines.size(); i < nlines; i++) {
-			String line = lines.get(i);
-			String ltrim = line.replaceAll("^\\s+", "");
+        int lastDepth = 0;
+        Node currentNode = rootNode;
+        for (int i = 1, nlines = lines.size(); i < nlines; i++) {
+            String line = lines.get(i);
+            String ltrim = line.replaceAll("^\\s+", "");
             if (ltrim.isEmpty())
                 continue;
 
-			int currentDepth = line.length() - ltrim.length();
+            int currentDepth = line.length() - ltrim.length();
 
-			int deltaDepth = currentDepth - lastDepth;
+            int deltaDepth = currentDepth - lastDepth;
             lastDepth = currentDepth;
 
             if (deltaDepth > 1)
@@ -68,11 +68,11 @@ public class SemantickiAnalizator {
         }
         currentNode = rootNode;
 
-		while (currentNode != null) {
-			currentNode = nextTask(currentNode);
-		}
-		// provjera ima li maina, ako je uspjesno do sada
-		// jos neka provjera posle svega, ne sicam se koja
+        while (currentNode != null) {
+            currentNode = nextTask(currentNode);
+        }
+        // provjera ima li maina, ako je uspjesno do sada
+        // jos neka provjera posle svega, ne sicam se koja
 
         return sb.toString();
     }
