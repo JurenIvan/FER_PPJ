@@ -1,6 +1,7 @@
 package semanal;
 
 import semanal.node.Node;
+import semanal.node.TerminalNode;
 
 import java.util.List;
 
@@ -12,22 +13,28 @@ public class SemantickiAnalizator {
         System.out.print(new SemantickiAnalizator().run());
     }
 
-    public static Node nextTask(Node node) {
-        if (node.tasks == null || node.tasks.isEmpty()) {
-            return null;
+    public static Node error(Node node) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(node.nodeType.symbolName);
+        sb.append(" ::=");
+        for (Node child : node.children) {
+            sb.append(" ");
+            if (node.nodeType == NodeType.TERMINAL) {
+                TerminalNode terminalNode = (TerminalNode) node;
+                sb.append(terminalNode.getTerminalType());
+                sb.append("(");
+                sb.append(terminalNode.getLineNumber());
+                sb.append(",");
+                sb.append(terminalNode.getSourceCode());
+                sb.append(")");
+            } else {
+                sb.append(node.nodeType.symbolName);
+            }
         }
 
-        if (node.currentTask == node.tasks.size()) {
-            return node.parent;
-        }
-
-        node = node.tasks.get(node.currentTask).get();
-        node.currentTask++;
-        return node;
-    }
-
-    public static Node pogreska(Node node) {
-        System.out.println("Pogreska na produkciji kod ovog cvora: " + node);
+        //        return sb.toString(); // TODO return somehow this error value
+        System.out.println(sb.toString()); // TODO remove, deubug only
         return null;
     }
 
@@ -63,13 +70,24 @@ public class SemantickiAnalizator {
                 currentNode.addChild(newNode);
                 currentNode = newNode;
             } else {
-                System.out.println("terminal --> " + ltrim); // TODO terminal
+                String[] parts = ltrim.split(" ", 3);
+                if (parts.length != 3) {
+                    throw new IllegalArgumentException(
+                            "Terminal leaf node has invalid format. The node should have three parts separated with spaces");
+                }
+
+                TerminalType terminalType = TerminalType.valueOf(parts[0]);
+                Integer lineNumber = Integer.parseInt(parts[1]);
+                String source = parts[2];
+
+                TerminalNode terminalNode = new TerminalNode(currentNode, terminalType, lineNumber, source);
+                currentNode.addChild(terminalNode);
             }
         }
         currentNode = rootNode;
 
         while (currentNode != null) {
-            currentNode = nextTask(currentNode);
+            currentNode = currentNode.nextTask();
         }
         // provjera ima li maina, ako je uspjesno do sada
         // jos neka provjera posle svega, ne sicam se koja
