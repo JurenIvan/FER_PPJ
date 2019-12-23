@@ -30,6 +30,7 @@ public class SemantickiAnalizator {
 
         TaskResult taskResult = rootNode.nextTask();
         while (taskResult.getNextNode() != null && taskResult.isSuccess()) {
+            System.out.println(taskResult.getNextNode().nodeType.symbolName);
             taskResult = taskResult.getNextNode().nextTask();
         }
 
@@ -50,8 +51,10 @@ public class SemantickiAnalizator {
      * @return the root of the tree
      */
     private Node parseTree(List<String> lines) {
+        Node rootNode = NodeFactory.create(lines.get(0), null);
+
         int lastDepth = 0;
-        Node currentNode = NodeFactory.create(lines.get(0), null);
+        Node currentNode = rootNode;
         for (int i = 1, nlines = lines.size(); i < nlines; i++) {
             String line = lines.get(i);
             String ltrim = line.replaceAll("^\\s+", "");
@@ -91,6 +94,6 @@ public class SemantickiAnalizator {
             }
         }
 
-        return currentNode;
+        return rootNode;
     }
 }

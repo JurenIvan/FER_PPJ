@@ -60,11 +60,7 @@ public abstract class Node {
 
         }
 
-        if (tasks.isEmpty()) {
-            return null;
-        }
-
-        if (currentTaskNumber == tasks.size()) {
+        if (tasks.isEmpty() || currentTaskNumber == tasks.size()) {
             return TaskResult.success(parent);
         }
 
