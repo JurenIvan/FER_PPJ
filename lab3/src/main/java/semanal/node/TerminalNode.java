@@ -3,8 +3,6 @@ package semanal.node;
 import semanal.NodeType;
 import semanal.TerminalType;
 
-import java.util.ArrayList;
-
 public class TerminalNode extends Node {
 
     private final TerminalType terminalType;
@@ -19,7 +17,7 @@ public class TerminalNode extends Node {
     }
 
     @Override void initializeTasks() {
-        tasks = new ArrayList<>();
+        throw new IllegalStateException("Terminal node is not permitted to initialize tasks.");
     }
 
     public TerminalType getTerminalType() {

@@ -41,7 +41,7 @@ public enum NodeType {
     VANJSKA_DEKLARACIJA("<vanjska_deklaracija>"),
     TERMINAL("");
 
-    final String symbolName;
+    public final String symbolName;
 
     NodeType(String symbolName) {
         this.symbolName = symbolName;

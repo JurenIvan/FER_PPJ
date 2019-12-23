@@ -9,43 +9,49 @@ public class SemantickiAnalizator {
 
     private Node rootNode;
 
+    /**
+     * Program main entry point.
+     *
+     * @param args irrelevant
+     */
     public static void main(String[] args) {
         System.out.print(new SemantickiAnalizator().run());
     }
 
-    public static Node error(Node node) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(node.nodeType.symbolName);
-        sb.append(" ::=");
-        for (Node child : node.children) {
-            sb.append(" ");
-            if (node.nodeType == NodeType.TERMINAL) {
-                TerminalNode terminalNode = (TerminalNode) node;
-                sb.append(terminalNode.getTerminalType());
-                sb.append("(");
-                sb.append(terminalNode.getLineNumber());
-                sb.append(",");
-                sb.append(terminalNode.getSourceCode());
-                sb.append(")");
-            } else {
-                sb.append(node.nodeType.symbolName);
-            }
-        }
-
-        //        return sb.toString(); // TODO return somehow this error value
-        System.out.println(sb.toString()); // TODO remove, deubug only
-        return null;
-    }
-
+    /**
+     * Method to start the semantic analyser and return generated output.
+     *
+     * @return the output of the semantic analysis
+     */
     public String run() {
-        StringBuilder sb = new StringBuilder();
         List<String> lines = Inputter.outputListString();
 
-        rootNode = NodeFactory.create(lines.get(0), null);
+        rootNode = parseTree(lines);
 
+        TaskResult taskResult = rootNode.nextTask();
+        while (taskResult.getNextNode() != null && taskResult.isSuccess()) {
+            taskResult = taskResult.getNextNode().nextTask();
+        }
+
+        if (!taskResult.isSuccess()) {
+            return taskResult.getErrorMessage();
+        }
+
+        //checkMain(); // provjera ima li maina, ako je uspjesno do sada
+        // // jos neka provjera posle svega, ne sicam se koja
+
+        return "";
+    }
+
+    /**
+     * Help method used to generate {@link Node} tree from syntax tree given by input lines.
+     *
+     * @param lines syntax tree lines
+     * @return the root of the tree
+     */
+    private Node parseTree(List<String> lines) {
         int lastDepth = 0;
-        Node currentNode = rootNode;
+        Node currentNode = NodeFactory.create(lines.get(0), null);
         for (int i = 1, nlines = lines.size(); i < nlines; i++) {
             String line = lines.get(i);
             String ltrim = line.replaceAll("^\\s+", "");
@@ -84,14 +90,7 @@ public class SemantickiAnalizator {
                 currentNode.addChild(terminalNode);
             }
         }
-        currentNode = rootNode;
 
-        while (currentNode != null) {
-            currentNode = currentNode.nextTask();
-        }
-        // provjera ima li maina, ako je uspjesno do sada
-        // jos neka provjera posle svega, ne sicam se koja
-
-        return sb.toString();
+        return currentNode;
     }
 }

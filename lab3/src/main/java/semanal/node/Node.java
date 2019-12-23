@@ -1,6 +1,8 @@
 package semanal.node;
 
 import semanal.NodeType;
+import semanal.TaskResult;
+import semanal.TerminalType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +15,7 @@ public abstract class Node {
     public NodeType nodeType;
 
     public int currentTaskNumber = 0;
-    public List<Supplier<Node>> tasks;
+    public List<Supplier<TaskResult>> tasks;
 
     public Node(Node parent, NodeType nodeType) {
         this.parent = parent;
@@ -24,18 +26,79 @@ public abstract class Node {
         return children.add(child);
     }
 
+    public boolean hasNChildren(int n) {
+        return children.size() == n;
+    }
+
+    public boolean isChildOfType(int i, NodeType nodeType) {
+        return children.get(i).nodeType == nodeType;
+    }
+
+    public boolean isChildOfTerminalType(int i, TerminalType terminalType) {
+        return children.get(i).isTerminalOfType(terminalType);
+    }
+
+    public <T extends Node> T getChild(int i) {
+        return (T) children.get(i);
+    }
+
     abstract void initializeTasks();
 
-    public Node nextTask() {
-        if (tasks == null || tasks.isEmpty()) {
+    public TaskResult nextTask() {
+        if (tasks == null) {
+            initializeTasks();
+            for (var child : children) {
+                if (child.nodeType == NodeType.TERMINAL)
+                    continue;
+                tasks.add(() -> {
+                    return TaskResult.success(child);
+                });
+            }
+        }
+
+        if (tasks.isEmpty()) {
             return null;
         }
 
         if (currentTaskNumber == tasks.size()) {
-            return parent;
+            return TaskResult.success(parent);
         }
 
         return tasks.get(currentTaskNumber++).get();
+    }
+
+    public boolean isTerminalOfType(TerminalType terminalType) {
+        if (nodeType == NodeType.TERMINAL && toTerminalNode().getTerminalType() == terminalType)
+            return true;
+
+        return false;
+    }
+
+    public TerminalNode toTerminalNode() {
+        return (TerminalNode) this;
+    }
+
+    public String createErrorMessageAtNode() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(nodeType.symbolName);
+        sb.append(" ::=");
+        for (Node child : children) {
+            sb.append(" ");
+            if (nodeType == NodeType.TERMINAL) {
+                TerminalNode terminalNode = toTerminalNode();
+                sb.append(terminalNode.getTerminalType());
+                sb.append("(");
+                sb.append(terminalNode.getLineNumber());
+                sb.append(",");
+                sb.append(terminalNode.getSourceCode());
+                sb.append(")");
+            } else {
+                sb.append(nodeType.symbolName);
+            }
+        }
+
+        return sb.toString();
     }
 
 }
