@@ -1,7 +1,5 @@
 package semanal;
 
-import semanal.node.Node;
-
 public class TaskResult {
     private Node nextNode;
     private boolean success;

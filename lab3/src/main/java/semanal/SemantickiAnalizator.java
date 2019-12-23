@@ -1,13 +1,10 @@
 package semanal;
 
-import semanal.node.Node;
-import semanal.node.TerminalNode;
+import semanal.nodes.TerminalNode;
 
 import java.util.List;
 
 public class SemantickiAnalizator {
-
-    private Node rootNode;
 
     /**
      * Program main entry point.
@@ -26,11 +23,11 @@ public class SemantickiAnalizator {
     public String run() {
         List<String> lines = Inputter.outputListString();
 
-        rootNode = parseTree(lines);
+        Node rootNode = parseTree(lines);
 
         TaskResult taskResult = rootNode.nextTask();
         while (taskResult.getNextNode() != null && taskResult.isSuccess()) {
-            System.out.println(taskResult.getNextNode().nodeType.symbolName);
+            System.out.println(taskResult.getNextNode().getNodeType().symbolName);
             taskResult = taskResult.getNextNode().nextTask();
         }
 
@@ -38,8 +35,8 @@ public class SemantickiAnalizator {
             return taskResult.getErrorMessage();
         }
 
-        //checkMain(); // provjera ima li maina, ako je uspjesno do sada
-        // // jos neka provjera posle svega, ne sicam se koja
+        //checkMain(); // TODO provjera ima li maina, ako je uspjesno do sada
+        // TODO jos neka provjera posle svega, ne sicam se koja
 
         return "";
     }
@@ -70,7 +67,7 @@ public class SemantickiAnalizator {
                 throw new IllegalStateException("Depth can only increase by one step, not " + deltaDepth);
 
             while (deltaDepth < 0) {
-                currentNode = currentNode.parent;
+                currentNode = currentNode.getParent();
                 deltaDepth++;
             }
 
@@ -86,7 +83,7 @@ public class SemantickiAnalizator {
                 }
 
                 TerminalType terminalType = TerminalType.valueOf(parts[0]);
-                Integer lineNumber = Integer.parseInt(parts[1]);
+                int lineNumber = Integer.parseInt(parts[1]);
                 String source = parts[2];
 
                 TerminalNode terminalNode = new TerminalNode(currentNode, terminalType, lineNumber, source);

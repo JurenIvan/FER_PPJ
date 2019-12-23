@@ -1,6 +1,6 @@
 package semanal;
 
-import semanal.node.*;
+import semanal.nodes.*;
 
 import java.util.HashMap;
 import java.util.Map;
