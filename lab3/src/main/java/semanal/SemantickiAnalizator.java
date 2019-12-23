@@ -42,15 +42,18 @@ public class SemantickiAnalizator {
 		for (int i = 1, nlines = lines.size(); i < nlines; i++) {
 			String line = lines.get(i);
 			String ltrim = line.replaceAll("^\\s+", "");
+            if (ltrim.isEmpty())
+                continue;
+
 			int currentDepth = line.length() - ltrim.length();
 
-            int deltaDepth = currentDepth - lastDepth;
+			int deltaDepth = currentDepth - lastDepth;
             lastDepth = currentDepth;
 
             if (deltaDepth > 1)
                 throw new IllegalStateException("Depth can only increase by one step, not " + deltaDepth);
 
-            while (deltaDepth <= 0) {
+            while (deltaDepth < 0) {
                 currentNode = currentNode.parent;
                 deltaDepth++;
             }
