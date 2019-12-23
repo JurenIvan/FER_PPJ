@@ -47,6 +47,8 @@ public abstract class Node {
     public TaskResult nextTask() {
         if (tasks == null) {
             initializeTasks();
+
+            // <! DUMMY -- adding dummy tasks, only to visit all tree nodes>
             for (var child : children) {
                 if (child.nodeType == NodeType.TERMINAL)
                     continue;
@@ -54,6 +56,8 @@ public abstract class Node {
                     return TaskResult.success(child);
                 });
             }
+            // <DUMMY !>
+
         }
 
         if (tasks.isEmpty()) {
