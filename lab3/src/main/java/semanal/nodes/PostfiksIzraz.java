@@ -1,6 +1,9 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.types.NumberType;
+import semanal.types.SubType;
+import semanal.types.Type;
 
 import java.util.ArrayList;
 
@@ -9,8 +12,8 @@ import static semanal.NodeType.POSTFIKS_IZRAZ;
 
 public class PostfiksIzraz extends Node {
 
-    public String tip;
-    public boolean lIzraz;
+    public Type type; // TODO should it be private and accesed by getter?
+    public boolean leftAssignableExpression; // TODO should it be private and accesed by getter?
 
     public PostfiksIzraz(Node parent) {
         super(parent, POSTFIKS_IZRAZ);
@@ -42,8 +45,8 @@ public class PostfiksIzraz extends Node {
 
             // final step
             addProcedureToTasks(() -> {
-                tip = primarniIzraz.tip;
-                lIzraz = primarniIzraz.lIzraz;
+                type = primarniIzraz.type;
+                leftAssignableExpression = primarniIzraz.leftAssignableExpression;
             });
 
         } else if (hasNChildren(2)) {
@@ -53,12 +56,13 @@ public class PostfiksIzraz extends Node {
             // 1.
             addNodeCheckToTasks(postfiksIzraz);
             // 2.
-            addErrorCheckToTasks(postfiksIzraz.lIzraz == true && postfiksIzraz.tip == " ~ int ( ~ aka impl. svodiv)");  // TODO real type
+            addErrorCheckToTasks(
+                    postfiksIzraz.leftAssignableExpression == true && NumberType.implicitConvertInto(postfiksIzraz.type, NumberType.INT));
 
             // final step
             addProcedureToTasks(() -> {
-                tip = "int"; // TODO real type
-                lIzraz = false;
+                type = Type.createNumber(NumberType.INT);
+                leftAssignableExpression = false;
             });
         } else if (hasNChildren(3)) {
             PostfiksIzraz postfiksIzraz = getChild(0);
@@ -72,12 +76,12 @@ public class PostfiksIzraz extends Node {
             // 1.
             addNodeCheckToTasks(postfiksIzraz);
             // 2.
-            addErrorCheckToTasks(postfiksIzraz.tip == "function(void->POVRATNA_KOJA_SE_IZVADI_IZ_TIPA)"); // TODO real type
+            addErrorCheckToTasks(postfiksIzraz.type.getSubType() == SubType.FUNCTION && postfiksIzraz.type.getFunction().acceptsVoid());
 
             // final step
             addProcedureToTasks(() -> {
-                tip = "pov --- povratna vrijednost od funkcije"; // TODO real type
-                lIzraz = false;
+                type = postfiksIzraz.type.getFunction().getReturnValueType();
+                leftAssignableExpression = false;
             });
         } else if (hasNChildren(4)) {
             PostfiksIzraz postfiksIzraz = getChild(0);
@@ -90,16 +94,16 @@ public class PostfiksIzraz extends Node {
                 // 1.
                 addNodeCheckToTasks(postfiksIzraz);
                 // 2.
-                addErrorCheckToTasks(postfiksIzraz.tip.contains("niz")); // TODO real type
+                addErrorCheckToTasks(postfiksIzraz.type.getSubType() == SubType.ARRAY);
                 // 3.
                 addNodeCheckToTasks(izraz);
                 // 4.
-                addErrorCheckToTasks(izraz.tip == "~ int (~ znaci da je implicitno svodiv)"); // TODO real type
+                addErrorCheckToTasks(NumberType.implicitConvertInto(postfiksIzraz.type, NumberType.INT));
 
                 // final step, after 1-4 tests
                 addProcedureToTasks(() -> {
-                    tip = "X iz postfiksIzraz.tip"; // TODO real type
-                    lIzraz = "X iz postfiksIzraz.tip" != "const(T)";  // TODO real type
+                    type = postfiksIzraz.type.getArray().getElementType();
+                    leftAssignableExpression = !type.getNumber().isConst();
                 });
             } else {
                 ListaArgumenata listaArgumenata = getChild(2);
@@ -109,16 +113,15 @@ public class PostfiksIzraz extends Node {
                 // 2.
                 addNodeCheckToTasks(listaArgumenata);
                 // 3.
-                // TODO function types not implemented, so the .tip check is just dummy lines of code
-                addErrorCheckToTasks(postfiksIzraz.tip == "funkcija(params->POVRATNA_OD_TIPA)");
-                for (String functionParameter : postfiksIzraz.tip.split("bezveze pisem, tip necemo modelirati stringom..")) {
-                    addErrorCheckToTasks(functionParameter == "istog tipa kao respektivni parametar od postfiksniIzraz.tip");
-                }
+                addErrorCheckToTasks(postfiksIzraz.type.getSubType() == SubType.FUNCTION);
+                addProcedureToTasks(() -> {
+                    // TODO ... "argTip ~ paramTip" check..
+                });
 
                 // final step
                 addProcedureToTasks(() -> {
-                    tip = "POVRATNA"; // TODO real type
-                    lIzraz = false;
+                    type = postfiksIzraz.type.getFunction().getReturnValueType();
+                    leftAssignableExpression = false;
                 });
             }
         } else {

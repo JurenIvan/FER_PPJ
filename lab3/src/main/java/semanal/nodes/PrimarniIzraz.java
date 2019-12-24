@@ -3,7 +3,9 @@ package semanal.nodes;
 import semanal.Node;
 import semanal.TaskResult;
 import semanal.TerminalType;
-import semanal.Utils;
+import semanal.types.ArrayModel;
+import semanal.types.NumberType;
+import semanal.types.Type;
 
 import java.util.ArrayList;
 
@@ -11,8 +13,8 @@ import static semanal.NodeType.PRIMARNI_IZRAZ;
 
 public class PrimarniIzraz extends Node {
 
-    public boolean lIzraz;
-    public String tip;
+    public boolean leftAssignableExpression; // TODO should it be private and accesed by getter?
+    public Type type; // TODO should it be private and accesed by getter?
 
     public PrimarniIzraz(Node parent) {
         super(parent, PRIMARNI_IZRAZ);
@@ -40,57 +42,51 @@ public class PrimarniIzraz extends Node {
 
                 tasks.add(() -> {
                     // firstChild.getSourceCode() is a variable name TODO check scope
-                    tip = "int";
-                    lIzraz = false;
+                    type = Type.createNumber(NumberType.INT);
+                    leftAssignableExpression = false;
                     return TaskResult.success(this);
                 });
                 //same as:
                 // addErrorCheckToTasks(check_if_variable_in_scope);
                 // addProcedureToTasks(()->{ tip = "int"; lIzraz = false; });
 
-            } else if (firstChild.getTerminalType() == TerminalType.BROJ) {
+            } else if (firstChild.getTerminalType() == TerminalType.BROJ || firstChild.getTerminalType() == TerminalType.ZNAK) {
+
+                NumberType numberType;
+                if (firstChild.getTerminalType() == TerminalType.BROJ) {
+                    numberType = NumberType.INT;
+                } else {
+                    numberType = NumberType.CHAR;
+                }
+                Type number = Type.createNumber(numberType);
 
                 tasks.add(() -> {
-                    if (!Utils.checkIfInt(firstChild.getSourceCode())) {
+                    if (!number.getNumber().checkIfValidValue(firstChild.getSourceCode())) {
                         return TaskResult.failure(this);
                     }
-                    tip = "int";
-                    lIzraz = false;
+                    type = number;
+                    leftAssignableExpression = false;
                     return TaskResult.success(this);
                 });
-
                 //same as:
-                // addErrorCheckToTasks(Utils.checkIfInt(firstChild.getSourceCode()));
-                // addProcedureToTasks(()->{ tip = "int"; lIzraz = false; });
-
-            } else if (firstChild.getTerminalType() == TerminalType.ZNAK) {
-
-                tasks.add(() -> {
-                    if (!Utils.isValidChar(firstChild.getSourceCode())) {
-                        return TaskResult.failure(this);
-                    }
-                    tip = "char";
-                    lIzraz = false;
-                    return TaskResult.success(this);
-                });
-
-                //same as:
-                // addErrorCheckToTasks(Utils.isValidChar(firstChild.getSourceCode()));
-                // addProcedureToTasks(()->{ tip = "int"; lIzraz = false; });
+                // addErrorCheckToTasks(number.getNumber().checkIfValidValue(firstChild.getSourceCode()));
+                // addProcedureToTasks(()->{ type = number; leftAssignableExpression = false; });
 
             } else if (firstChild.getTerminalType() == TerminalType.NIZ_ZNAKOVA) {
 
+                Type array = Type.createArray(NumberType.CONST_CHAR);
+
                 tasks.add(() -> {
-                    if (!Utils.isValidCharArray(firstChild.getSourceCode())) {
+                    if (!ArrayModel.isValidCharArray(firstChild.getSourceCode())) {
                         return TaskResult.failure(this);
                     }
-                    tip = "niz (const(char))";
-                    lIzraz = false;
+                    type = array;
+                    leftAssignableExpression = false;
                     return TaskResult.success(this);
                 });
                 // same as:
-                // addErrorCheckToTasks(Utils.isValidCharArray(firstChild.getSourceCode()));
-                // addProcedureToTasks(()->{tip = "niz (const(char))"; lIzraz = false;});
+                // addErrorCheckToTasks(ArrayModel.isValidCharArray(firstChild.getSourceCode()));
+                // addProcedureToTasks(()->{type = array; leftAssignableExpression = false;});
             }
         } else if (hasNChildren(3)) {
             Izraz izraz = getChild(1);
@@ -100,10 +96,10 @@ public class PrimarniIzraz extends Node {
             }); // same as: addNodeCheckToTasks(izraz);
 
             tasks.add(() -> {
-                tip = izraz.tip;
-                lIzraz = izraz.lIzraz;
+                type = izraz.type;
+                leftAssignableExpression = izraz.leftAssignableExpression;
                 return TaskResult.success(this);
-            }); // same as: addProcedureToTasks(()->{ tip = izraz.tip; lIzraz = izraz.lIzraz; });
+            }); // same as: addProcedureToTasks(()->{ type = izraz.type; leftAssignableExpression = izraz.leftAssignableExpression; });
         } else {
             throw new IllegalStateException("Invalid syntax tree structure.");
         }

@@ -1,6 +1,7 @@
 package semanal;
 
 import semanal.nodes.TerminalNode;
+import semanal.types.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ public abstract class Node {
     private List<Node> children = new ArrayList<>();
     private NodeType nodeType;
     private int currentTaskNumber = 0;
-    private MemoryScope<VariableType> variableMemory;
+    private MemoryScope<Type> variableMemory;
     private boolean alreadyCreatedLocalMemoryScope = false;
 
     public Node(Node parent, NodeType nodeType) {

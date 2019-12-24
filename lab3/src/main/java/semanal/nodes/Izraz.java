@@ -1,6 +1,7 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.types.Type;
 
 import java.util.ArrayList;
 
@@ -8,8 +9,8 @@ import static semanal.NodeType.IZRAZ;
 
 public class Izraz extends Node {
 
-    public boolean lIzraz;
-    public String tip;
+    public Type type;
+    public boolean leftAssignableExpression;
 
     public Izraz(Node parent) {
         super(parent, IZRAZ);
