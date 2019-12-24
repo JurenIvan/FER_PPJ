@@ -32,6 +32,10 @@ public abstract class Node {
         variableMemory = new MemoryScope<>(variableMemory);
     }
 
+    public MemoryScope<Type> getVariableMemory() {
+        return variableMemory;
+    }
+
     public Node getParent() {
         return parent;
     }
@@ -98,12 +102,11 @@ public abstract class Node {
         });
     }
 
-    protected void addErrorCheckToTasks(boolean... tests) {
+    protected void addErrorCheckToTasks(Supplier<Boolean> booleanSupplier) {
         tasks.add(() -> {
-            for (boolean b : tests) {
-                if (!b)
-                    return TaskResult.failure(this);
-            }
+            if (!booleanSupplier.get())
+                return TaskResult.failure(this);
+
             return TaskResult.success(this);
         });
     }

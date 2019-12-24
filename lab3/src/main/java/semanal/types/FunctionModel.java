@@ -7,6 +7,7 @@ public class FunctionModel {
 
     private List<Type> parameterTypes;
     private Type returnValueType;
+    private boolean defined = false;
 
     public FunctionModel(List<Type> parameterTypes, Type returnValueType) {
         Objects.requireNonNull(returnValueType);
@@ -21,7 +22,7 @@ public class FunctionModel {
         }
 
         if (!voidParameters(parameterTypes)) {
-            if (parameterTypes.stream().filter(x -> !validNumberParameter(x)).count() > 0) {
+            if (parameterTypes.stream().anyMatch(x -> !validNumberParameter(x))) {
                 throw new IllegalArgumentException(
                         "Illegal parameters given. Function parameters can either be of type char/int or a single parameter of type void.");
             }
@@ -31,8 +32,21 @@ public class FunctionModel {
         this.returnValueType = returnValueType;
     }
 
+    public FunctionModel(List<Type> parameterTypes, Type returnValueType, boolean defined) {
+        this(parameterTypes, returnValueType);
+        this.defined = defined;
+    }
+
     private static boolean voidParameters(List<Type> parameters) {
         return parameters.size() == 1 && parameters.get(0).getSubType() == SubType.VOID;
+    }
+
+    public boolean isDefined() {
+        return defined;
+    }
+
+    public void setDefined(boolean defined) {
+        this.defined = defined;
     }
 
     public boolean acceptsVoid() {
@@ -41,6 +55,20 @@ public class FunctionModel {
 
     private boolean validNumberParameter(Type type) {
         return type.getSubType() == SubType.NUMBER && !type.getNumber().isConst();
+    }
+
+    public boolean argumentCheck(List<Type> arguments) {
+        for (int i = 0; i < arguments.size(); i++) {
+            Type argType = arguments.get(i);
+            Type paramType = parameterTypes.get(i);
+
+            if (argType.getSubType() != paramType.getSubType())
+                return false;
+
+            if (argType.getSubType() == SubType.NUMBER && NumberType.implicitConvertInto(argType, paramType.getNumber()))
+                return false;
+        }
+        return true;
     }
 
     public List<Type> getParameterTypes() {

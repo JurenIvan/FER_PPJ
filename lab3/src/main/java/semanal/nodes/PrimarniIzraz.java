@@ -13,8 +13,8 @@ import static semanal.NodeType.PRIMARNI_IZRAZ;
 
 public class PrimarniIzraz extends Node {
 
-    public boolean leftAssignableExpression; // TODO should it be private and accesed by getter?
-    public Type type; // TODO should it be private and accesed by getter?
+    public boolean leftAssignableExpression;
+    public Type type;
 
     public PrimarniIzraz(Node parent) {
         super(parent, PRIMARNI_IZRAZ);
@@ -41,13 +41,15 @@ public class PrimarniIzraz extends Node {
             if (firstChild.getTerminalType() == TerminalType.IDN) {
 
                 tasks.add(() -> {
-                    // firstChild.getSourceCode() is a variable name TODO check scope
+                    if (!getVariableMemory().check(firstChild.getSourceCode())) {
+                        return TaskResult.failure(this);
+                    }
                     type = Type.createNumber(NumberType.INT);
                     leftAssignableExpression = false;
                     return TaskResult.success(this);
                 });
                 //same as:
-                // addErrorCheckToTasks(check_if_variable_in_scope);
+                // addErrorCheckToTasks(() -> check_if_variable_in_scope);
                 // addProcedureToTasks(()->{ tip = "int"; lIzraz = false; });
 
             } else if (firstChild.getTerminalType() == TerminalType.BROJ || firstChild.getTerminalType() == TerminalType.ZNAK) {
@@ -91,9 +93,7 @@ public class PrimarniIzraz extends Node {
         } else if (hasNChildren(3)) {
             Izraz izraz = getChild(1);
 
-            tasks.add(() -> {
-                return TaskResult.success(izraz);
-            }); // same as: addNodeCheckToTasks(izraz);
+            tasks.add(() -> TaskResult.success(izraz)); // same as: addNodeCheckToTasks(izraz);
 
             tasks.add(() -> {
                 type = izraz.type;

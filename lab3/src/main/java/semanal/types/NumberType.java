@@ -6,8 +6,10 @@ import java.util.Objects;
 
 public enum NumberType {
 
-    INT(PrimitiveNumberType.INT, false), CHAR(PrimitiveNumberType.CHAR, false), CONST_INT(PrimitiveNumberType.INT, true), CONST_CHAR(
-            PrimitiveNumberType.CHAR, true);
+    INT(PrimitiveNumberType.INT, false),
+    CHAR(PrimitiveNumberType.CHAR, false),
+    CONST_INT(PrimitiveNumberType.INT, true),
+    CONST_CHAR(PrimitiveNumberType.CHAR, true);
 
     private boolean isConst;
     private PrimitiveNumberType primitiveNumberType;
@@ -62,10 +64,7 @@ public enum NumberType {
     }
 
     public boolean implicitConvertInto(NumberType other) {
-        if (primitiveNumberType == PrimitiveNumberType.INT && other.primitiveNumberType == PrimitiveNumberType.CHAR) {
-            return false;
-        }
-        return true;
+        return primitiveNumberType != PrimitiveNumberType.INT || other.primitiveNumberType != PrimitiveNumberType.CHAR;
     }
 
     public static boolean implicitConvertInto(Type type, NumberType other) {

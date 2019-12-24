@@ -20,7 +20,7 @@ public class MemoryScope<OF> {
     public OF get(String variable) {
         if (memory.containsKey(variable)) return memory.get(variable);
         if (previous != null) return previous.get(variable);
-        return null; //todo dal da bacim exception?
+        throw new IllegalArgumentException("Variable not in memory.");
     }
 
     public void define(String variable, OF value) {
@@ -30,7 +30,7 @@ public class MemoryScope<OF> {
     public OF set(String variable, OF value) {
         if (memory.containsKey(variable)) return memory.put(variable, value);
         if (previous != null) return previous.set(variable, value);
-        return null; //todo dal da bacim exception
+        throw new IllegalArgumentException("Variable not in memory.");
     }
 
 
