@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class MemoryScope<OF> {
 
-    private HashMap<String, OF> memory;
+    private HashMap<String, OF> memory = new HashMap<>();
     private MemoryScope<OF> previous;
 
     public MemoryScope(MemoryScope<OF> previous) {
