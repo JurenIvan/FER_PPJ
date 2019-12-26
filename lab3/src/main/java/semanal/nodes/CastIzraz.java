@@ -10,6 +10,7 @@ import static semanal.NodeType.CAST_IZRAZ;
 public class CastIzraz extends Node {
 
     public Type type;
+    public boolean leftAssignableExpression;
 
     public CastIzraz(Node parent) {
         super(parent, CAST_IZRAZ);
@@ -29,7 +30,34 @@ public class CastIzraz extends Node {
 
          */
 
-        // TODO
+        switch (getChildrenNumber()) {
+            case 1: {
+                UnarniIzraz unarniIzraz = getChild(0);
+
+                addNodeCheckToTasks(unarniIzraz);
+                addProcedureToTasks(() -> {
+                    type = unarniIzraz.type;
+                    leftAssignableExpression = unarniIzraz.leftAssignableExpression;
+                });
+                break;
+            }
+            case 4: {
+                ImeTipa imeTipa = getChild(0);
+                CastIzraz castIzraz = getChild(2);
+
+                addNodeCheckToTasks(imeTipa);
+                addNodeCheckToTasks(castIzraz);
+                //            addErrorCheckToTasks(() -> castIzraz.type.); //todo check
+
+                addProcedureToTasks(() -> {
+                    type = imeTipa.type;
+                    leftAssignableExpression = false;
+                });
+                break;
+            }
+            default:
+                throw new IllegalStateException("Invalid syntax tree structure.");
+        }
 
     }
 }

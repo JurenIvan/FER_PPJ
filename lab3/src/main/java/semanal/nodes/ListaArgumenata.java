@@ -31,24 +31,27 @@ public class ListaArgumenata extends Node {
 
          */
 
-        if (hasNChildren(1)) {
-            IzrazPridruzivanja izrazPridruzivanja = getChild(0);
-            addNodeCheckToTasks(izrazPridruzivanja);
-            addProcedureToTasks(() -> argumentTypes.add(izrazPridruzivanja.type));
-        } else if (hasNChildren(3)) {
-            ListaArgumenata listaArgumenata = getChild(0);
-            IzrazPridruzivanja izrazPridruzivanja = getChild(2);
+        switch (getChildrenNumber()) {
+            case 1: {
+                IzrazPridruzivanja izrazPridruzivanja = getChild(0);
+                addNodeCheckToTasks(izrazPridruzivanja);
+                addProcedureToTasks(() -> argumentTypes.add(izrazPridruzivanja.type));
+                break;
+            }
+            case 3: {
+                ListaArgumenata listaArgumenata = getChild(0);
+                IzrazPridruzivanja izrazPridruzivanja = getChild(2);
 
-            addNodeCheckToTasks(listaArgumenata);
-            addNodeCheckToTasks(izrazPridruzivanja);
-            addProcedureToTasks(() -> {
-                argumentTypes.addAll(listaArgumenata.argumentTypes);
-                argumentTypes.add(izrazPridruzivanja.type);
-            });
-
-        } else {
-            throw new IllegalStateException("Invalid syntax tree structure.");
+                addNodeCheckToTasks(listaArgumenata);
+                addNodeCheckToTasks(izrazPridruzivanja);
+                addProcedureToTasks(() -> {
+                    argumentTypes.addAll(listaArgumenata.argumentTypes);
+                    argumentTypes.add(izrazPridruzivanja.type);
+                });
+                break;
+            }
+            default:
+                throw new IllegalStateException("Invalid syntax tree structure.");
         }
-
     }
 }

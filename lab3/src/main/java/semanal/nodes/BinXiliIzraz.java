@@ -1,18 +1,24 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.types.Type;
 
 import java.util.ArrayList;
 
 import static semanal.NodeType.BIN_XILI_IZRAZ;
+import static semanal.types.NumberType.INT;
 
 public class BinXiliIzraz extends Node {
+
+    public Type type;
+    public boolean leftAssignableExpression;
 
     public BinXiliIzraz(Node parent) {
         super(parent, BIN_XILI_IZRAZ);
     }
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -26,7 +32,35 @@ public class BinXiliIzraz extends Node {
 
          */
 
-        // TODO
+        switch (getChildrenNumber()) {
+            case 1: {
+                BinIIzraz binIIzraz = getChild(0);
 
+                addNodeCheckToTasks(binIIzraz);
+
+                addProcedureToTasks(() -> {
+                    type = binIIzraz.type;
+                    leftAssignableExpression = binIIzraz.leftAssignableExpression;
+                });
+                break;
+            }
+            case 3: {
+                BinXiliIzraz binXiliIzraz = getChild(0);
+                BinIIzraz binIIzraz = getChild(2);
+
+                addNodeCheckToTasks(binXiliIzraz);
+                addErrorCheckToTasks(() -> binXiliIzraz.type.getNumber().implicitConvertInto(INT));
+                addNodeCheckToTasks(binIIzraz);
+                addErrorCheckToTasks(() -> binIIzraz.type.getNumber().implicitConvertInto(INT));
+
+                addProcedureToTasks(() -> {
+                    type = Type.createNumber(INT);
+                    leftAssignableExpression = false;
+                });
+                break;
+            }
+            default:
+                throw new IllegalStateException("Invalid syntax tree structure.");
+        }
     }
 }
