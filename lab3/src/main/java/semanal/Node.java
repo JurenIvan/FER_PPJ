@@ -48,6 +48,10 @@ public abstract class Node {
         return children.add(child);
     }
 
+    public int getChildrenNumber() {
+        return children.size();
+    }
+
     public boolean hasNChildren(int n) {
         return children.size() == n;
     }
