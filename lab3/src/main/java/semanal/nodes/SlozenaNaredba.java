@@ -14,5 +14,32 @@ public class SlozenaNaredba extends Node {
 
     @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
+
+         /*
+        o---------------o
+        o--> 62. str <--o
+        o---------------o
+
+        <slozena_naredba> ::=
+			L_VIT_ZAGRADA <lista_naredbi> D_VIT_ZAGRADA
+			| L_VIT_ZAGRADA <lista_deklaracija> <lista_naredbi> D_VIT_ZAGRADA
+
+         */
+
+        createLocalVariableMemory();
+        switch (getChildrenNumber()) {
+            case 3: {
+                addNodeCheckToTasks(getChild(1));
+                break;
+            }
+            case 4: {
+                addNodeCheckToTasks(getChild(1));
+                addNodeCheckToTasks(getChild(2));
+                break;
+            }
+            default:
+                throw new IllegalStateException("Invalid syntax tree structure.");
+        }
+
     }
 }

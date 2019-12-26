@@ -66,6 +66,13 @@ public class Type {
         return array;
     }
 
+    public boolean implicitConvertInto(NumberType other) {
+        if (subType != SubType.NUMBER)
+            return false;
+
+        return getNumber().implicitConvertInto(other);
+    }
+
     public boolean implicitConvertInto(Type other) {
         if (subType != other.subType) {
             return false;
