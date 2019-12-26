@@ -10,6 +10,7 @@ import static semanal.NodeType.LISTA_INIT_DEKLARATORA;
 
 public class ListaInitDeklaratora extends Node {
 
+    public Type type;
     public List<Type> argumentTypes;
 
     public ListaInitDeklaratora(Node parent) {
@@ -29,18 +30,20 @@ public class ListaInitDeklaratora extends Node {
          * nasljedno svojstvo <init_deklarator>.ntip ← <lista_init_deklaratora> 1 .ntip
          *
          * 
-         <lista_init_deklaratora> ::= 
-            <init_deklarator>
-            | <lista_init_deklaratora>  ZAREZ <init_deklarator>
+         * <lista_init_deklaratora> ::= <init_deklarator> | <lista_init_deklaratora>
+         * ZAREZ <init_deklarator>
          */
 
-         //TODO nasljedno svojstvo
         if (hasNChildren(1)) {
             InitDeklarator initDeklarator = getChild(0);
             addNodeCheckToTasks(initDeklarator);
+            initDeklarator.type = this.type;
         } else if (hasNChildren(2)) {
             ListaInitDeklaratora listaInitDeklaratora = getChild(0);
             InitDeklarator initDeklarator = getChild(1);
+
+            listaInitDeklaratora.type = this.type;
+            initDeklarator.type = this.type;
 
             addNodeCheckToTasks(listaInitDeklaratora);
             addNodeCheckToTasks(initDeklarator);
