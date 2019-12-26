@@ -65,4 +65,26 @@ public class Type {
     public ArrayModel getArray() {
         return array;
     }
+
+    public boolean implicitConvertInto(Type other) {
+        if (subType != other.subType) {
+            return false;
+        }
+
+        switch (subType) {
+            case NUMBER:
+                return getNumber().implicitConvertInto(other.getNumber());
+            case ARRAY:
+                return getArray().implicitConvertInto(other.getArray());
+            default:
+                return false;
+        }
+    }
+
+    public boolean expliciteConvertInto(Type other) {
+        if (subType != other.getSubType()) {
+            return false;
+        }
+        return subType == SubType.NUMBER || subType == SubType.ARRAY;
+    }
 }
