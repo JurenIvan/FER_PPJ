@@ -37,89 +37,97 @@ public class PostfiksIzraz extends Node {
 
          */
 
-        if (hasNChildren(1)) {
-            PrimarniIzraz primarniIzraz = getChild(0);
-
-            // 1.
-            addNodeCheckToTasks(primarniIzraz);
-
-            // final step
-            addProcedureToTasks(() -> {
-                type = primarniIzraz.type;
-                leftAssignableExpression = primarniIzraz.leftAssignableExpression;
-            });
-
-        } else if (hasNChildren(2)) {
-            PostfiksIzraz postfiksIzraz = getChild(0);
-
-            // 1.
-            addNodeCheckToTasks(postfiksIzraz);
-            // 2.
-            addErrorCheckToTasks(
-                    () -> postfiksIzraz.leftAssignableExpression && NumberType.implicitConvertInto(postfiksIzraz.type, NumberType.INT));
-
-            // final step
-            addProcedureToTasks(() -> {
-                type = postfiksIzraz.type;
-                leftAssignableExpression = false;
-            });
-        } else if (hasNChildren(3)) {
-            PostfiksIzraz postfiksIzraz = getChild(0);
-
-            // NOTE: It is not necessary to check whether first and second terminals are of
-            // L_ZAGRADA and D_ZAGRADA types, because parser makes sure that is satisfied
-            // and therefore it can be removed..
-
-            // 1.
-            addNodeCheckToTasks(postfiksIzraz);
-            // 2.
-            addErrorCheckToTasks(
-                    () -> postfiksIzraz.type.getSubType() == SubType.FUNCTION && postfiksIzraz.type.getFunction().acceptsVoid());
-
-            // final step
-            addProcedureToTasks(() -> {
-                type = postfiksIzraz.type.getFunction().getReturnValueType();
-                leftAssignableExpression = false;
-            });
-        } else if (hasNChildren(4)) {
-            PostfiksIzraz postfiksIzraz = getChild(0);
-
-            if (isChildOfType(2, IZRAZ)) {
-                Izraz izraz = getChild(2);
+        switch (getChildrenNumber()) {
+            case 1: {
+                PrimarniIzraz primarniIzraz = getChild(0);
 
                 // 1.
-                addNodeCheckToTasks(postfiksIzraz);
-                // 2.
-                addErrorCheckToTasks(() -> postfiksIzraz.type.getSubType() == SubType.ARRAY);
-                // 3.
-                addNodeCheckToTasks(izraz);
-                // 4.
-                addErrorCheckToTasks(() -> NumberType.implicitConvertInto(postfiksIzraz.type, NumberType.INT));
+                addNodeCheckToTasks(primarniIzraz);
 
-                // final step, after 1-4 tests
+                // final step
                 addProcedureToTasks(() -> {
-                    type = postfiksIzraz.type.getArray().getElementType();
-                    leftAssignableExpression = !type.getNumber().isConst();
+                    type = primarniIzraz.type;
+                    leftAssignableExpression = primarniIzraz.leftAssignableExpression;
                 });
-            } else {
-                ListaArgumenata listaArgumenata = getChild(2);
+                break;
+            }
+            case 2: {
+                PostfiksIzraz postfiksIzraz = getChild(0);
 
                 // 1.
                 addNodeCheckToTasks(postfiksIzraz);
                 // 2.
-                addNodeCheckToTasks(listaArgumenata);
-                // 3.
-                addErrorCheckToTasks(() -> postfiksIzraz.type.getSubType() == SubType.FUNCTION);
-                addErrorCheckToTasks(() -> postfiksIzraz.type.getFunction().argumentCheck(listaArgumenata.argumentTypes));
+                addErrorCheckToTasks(
+                        () -> postfiksIzraz.leftAssignableExpression && NumberType.implicitConvertInto(postfiksIzraz.type, NumberType.INT));
+
+                // final step
+                addProcedureToTasks(() -> {
+                    type = postfiksIzraz.type;
+                    leftAssignableExpression = false;
+                });
+                break;
+            }
+            case 3: {
+                PostfiksIzraz postfiksIzraz = getChild(0);
+
+                // NOTE: It is not necessary to check whether first and second terminals are of
+                // L_ZAGRADA and D_ZAGRADA types, because parser makes sure that is satisfied
+                // and therefore it can be removed..
+
+                // 1.
+                addNodeCheckToTasks(postfiksIzraz);
+                // 2.
+                addErrorCheckToTasks(
+                        () -> postfiksIzraz.type.getSubType() == SubType.FUNCTION && postfiksIzraz.type.getFunction().acceptsVoid());
 
                 // final step
                 addProcedureToTasks(() -> {
                     type = postfiksIzraz.type.getFunction().getReturnValueType();
                     leftAssignableExpression = false;
                 });
+                break;
             }
-        } else {
-            throw new IllegalStateException("Invalid syntax tree structure.");
+            case 4: {
+                PostfiksIzraz postfiksIzraz = getChild(0);
+
+                if (isChildOfType(2, IZRAZ)) {
+                    Izraz izraz = getChild(2);
+
+                    // 1.
+                    addNodeCheckToTasks(postfiksIzraz);
+                    // 2.
+                    addErrorCheckToTasks(() -> postfiksIzraz.type.getSubType() == SubType.ARRAY);
+                    // 3.
+                    addNodeCheckToTasks(izraz);
+                    // 4.
+                    addErrorCheckToTasks(() -> NumberType.implicitConvertInto(postfiksIzraz.type, NumberType.INT));
+
+                    // final step, after 1-4 tests
+                    addProcedureToTasks(() -> {
+                        type = postfiksIzraz.type.getArray().getElementType();
+                        leftAssignableExpression = !type.getNumber().isConst();
+                    });
+                } else {
+                    ListaArgumenata listaArgumenata = getChild(2);
+
+                    // 1.
+                    addNodeCheckToTasks(postfiksIzraz);
+                    // 2.
+                    addNodeCheckToTasks(listaArgumenata);
+                    // 3.
+                    addErrorCheckToTasks(() -> postfiksIzraz.type.getSubType() == SubType.FUNCTION);
+                    addErrorCheckToTasks(() -> postfiksIzraz.type.getFunction().argumentCheck(listaArgumenata.argumentTypes));
+
+                    // final step
+                    addProcedureToTasks(() -> {
+                        type = postfiksIzraz.type.getFunction().getReturnValueType();
+                        leftAssignableExpression = false;
+                    });
+                }
+                break;
+            }
+            default:
+                throw new IllegalStateException("Invalid syntax tree structure.");
         }
 
     }

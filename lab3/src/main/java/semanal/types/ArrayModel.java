@@ -24,6 +24,7 @@ public class ArrayModel {
                     return false;
                 }
 
+                c =string.charAt(i+1);
                 if (!(c == 't' || c == 'n' || c == '\\' || c == '0' || c == '\'' || c == '\"')) {
                     return false;
                 }
