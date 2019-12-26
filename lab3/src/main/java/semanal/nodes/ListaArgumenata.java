@@ -10,7 +10,7 @@ import static semanal.NodeType.LISTA_ARGUMENATA;
 
 public class ListaArgumenata extends Node {
 
-    public List<Type> argumentTypes;
+    public List<Type> argumentTypes = new ArrayList<>();
 
     public ListaArgumenata(Node parent) {
         super(parent, LISTA_ARGUMENATA);
@@ -34,9 +34,10 @@ public class ListaArgumenata extends Node {
         if (hasNChildren(1)) {
             IzrazPridruzivanja izrazPridruzivanja = getChild(0);
             addNodeCheckToTasks(izrazPridruzivanja);
-        } else if (hasNChildren(2)) {
+            addProcedureToTasks(() -> argumentTypes.add(izrazPridruzivanja.type));
+        } else if (hasNChildren(3)) {
             ListaArgumenata listaArgumenata = getChild(0);
-            IzrazPridruzivanja izrazPridruzivanja = getChild(1);
+            IzrazPridruzivanja izrazPridruzivanja = getChild(2);
 
             addNodeCheckToTasks(listaArgumenata);
             addNodeCheckToTasks(izrazPridruzivanja);

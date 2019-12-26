@@ -41,6 +41,7 @@ public class UnarniIzraz extends Node {
             PostfiksIzraz postfiksIzraz = getChild(0);
 
             addNodeCheckToTasks(postfiksIzraz);
+
             addProcedureToTasks(() -> {
                 type = postfiksIzraz.type;
                 leftAssignableExpression = postfiksIzraz.leftAssignableExpression;
@@ -52,30 +53,25 @@ public class UnarniIzraz extends Node {
                 UnarniIzraz unarniIzraz = getChild(1);
 
                 addNodeCheckToTasks(unarniIzraz);
+                addErrorCheckToTasks(() -> unarniIzraz.leftAssignableExpression && unarniIzraz.type.getNumber().implicitConvertInto(INT));
 
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);
                     leftAssignableExpression = false;
-                });
-
-                addProcedureToTasks(() -> {
-                    unarniIzraz.leftAssignableExpression = true;
-                    unarniIzraz.type = Type.createNumber(INT);
                 });
             } else if (isChildOfType(0, UNARNI_OPERATOR)) {
                 UnarniOperator unarniOperator = getChild(0);
                 CastIzraz castIzraz = getChild(1);
 
                 addNodeCheckToTasks(castIzraz);
+                addErrorCheckToTasks(() -> castIzraz.type.getNumber().implicitConvertInto(INT));
+
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);
                     leftAssignableExpression = false;
                 });
-                addProcedureToTasks(() -> castIzraz.type = Type.createNumber(INT));
-
             } else
                 throw new IllegalStateException("Invalid syntax tree structure.");
-
         } else
             throw new IllegalStateException("Invalid syntax tree structure.");
     }
