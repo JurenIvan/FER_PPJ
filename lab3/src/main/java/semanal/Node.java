@@ -90,9 +90,7 @@ public abstract class Node {
     }
 
     protected void addNodeCheckToTasks(Node node) {
-        tasks.add(() -> {
-            return TaskResult.success(node);
-        });
+        tasks.add(() -> TaskResult.success(node));
     }
 
     protected void addProcedureToTasks(Procedure p) {
@@ -144,5 +142,4 @@ public abstract class Node {
 
         return sb.toString();
     }
-
 }

@@ -1,11 +1,10 @@
 package semanal;
 
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class Utils {
 
     public static boolean isAscii(String s) {
-        return Charset.forName("US-ASCII").newEncoder().canEncode(s);
+        return StandardCharsets.US_ASCII.newEncoder().canEncode(s);
     }
-
 }

@@ -33,7 +33,6 @@ public class MemoryScope<OF> {
         throw new IllegalArgumentException("Variable not in memory.");
     }
 
-
     public MemoryScope<OF> getPrevious() {
         return previous;
     }
