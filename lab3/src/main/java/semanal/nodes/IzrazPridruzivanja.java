@@ -1,12 +1,15 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.types.Type;
 
 import java.util.ArrayList;
 
 import static semanal.NodeType.IZRAZ_PRIDRUZIVANJA;
 
 public class IzrazPridruzivanja extends Node {
+
+    public Type type;
 
     public IzrazPridruzivanja(Node parent) {
         super(parent, IZRAZ_PRIDRUZIVANJA);

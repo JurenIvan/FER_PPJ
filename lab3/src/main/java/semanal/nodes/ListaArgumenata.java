@@ -16,7 +16,8 @@ public class ListaArgumenata extends Node {
         super(parent, LISTA_ARGUMENATA);
     }
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -30,7 +31,23 @@ public class ListaArgumenata extends Node {
 
          */
 
-        // TODO
+        if (hasNChildren(1)) {
+            IzrazPridruzivanja izrazPridruzivanja = getChild(0);
+            addNodeCheckToTasks(izrazPridruzivanja);
+        } else if (hasNChildren(2)) {
+            ListaArgumenata listaArgumenata = getChild(0);
+            IzrazPridruzivanja izrazPridruzivanja = getChild(1);
+
+            addNodeCheckToTasks(listaArgumenata);
+            addNodeCheckToTasks(izrazPridruzivanja);
+            addProcedureToTasks(() -> {
+                argumentTypes.addAll(listaArgumenata.argumentTypes);
+                argumentTypes.add(izrazPridruzivanja.type);
+            });
+
+        } else {
+            throw new IllegalStateException("Invalid syntax tree structure.");
+        }
 
     }
 }
