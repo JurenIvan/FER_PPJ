@@ -30,8 +30,7 @@ public class InitDeklarator extends Node {
             ImeTipa imeTipa = getChild(0);
             ListaInitDeklaratora listaInitDeklaratora = getChild(1);
 
-            // TODO
-            // this.type = imeTipa.type;
+            this.type = imeTipa.type;
 
             listaInitDeklaratora.type = this.type;
 
