@@ -64,7 +64,7 @@ public enum NumberType {
     }
 
     public boolean implicitConvertInto(NumberType other) {
-        return primitiveNumberType != PrimitiveNumberType.INT || other.primitiveNumberType != PrimitiveNumberType.CHAR;
+        return primitiveNumberType != PrimitiveNumberType.INT && other.primitiveNumberType != PrimitiveNumberType.CHAR;
     }
 
     public static boolean implicitConvertInto(Type type, NumberType other) {

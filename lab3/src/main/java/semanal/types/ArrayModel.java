@@ -58,7 +58,7 @@ public class ArrayModel {
     }
 
     public boolean implicitConvertInto(ArrayModel other) {
-        // TODO not sure if Ive understood it correctly that only the following is permitted:
+        // only the following is permitted:
         //      niz(T) --> niz(const(T))
 
         if (getNumberType().getPrimitiveNumberType() != other.getNumberType().getPrimitiveNumberType())

@@ -37,46 +37,47 @@ public class UnarniIzraz extends Node {
 
          */
 
-        if (hasNChildren(1)) {
-            PostfiksIzraz postfiksIzraz = getChild(0);
+        switch (getChildrenNumber()) {
+            case 1: {
+                PostfiksIzraz postfiksIzraz = getChild(0);
 
-            addNodeCheckToTasks(postfiksIzraz);
-            addProcedureToTasks(() -> {
-                type = postfiksIzraz.type;
-                leftAssignableExpression = postfiksIzraz.leftAssignableExpression;
-            });
-        } else if (hasNChildren(2)) {
-
-            if (isChildOfTerminalType(0, OP_INC) || isChildOfTerminalType(0, OP_DEC)) {
-                TerminalNode terminalNode = getChild(0);
-                UnarniIzraz unarniIzraz = getChild(1);
-
-                addNodeCheckToTasks(unarniIzraz);
+                addNodeCheckToTasks(postfiksIzraz);
 
                 addProcedureToTasks(() -> {
-                    type = Type.createNumber(INT);
-                    leftAssignableExpression = false;
+                    type = postfiksIzraz.type;
+                    leftAssignableExpression = postfiksIzraz.leftAssignableExpression;
                 });
+                break;
+            }
+            case 2: {
+                if (isChildOfTerminalType(0, OP_INC) || isChildOfTerminalType(0, OP_DEC)) {
+                    TerminalNode terminalNode = getChild(0);
+                    UnarniIzraz unarniIzraz = getChild(1);
 
-                addProcedureToTasks(() -> {
-                    unarniIzraz.leftAssignableExpression = true;
-                    unarniIzraz.type = Type.createNumber(INT);
-                });
-            } else if (isChildOfType(0, UNARNI_OPERATOR)) {
-                UnarniOperator unarniOperator = getChild(0);
-                CastIzraz castIzraz = getChild(1);
+                    addNodeCheckToTasks(unarniIzraz);
+                    addErrorCheckToTasks(() -> unarniIzraz.leftAssignableExpression && unarniIzraz.type.getNumber().implicitConvertInto(INT));
 
-                addNodeCheckToTasks(castIzraz);
-                addProcedureToTasks(() -> {
-                    type = Type.createNumber(INT);
-                    leftAssignableExpression = false;
-                });
-                addProcedureToTasks(() -> castIzraz.type = Type.createNumber(INT));
+                    addProcedureToTasks(() -> {
+                        type = Type.createNumber(INT);
+                        leftAssignableExpression = false;
+                    });
+                } else if (isChildOfType(0, UNARNI_OPERATOR)) {
+                    UnarniOperator unarniOperator = getChild(0);
+                    CastIzraz castIzraz = getChild(1);
 
-            } else
+                    addNodeCheckToTasks(castIzraz);
+                    addErrorCheckToTasks(() -> castIzraz.type.getNumber().implicitConvertInto(INT));
+
+                    addProcedureToTasks(() -> {
+                        type = Type.createNumber(INT);
+                        leftAssignableExpression = false;
+                    });
+                } else
+                    throw new IllegalStateException("Invalid syntax tree structure.");
+                break;
+            }
+            default:
                 throw new IllegalStateException("Invalid syntax tree structure.");
-
-        } else
-            throw new IllegalStateException("Invalid syntax tree structure.");
+        }
     }
 }
