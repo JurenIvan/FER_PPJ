@@ -2,11 +2,12 @@ package semanal.nodes;
 
 import semanal.Node;
 import semanal.TerminalType;
-import semanal.types.NumberType;
+import semanal.types.FunctionModel;
+import semanal.types.Type;
 
 import java.util.ArrayList;
 
-import static semanal.NodeType.NAREDBA_SKOKA;
+import static semanal.NodeType.*;
 
 public class NaredbaSkoka extends Node {
 
@@ -34,9 +35,9 @@ public class NaredbaSkoka extends Node {
             case 2: {
                 TerminalNode firstChild = getChild(0);
                 if (firstChild.getTerminalType() == TerminalType.KR_RETURN) {
-                    // TODO pov je VOID
+                    addErrorCheckToTasks(() -> Type.VOID_TYPE.equals(this.getFunctionIfNodeNestedInADefinition().getReturnValueType()));
                 } else {
-                    // TODO u petlji smo ili bloku u petlji
+                    addErrorCheckToTasks(this::isNodeNestedInALoopNode);
                 }
                 break;
             }
@@ -44,7 +45,8 @@ public class NaredbaSkoka extends Node {
                 Izraz izraz = getChild(1);
 
                 addNodeCheckToTasks(izraz);
-                // addErrorCheckToTasks(() -> izraz.type.implicitConvertInto(TODO pov));
+                addErrorCheckToTasks(
+                        () -> izraz.type.implicitConvertInto(this.getFunctionIfNodeNestedInADefinition().getReturnValueType()));
 
                 break;
             }
@@ -52,5 +54,25 @@ public class NaredbaSkoka extends Node {
                 throw new IllegalStateException("Invalid syntax tree structure.");
         }
 
+    }
+
+    private boolean isNodeNestedInALoopNode() {
+        Node node = this.getParent();
+        while (node != null) {
+            if (node.getNodeType() == NAREDBA_PETLJE)
+                return true;
+            node = node.getParent();
+        }
+        return false;
+    }
+
+    private FunctionModel getFunctionIfNodeNestedInADefinition() {
+        Node node = this.getParent();
+        while (node != null) {
+            if (node.getNodeType() == DEFINICIJA_FUNKCIJE)
+                return ((DefinicijaFunkcije) node).function;
+            node = node.getParent();
+        }
+        return null;
     }
 }

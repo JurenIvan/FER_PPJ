@@ -16,8 +16,7 @@ public class IzrazPridruzivanja extends Node {
         super(parent, IZRAZ_PRIDRUZIVANJA);
     }
 
-    @Override
-    protected void initializeTasks() {
+    @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -49,7 +48,7 @@ public class IzrazPridruzivanja extends Node {
                 addNodeCheckToTasks(postfiksIzraz);
                 addErrorCheckToTasks(() -> postfiksIzraz.leftAssignableExpression);
                 addNodeCheckToTasks(izrazPridruzivanja);
-                addErrorCheckToTasks(() -> postfiksIzraz.type.getNumber().implicitConvertInto(postfiksIzraz.type.getNumber())); //todo check
+                addErrorCheckToTasks(() -> izrazPridruzivanja.type.implicitConvertInto(postfiksIzraz.type));
 
                 addProcedureToTasks(() -> {
                     type = postfiksIzraz.type;

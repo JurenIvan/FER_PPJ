@@ -55,6 +55,18 @@ public enum NumberType {
         return isConst;
     }
 
+    public NumberType toNonConst() {
+        if(!isConst) {
+            return this;
+        }
+
+        if(this == CONST_INT) {
+            return INT;
+        }
+
+        return CHAR;
+    }
+
     public boolean checkIfValidValue(String value) {
         if (primitiveNumberType == PrimitiveNumberType.INT) {
             return checkIfInt(value);
@@ -64,7 +76,7 @@ public enum NumberType {
     }
 
     public boolean implicitConvertInto(NumberType other) {
-        return primitiveNumberType != PrimitiveNumberType.INT && other.primitiveNumberType != PrimitiveNumberType.CHAR;
+        return other != null && (primitiveNumberType != PrimitiveNumberType.INT || other.primitiveNumberType != PrimitiveNumberType.CHAR);
     }
 
     public static boolean implicitConvertInto(Type type, NumberType other) {

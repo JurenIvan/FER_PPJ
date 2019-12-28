@@ -17,9 +17,20 @@ public class ListaParametara extends Node {
         super(parent, LISTA_PARAMETARA);
     }
 
-    @Override
-    protected void initializeTasks() {
+    @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
+
+
+        /*
+        o---------------o
+        o--> 67. str <--o
+        o---------------o
+
+        <lista_parametara> ::=
+            <deklaracija_parametra>
+            | <lista_parametara> ZAREZ <deklaracija_parametra>
+
+         */
 
         switch (getChildrenNumber()) {
             case 1: {

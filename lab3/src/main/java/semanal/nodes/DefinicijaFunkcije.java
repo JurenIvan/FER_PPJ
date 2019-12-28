@@ -1,13 +1,13 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.Utils;
 import semanal.types.FunctionModel;
 import semanal.types.SubType;
 import semanal.types.Type;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static semanal.NodeType.DEFINICIJA_FUNKCIJE;
 import static semanal.NodeType.TERMINAL;
@@ -20,8 +20,7 @@ public class DefinicijaFunkcije extends Node {
         super(parent, DEFINICIJA_FUNKCIJE);
     }
 
-    @Override
-    protected void initializeTasks() {
+    @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
         /*
         o---------------o
@@ -69,8 +68,8 @@ public class DefinicijaFunkcije extends Node {
                     try {
                         // TODO should a new function variable be created (as is done)
                         //      or rather modify the existing, already fetched function variable?
-                        Type functionType = Type.createFunctionDeclaration(List.of(Type.VOID_TYPE), Collections.emptyList(),
-                                imeTipa.type); // TODO List.of since java 9, is that OK?
+                        Type functionType = Type
+                                .createFunctionDeclaration(Utils.listOf(Type.VOID_TYPE), Collections.emptyList(), imeTipa.type);
 
                         function = functionType.getFunction();
                         getVariableMemory().define(functionName, functionType);

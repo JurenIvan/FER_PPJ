@@ -1,6 +1,7 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.types.SubType;
 import semanal.types.Type;
 
 import java.util.ArrayList;
@@ -18,30 +19,42 @@ public class DeklaracijaParametra extends Node {
 
     @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
+        /*
+        o---------------o
+        o--> 67. str <--o
+        o---------------o
+
+		<deklaracija_parametra> ::=
+			<ime_tipa> IDN
+			| <ime_tipa> IDN L_UGL_ZAGRADA D_UGL_ZAGRADA
+
+         */
 
         switch (getChildrenNumber()) {
             case 2: {
                 ImeTipa imeTipa = getChild(0);
+                TerminalNode idn = getChild(1);
 
                 addNodeCheckToTasks(imeTipa);
-                addErrorCheckToTasks(() -> !imeTipa.type.equals(Type.VOID_TYPE));
+                addErrorCheckToTasks(() -> !Type.VOID_TYPE.equals(imeTipa.type));
 
                 addProcedureToTasks(() -> {
                     type = imeTipa.type;
-                    name = imeTipa.name;
+                    name = idn.getSourceCode();
                 });
                 break;
             }
             case 4: {
                 ImeTipa imeTipa = getChild(0);
-                TerminalNode terminalNode = getChild(1);
+                TerminalNode idn = getChild(1);
 
                 addNodeCheckToTasks(imeTipa);
-                addErrorCheckToTasks(() -> !imeTipa.type.equals(Type.VOID_TYPE));
+                addErrorCheckToTasks(() -> !Type.VOID_TYPE.equals(imeTipa.type));
 
+                addErrorCheckToTasks(() -> imeTipa.type.getSubType() == SubType.NUMBER);
                 addProcedureToTasks(() -> {
-                    type = Type.createArray(imeTipa.type.getNumber());
-                    name = terminalNode.getSourceCode(); //todo check
+                    type = Type.createArray(imeTipa.type.getNumber(), 0); // TODO check
+                    name = idn.getSourceCode();
                 });
                 break;
             }

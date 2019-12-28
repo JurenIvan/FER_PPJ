@@ -10,7 +10,6 @@ import static semanal.NodeType.IME_TIPA;
 public class ImeTipa extends Node {
 
     public Type type;
-    public String name;
     public boolean leftAssignableExpression;
 
     public ImeTipa(Node parent) {
@@ -40,7 +39,7 @@ public class ImeTipa extends Node {
                 break;
             }
             case 2: {
-                SpecifikatorTipa specifikatorTipa = getChild(0);
+                SpecifikatorTipa specifikatorTipa = getChild(1);
 
                 addNodeCheckToTasks(specifikatorTipa);
                 addErrorCheckToTasks(() -> !specifikatorTipa.type.equals(Type.VOID_TYPE));

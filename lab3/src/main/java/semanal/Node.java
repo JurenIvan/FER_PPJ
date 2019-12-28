@@ -73,16 +73,18 @@ public abstract class Node {
     public TaskResult nextTask() {
         if (tasks == null) {
             initializeTasks();
+            // System.out.println("::::::::INIT::::::::" + getNodeType().symbolName); // TODO remove debug
 
-            // <! DUMMY -- adding dummy tasks, only to visit all tree nodes>
-            for (var child : children) {
-                if (child.nodeType == NodeType.TERMINAL)
-                    continue;
-                tasks.add(() -> {
-                    return TaskResult.success(child);
-                });
-            }
-            // <DUMMY !>
+            //                  TODO remove dummy
+            //            // <! DUMMY -- adding dummy tasks, only to visit all tree nodes>
+            //            for (var child : children) {
+            //                if (child.nodeType == NodeType.TERMINAL)
+            //                    continue;
+            //                tasks.add(() -> {
+            //                    return TaskResult.success(child);
+            //                });
+            //            }
+            //            // <DUMMY !>
 
         }
 
@@ -90,7 +92,12 @@ public abstract class Node {
             return TaskResult.success(parent);
         }
 
-        return tasks.get(currentTaskNumber++).get();
+        try {
+            return tasks.get(currentTaskNumber++).get();
+        } catch (Exception e) {
+            throw new IllegalStateException(e);  // TODO remove debug
+            // return TaskResult.failure(this);
+        }
     }
 
     protected void addNodeCheckToTasks(Node node) {

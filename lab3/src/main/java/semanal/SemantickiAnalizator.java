@@ -12,7 +12,7 @@ public class SemantickiAnalizator {
      * @param args irrelevant
      */
     public static void main(String[] args) {
-        System.out.print(new SemantickiAnalizator().run());
+        System.out.println(new SemantickiAnalizator().run());
     }
 
     /**
@@ -27,7 +27,7 @@ public class SemantickiAnalizator {
 
         TaskResult taskResult = rootNode.nextTask();
         while (taskResult.getNextNode() != null && taskResult.isSuccess()) {
-            // System.out.println(taskResult.getNextNode().getNodeType().symbolName); // TODO remove debug
+            // System.out.println("-->" + taskResult.getNextNode().getNodeType().symbolName); // TODO remove debug
             taskResult = taskResult.getNextNode().nextTask();
         }
 
