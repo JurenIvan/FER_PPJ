@@ -37,7 +37,7 @@ public class SpecifikatorTipa extends Node {
         TerminalNode terminalNode = getChild(0);
         switch (terminalNode.getTerminalType()) {
             case KR_VOID:
-                addProcedureToTasks(() -> type = Type.createVoid());
+                addProcedureToTasks(() -> type = Type.VOID_TYPE);
                 break;
             case KR_CHAR:
                 addProcedureToTasks(() -> type = Type.createNumber(CHAR));

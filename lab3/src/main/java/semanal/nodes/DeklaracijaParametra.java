@@ -16,8 +16,7 @@ public class DeklaracijaParametra extends Node {
         super(parent, DEKLARACIJA_PARAMETRA);
     }
 
-    @Override
-    protected void initializeTasks() {
+    @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         switch (getChildrenNumber()) {
@@ -25,7 +24,7 @@ public class DeklaracijaParametra extends Node {
                 ImeTipa imeTipa = getChild(0);
 
                 addNodeCheckToTasks(imeTipa);
-                addErrorCheckToTasks(() -> !imeTipa.type.equals(Type.createVoid()));
+                addErrorCheckToTasks(() -> !imeTipa.type.equals(Type.VOID_TYPE));
 
                 addProcedureToTasks(() -> {
                     type = imeTipa.type;
@@ -38,7 +37,7 @@ public class DeklaracijaParametra extends Node {
                 TerminalNode terminalNode = getChild(1);
 
                 addNodeCheckToTasks(imeTipa);
-                addErrorCheckToTasks(() -> !imeTipa.type.equals(Type.createVoid()));
+                addErrorCheckToTasks(() -> !imeTipa.type.equals(Type.VOID_TYPE));
 
                 addProcedureToTasks(() -> {
                     type = Type.createArray(imeTipa.type.getNumber());
