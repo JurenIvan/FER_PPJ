@@ -5,6 +5,8 @@ import java.util.Objects;
 
 public class Type {
 
+    public static final Type voidType = new Type(SubType.VOID);
+
     private SubType subType;
     private NumberType number;
     private FunctionModel function;
@@ -14,20 +16,22 @@ public class Type {
         this.subType = Objects.requireNonNull(subType);
     }
 
-    public static Type createVoid() {
-        return new Type(SubType.VOID);
-    }
-
     public static Type createNumber(NumberType numberType) {
         Type number = new Type(SubType.NUMBER);
         number.number = numberType;
         return number;
     }
 
-    public static Type createMethod(List<Type> parameterTypes, Type returnValueType) {
-        Type method = new Type(SubType.NUMBER);
-        method.function = new FunctionModel(parameterTypes, returnValueType);
-        return method;
+    public static Type createFunctionDeclaration(List<Type> parameterTypes, List<String> parameterNames, Type returnValueType) {
+        Type function = new Type(SubType.FUNCTION);
+        function.function = new FunctionModel(parameterTypes, parameterNames, returnValueType);
+        return function;
+    }
+
+    public static Type createFunctionDefinition(List<Type> parameterTypes, List<String> parameterNames, Type returnValueType) {
+        Type function = new Type(SubType.FUNCTION);
+        function.function = new FunctionModel(parameterTypes, parameterNames, returnValueType, true);
+        return function;
     }
 
     public static Type createArray(NumberType numberType) {
