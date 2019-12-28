@@ -1,18 +1,24 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.types.Type;
 
 import java.util.ArrayList;
 
 import static semanal.NodeType.ODNOSNI_IZRAZ;
+import static semanal.types.NumberType.INT;
 
 public class OdnosniIzraz extends Node {
+
+    public Type type;
+    public boolean leftAssignableExpression;
 
     public OdnosniIzraz(Node parent) {
         super(parent, ODNOSNI_IZRAZ);
     }
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -28,6 +34,37 @@ public class OdnosniIzraz extends Node {
 			| <odnosni_izraz> OP_GTE <aditivni_izraz>
 
          */
+
+        switch (getChildrenNumber()) {
+            case 1: {
+                AditivniIzraz aditivniIzraz = getChild(0);
+
+                addNodeCheckToTasks(aditivniIzraz);
+
+                addProcedureToTasks(() -> {
+                    type = aditivniIzraz.type;
+                    leftAssignableExpression = aditivniIzraz.leftAssignableExpression;
+                });
+                break;
+            }
+            case 3: {
+                OdnosniIzraz odnosniIzraz = getChild(2);
+                AditivniIzraz aditivniIzraz = getChild(0);
+
+                addNodeCheckToTasks(odnosniIzraz);
+                addErrorCheckToTasks(() -> odnosniIzraz.type.getNumber().implicitConvertInto(INT));
+                addNodeCheckToTasks(aditivniIzraz);
+                addErrorCheckToTasks(() -> aditivniIzraz.type.getNumber().implicitConvertInto(INT));
+
+                addProcedureToTasks(() -> {
+                    type = Type.createNumber(INT);
+                    leftAssignableExpression = false;
+                });
+                break;
+            }
+            default:
+                throw new IllegalStateException("Invalid syntax tree structure.");
+        }
 
         // TODO
 
