@@ -20,7 +20,8 @@ public class DefinicijaFunkcije extends Node {
         super(parent, DEFINICIJA_FUNKCIJE);
     }
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
         /*
         o---------------o
@@ -134,6 +135,5 @@ public class DefinicijaFunkcije extends Node {
         } else {
             throw new IllegalStateException("Invalid syntax tree structure.");
         }
-
     }
 }
