@@ -6,14 +6,16 @@ import java.util.Objects;
 public class FunctionModel {
 
     private List<Type> parameterTypes;
+    private List<String> parameterNames;
     private Type returnValueType;
     private boolean defined = false;
 
-    public FunctionModel(List<Type> parameterTypes, Type returnValueType) {
+    public FunctionModel(List<Type> parameterTypes, List<String> parameterNames, Type returnValueType) {
         Objects.requireNonNull(returnValueType);
         Objects.requireNonNull(parameterTypes);
+        Objects.requireNonNull(parameterNames);
 
-        if (parameterTypes.isEmpty()) {
+        if (parameterTypes.isEmpty() || parameterNames.stream().anyMatch(String::isEmpty)) {
             throw new IllegalArgumentException("Parameters cannot be missing");
         }
 
@@ -26,14 +28,18 @@ public class FunctionModel {
                 throw new IllegalArgumentException(
                         "Illegal parameters given. Function parameters can either be of type char/int or a single parameter of type void.");
             }
+
+            if (parameterNames.size() != parameterTypes.size() || parameterNames.stream().anyMatch(String::isEmpty)) {
+                throw new IllegalArgumentException("Illegal parameter names.");
+            }
         }
 
         this.parameterTypes = parameterTypes;
         this.returnValueType = returnValueType;
     }
 
-    public FunctionModel(List<Type> parameterTypes, Type returnValueType, boolean defined) {
-        this(parameterTypes, returnValueType);
+    public FunctionModel(List<Type> parameterTypes, List<String> parameterNames, Type returnValueType, boolean defined) {
+        this(parameterTypes, parameterNames, returnValueType);
         this.defined = defined;
     }
 
@@ -57,6 +63,23 @@ public class FunctionModel {
         return type.getSubType() == SubType.NUMBER && !type.getNumber().isConst();
     }
 
+    public boolean parameterCheck(List<Type> types, List<String> names) {
+        if (types.size() != parameterTypes.size() || names.size() != parameterNames.size())
+            return false;
+
+        for (int i = 0; i < parameterTypes.size(); i++) {
+            if (!parameterTypes.get(i).equals(types.get(i)))
+                return false;
+        }
+
+        for (int i = 0; i < parameterNames.size(); i++) {
+            if (!parameterNames.get(i).equals(names.get(i)))
+                return false;
+        }
+
+        return true;
+    }
+
     public boolean argumentCheck(List<Type> arguments) {
         for (int i = 0; i < arguments.size(); i++) {
             Type argType = arguments.get(i);
@@ -73,6 +96,10 @@ public class FunctionModel {
 
     public List<Type> getParameterTypes() {
         return parameterTypes;
+    }
+
+    public List<String> getParameterNames() {
+        return parameterNames;
     }
 
     @Override public boolean equals(Object o) {

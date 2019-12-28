@@ -30,7 +30,36 @@ public class Izraz extends Node {
 
          */
 
-        // TODO
+        switch (getChildrenNumber()) {
+            case 1: {
+                IzrazPridruzivanja izrazPridruzivanja = getChild(0);
 
+                // 1.
+                addNodeCheckToTasks(izrazPridruzivanja);
+
+                addProcedureToTasks(() -> {
+                    type = izrazPridruzivanja.type;
+                    leftAssignableExpression = izrazPridruzivanja.leftAssignableExpression;
+                });
+                break;
+            }
+            case 3: {
+                Izraz izraz = getChild(0);
+
+                IzrazPridruzivanja izrazPridruzivanja = getChild(2);
+
+                // 1.
+                addNodeCheckToTasks(izraz);
+                // 2.
+                addNodeCheckToTasks(izrazPridruzivanja);
+
+                addProcedureToTasks(() -> {
+                    type = izrazPridruzivanja.type;
+                    leftAssignableExpression = false;
+                });
+            }
+            default:
+                throw new IllegalStateException("Invalid syntax tree structure.");
+        }
     }
 }

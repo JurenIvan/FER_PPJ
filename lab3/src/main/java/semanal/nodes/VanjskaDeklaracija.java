@@ -14,5 +14,26 @@ public class VanjskaDeklaracija extends Node {
 
     @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
+
+         /*
+        o---------------o
+        o--> 65. str <--o
+        o---------------o
+
+		<vanjska_deklaracija> ::=
+			<definicija_funkcije>
+			| <deklaracija>
+
+         */
+
+        switch (getChildrenNumber()) {
+            case 1: {
+                addNodeCheckToTasks(getChild(0));
+                break;
+            }
+            default:
+                throw new IllegalStateException("Invalid syntax tree structure.");
+        }
+
     }
 }
