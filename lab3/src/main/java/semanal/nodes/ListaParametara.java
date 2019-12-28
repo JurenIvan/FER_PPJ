@@ -10,8 +10,8 @@ import static semanal.NodeType.LISTA_PARAMETARA;
 
 public class ListaParametara extends Node {
 
-    private List<Type> types = new ArrayList<>();
-    private List<String> names = new ArrayList<>();
+    public List<Type> types = new ArrayList<>();
+    public List<String> names = new ArrayList<>();
 
     public ListaParametara(Node parent) {
         super(parent, LISTA_PARAMETARA);

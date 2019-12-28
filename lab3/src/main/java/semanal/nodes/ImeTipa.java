@@ -17,8 +17,7 @@ public class ImeTipa extends Node {
         super(parent, IME_TIPA);
     }
 
-    @Override
-    protected void initializeTasks() {
+    @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -44,7 +43,7 @@ public class ImeTipa extends Node {
                 SpecifikatorTipa specifikatorTipa = getChild(0);
 
                 addNodeCheckToTasks(specifikatorTipa);
-                addErrorCheckToTasks(() -> !specifikatorTipa.type.equals(Type.createVoid()));
+                addErrorCheckToTasks(() -> !specifikatorTipa.type.equals(Type.VOID_TYPE));
 
                 addProcedureToTasks(() -> type = specifikatorTipa.type);
                 break;

@@ -16,10 +16,12 @@ public class InitDeklarator extends Node {
     }
 
     /*
-     * 68. str
-     *
-     * <init_DEKLARATOR> ::= <ime_tipa> <lista_init_deklaratora> TOCKAZAREZ ZAREZ
-     * <init_deklarator>
+      69. str
+
+     <init_deklarator> ::=
+			<izravni_deklarator>
+			| <izravni_deklarator> OP_PRIDRUZI <inicijalizator>
+
      */
 
     @Override

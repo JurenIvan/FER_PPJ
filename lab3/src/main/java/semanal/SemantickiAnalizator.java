@@ -27,7 +27,7 @@ public class SemantickiAnalizator {
 
         TaskResult taskResult = rootNode.nextTask();
         while (taskResult.getNextNode() != null && taskResult.isSuccess()) {
-            System.out.println(taskResult.getNextNode().getNodeType().symbolName);
+            // System.out.println(taskResult.getNextNode().getNodeType().symbolName); // TODO remove debug
             taskResult = taskResult.getNextNode().nextTask();
         }
 

@@ -69,7 +69,7 @@ public class DefinicijaFunkcije extends Node {
                     try {
                         // TODO should a new function variable be created (as is done)
                         //      or rather modify the existing, already fetched function variable?
-                        Type functionType = Type.createFunctionDeclaration(List.of(Type.voidType), Collections.emptyList(),
+                        Type functionType = Type.createFunctionDeclaration(List.of(Type.VOID_TYPE), Collections.emptyList(),
                                 imeTipa.type); // TODO List.of since java 9, is that OK?
 
                         function = functionType.getFunction();

@@ -5,7 +5,7 @@ import java.util.Objects;
 
 public class Type {
 
-    public static final Type voidType = new Type(SubType.VOID);
+    public static final Type VOID_TYPE = new Type(SubType.VOID);
 
     private SubType subType;
     private NumberType number;
