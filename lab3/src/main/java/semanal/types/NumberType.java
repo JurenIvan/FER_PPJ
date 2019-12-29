@@ -18,27 +18,37 @@ public enum NumberType {
     }
 
     /**
-     * Utility method that checks if the given string represents an integer in the range of (-2^31, 2^31 - 1) aka (-2147483648, 2147483647).
+     * Utility method that checks if the given string represents an decimal or hexadecimal integer in the
+     * range of (-2^31, 2^31 - 1) aka (-2147483648, 2147483647).
      *
-     * @param s the string representing the integer to check
+     * @param s the string representing the integer to check in decimal (123) or hexadecimal format (0x123)
      * @return true if given string is a parsable integer
      */
     private static boolean checkIfInt(String s) {
         try {
             Integer.parseInt(s);
             return true;
-        } catch (NumberFormatException e) {
-            return false;
+        } catch (NumberFormatException ignored) {
         }
+
+        try {
+            if (s.startsWith("0x")) {
+                Integer.parseInt(s.substring(2), 16);
+                return true;
+            }
+        } catch (NumberFormatException ignored) {
+        }
+
+        return false;
     }
 
     private static boolean isValidChar(String s) {
-        if (!Utils.isAscii(s) || s.length() > 4) {
+        if (!Utils.isAscii(s) || s.length() > 4 || s.length() < 3) {
             return false;
         }
 
         if (s.length() == 3) {
-            return true;
+            return s.charAt(1) != '\\';
         }
 
         s = s.substring(1, 3); // remove surrounding quotation marks

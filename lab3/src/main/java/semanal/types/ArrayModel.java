@@ -39,7 +39,7 @@ public class ArrayModel {
 
         string = string.substring(1, string.length() - 1); // remove surrounding quotation marks
         int charCount = 0;
-        for (int i = 0; i < string.length(); i++) {
+        for (int i = 0; i < string.length(); i++, charCount++) {
             char c = string.charAt(i);
             if (c == '\\') {
                 if (i == string.length() - 1) {
@@ -50,9 +50,10 @@ public class ArrayModel {
                 if (!(c == 't' || c == 'n' || c == '\\' || c == '0' || c == '\'' || c == '\"')) {
                     return -1;
                 }
-
                 i++;
-                charCount++;
+
+            } else if (c == '\"') {
+                return -1;
             }
         }
         return charCount + 1;

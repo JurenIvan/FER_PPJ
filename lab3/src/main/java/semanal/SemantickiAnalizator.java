@@ -51,7 +51,9 @@ public class SemantickiAnalizator {
             if (node.getNodeType() == NodeType.TERMINAL)
                 continue;
             nodesToVisit.addAll(node.getChildren());
-            memoryScopeSet.add(node.getVariableMemory());
+            if (node.getVariableMemory() != null) {
+                memoryScopeSet.add(node.getVariableMemory());
+            }
         }
 
         boolean mainOK = true;

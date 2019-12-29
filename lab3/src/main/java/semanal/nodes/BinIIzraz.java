@@ -45,8 +45,8 @@ public class BinIIzraz extends Node {
                 break;
             }
             case 3: {
-                BinIIzraz binIIzraz = getChild(2);
-                JednakosniIzraz jednakosniIzraz = getChild(0);
+                BinIIzraz binIIzraz = getChild(0);
+                JednakosniIzraz jednakosniIzraz = getChild(2);
 
                 addNodeCheckToTasks(binIIzraz);
                 addErrorCheckToTasks(() -> binIIzraz.type.implicitConvertInto(INT));
