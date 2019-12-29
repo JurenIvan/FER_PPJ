@@ -17,8 +17,7 @@ public class AditivniIzraz extends Node {
         super(parent, ADITIVNI_IZRAZ);
     }
 
-    @Override
-    protected void initializeTasks() {
+    @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -46,13 +45,13 @@ public class AditivniIzraz extends Node {
                 break;
             }
             case 3: {
-                AditivniIzraz aditivniIzraz = getChild(2);
-                MultiplikativniIzraz multiplikativniIzraz = getChild(0);
+                AditivniIzraz aditivniIzraz = getChild(0);
+                MultiplikativniIzraz multiplikativniIzraz = getChild(2);
 
                 addNodeCheckToTasks(aditivniIzraz);
-                addErrorCheckToTasks(() -> aditivniIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> aditivniIzraz.type.implicitConvertInto(INT));
                 addNodeCheckToTasks(multiplikativniIzraz);
-                addErrorCheckToTasks(() -> multiplikativniIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> multiplikativniIzraz.type.implicitConvertInto(INT));
 
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);

@@ -57,6 +57,7 @@ public class Izraz extends Node {
                     type = izrazPridruzivanja.type;
                     leftAssignableExpression = false;
                 });
+                break;
             }
             default:
                 throw new IllegalStateException("Invalid syntax tree structure.");

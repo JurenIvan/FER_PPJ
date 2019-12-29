@@ -49,9 +49,9 @@ public class BinXiliIzraz extends Node {
                 BinIIzraz binIIzraz = getChild(2);
 
                 addNodeCheckToTasks(binXiliIzraz);
-                addErrorCheckToTasks(() -> binXiliIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> binXiliIzraz.type.implicitConvertInto(INT));
                 addNodeCheckToTasks(binIIzraz);
-                addErrorCheckToTasks(() -> binIIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> binIIzraz.type.implicitConvertInto(INT));
 
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);

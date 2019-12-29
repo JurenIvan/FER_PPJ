@@ -49,9 +49,9 @@ public class BinIIzraz extends Node {
                 JednakosniIzraz jednakosniIzraz = getChild(0);
 
                 addNodeCheckToTasks(binIIzraz);
-                addErrorCheckToTasks(() -> binIIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> binIIzraz.type.implicitConvertInto(INT));
                 addNodeCheckToTasks(jednakosniIzraz);
-                addErrorCheckToTasks(() -> jednakosniIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> jednakosniIzraz.type.implicitConvertInto(INT));
 
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);

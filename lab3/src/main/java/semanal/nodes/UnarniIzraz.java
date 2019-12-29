@@ -55,25 +55,23 @@ public class UnarniIzraz extends Node {
                     UnarniIzraz unarniIzraz = getChild(1);
 
                     addNodeCheckToTasks(unarniIzraz);
-                    addErrorCheckToTasks(() -> unarniIzraz.leftAssignableExpression && unarniIzraz.type.getNumber().implicitConvertInto(INT));
+                    addErrorCheckToTasks(() -> unarniIzraz.leftAssignableExpression && unarniIzraz.type.implicitConvertInto(INT));
 
                     addProcedureToTasks(() -> {
                         type = Type.createNumber(INT);
                         leftAssignableExpression = false;
                     });
-                } else if (isChildOfType(0, UNARNI_OPERATOR)) {
-                    UnarniOperator unarniOperator = getChild(0);
+                } else {
                     CastIzraz castIzraz = getChild(1);
 
                     addNodeCheckToTasks(castIzraz);
-                    addErrorCheckToTasks(() -> castIzraz.type.getNumber().implicitConvertInto(INT));
+                    addErrorCheckToTasks(() -> castIzraz.type.implicitConvertInto(INT));
 
                     addProcedureToTasks(() -> {
                         type = Type.createNumber(INT);
                         leftAssignableExpression = false;
                     });
-                } else
-                    throw new IllegalStateException("Invalid syntax tree structure.");
+                }
                 break;
             }
             default:

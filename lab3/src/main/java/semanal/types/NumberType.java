@@ -6,15 +6,13 @@ import java.util.Objects;
 
 public enum NumberType {
 
-    INT(PrimitiveNumberType.INT, false),
-    CHAR(PrimitiveNumberType.CHAR, false),
-    CONST_INT(PrimitiveNumberType.INT, true),
-    CONST_CHAR(PrimitiveNumberType.CHAR, true);
+    INT(PrimitiveNumberType.INT, false), CHAR(PrimitiveNumberType.CHAR, false), CONST_INT(PrimitiveNumberType.INT, true), CONST_CHAR(
+            PrimitiveNumberType.CHAR, true);
 
     private boolean isConst;
     private PrimitiveNumberType primitiveNumberType;
 
-    private NumberType(PrimitiveNumberType primitiveNumberType, boolean isConst) {
+    NumberType(PrimitiveNumberType primitiveNumberType, boolean isConst) {
         this.primitiveNumberType = Objects.requireNonNull(primitiveNumberType);
         this.isConst = isConst;
     }
@@ -47,12 +45,40 @@ public enum NumberType {
         return "\\t".equals(s) || "\\n".equals(s) || "\\0".equals(s) || "\\'".equals(s) || "\\\"".equals(s) || "\\\\".equals(s);
     }
 
+    public static boolean implicitConvertInto(Type type, NumberType other) {
+        if (type.getSubType() != SubType.NUMBER) {
+            return false;
+        }
+
+        return type.getNumber().implicitConvertInto(other);
+    }
+
     public PrimitiveNumberType getPrimitiveNumberType() {
         return primitiveNumberType;
     }
 
-    public boolean isConst() {
-        return isConst;
+    public boolean isNotConst() {
+        return !isConst;
+    }
+
+    public NumberType toConst() {
+        if (isConst)
+            return this;
+
+        if (this == INT)
+            return CONST_INT;
+
+        return CONST_CHAR;
+    }
+
+    public NumberType toNonConst() {
+        if (!isConst)
+            return this;
+
+        if (this == CONST_INT)
+            return INT;
+
+        return CHAR;
     }
 
     public boolean checkIfValidValue(String value) {
@@ -64,15 +90,6 @@ public enum NumberType {
     }
 
     public boolean implicitConvertInto(NumberType other) {
-        return primitiveNumberType != PrimitiveNumberType.INT && other.primitiveNumberType != PrimitiveNumberType.CHAR;
+        return other != null && (primitiveNumberType != PrimitiveNumberType.INT || other.primitiveNumberType != PrimitiveNumberType.CHAR);
     }
-
-    public static boolean implicitConvertInto(Type type, NumberType other) {
-        if (type.getSubType() != SubType.NUMBER) {
-            return false;
-        }
-
-        return type.getNumber().implicitConvertInto(other);
-    }
-
 }

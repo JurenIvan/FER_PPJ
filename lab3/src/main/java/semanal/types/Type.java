@@ -34,9 +34,15 @@ public class Type {
         return function;
     }
 
-    public static Type createArray(NumberType numberType) {
+    public static Type createArray(NumberType numberType, int numberOfElements) {
         Type array = new Type(SubType.ARRAY);
-        array.array = new ArrayModel(numberType);
+        array.array = new ArrayModel(numberType, numberOfElements, false);
+        return array;
+    }
+
+    public static Type createArrayFromString(NumberType numberType, int numberOfElements) {
+        Type array = new Type(SubType.ARRAY);
+        array.array = new ArrayModel(numberType, numberOfElements, true);
         return array;
     }
 
@@ -92,10 +98,24 @@ public class Type {
         }
     }
 
-    public boolean expliciteConvertInto(Type other) {
-        if (subType != other.getSubType()) {
+    public boolean explicitConvertInto(Type other) {
+        if (other == null)
             return false;
+
+        return subType == SubType.NUMBER && other.subType == SubType.NUMBER;
+        // return (subType == other.subType) && (subType == SubType.NUMBER || subType == SubType.ARRAY);
+    }
+
+    public boolean isLeftAssignable() { // TODO is this check good?
+        switch (subType){
+            case NUMBER:{
+                return getNumber().isNotConst();
+            }
+            case ARRAY:{
+                return getArray().getNumberType().isNotConst();
+            }
+            default:
+                return false;
         }
-        return subType == SubType.NUMBER || subType == SubType.ARRAY;
     }
 }

@@ -1,10 +1,17 @@
 package semanal;
 
 import semanal.nodes.TerminalNode;
+import semanal.types.FunctionModel;
+import semanal.types.NumberType;
+import semanal.types.SubType;
+import semanal.types.Type;
 
-import java.util.List;
+import java.util.*;
 
 public class SemantickiAnalizator {
+
+    private static String MAIN_ERROR_MESSAGE = "main";
+    private static String FUNCTION_ERROR_MESSAGE = "funkcija";
 
     /**
      * Program main entry point.
@@ -12,7 +19,7 @@ public class SemantickiAnalizator {
      * @param args irrelevant
      */
     public static void main(String[] args) {
-        System.out.print(new SemantickiAnalizator().run());
+        System.out.println(new SemantickiAnalizator().run());
     }
 
     /**
@@ -27,7 +34,7 @@ public class SemantickiAnalizator {
 
         TaskResult taskResult = rootNode.nextTask();
         while (taskResult.getNextNode() != null && taskResult.isSuccess()) {
-            // System.out.println(taskResult.getNextNode().getNodeType().symbolName); // TODO remove debug
+            // System.out.println("-->" + taskResult.getNextNode().getNodeType().symbolName); // TODO remove debug
             taskResult = taskResult.getNextNode().nextTask();
         }
 
@@ -35,8 +42,54 @@ public class SemantickiAnalizator {
             return taskResult.getErrorMessage();
         }
 
-        //checkMain(); // TODO provjera ima li maina, ako je uspjesno do sada
-        // TODO jos neka provjera posle svega, ne sicam se koja
+        List<Node> nodesToVisit = new ArrayList<>();
+        nodesToVisit.add(rootNode);
+        Set<MemoryScope<Type>> memoryScopeSet = new HashSet<>();
+
+        while (!nodesToVisit.isEmpty()) {
+            Node node = nodesToVisit.remove(nodesToVisit.size() - 1);
+            if (node.getNodeType() == NodeType.TERMINAL)
+                continue;
+            nodesToVisit.addAll(node.getChildren());
+            memoryScopeSet.add(node.getVariableMemory());
+        }
+
+        boolean mainOK = true;
+        boolean functionOK = true;
+        HashMap<String, FunctionModel> declared = new HashMap<>();
+        HashMap<String, FunctionModel> defined = new HashMap<>();
+        for (MemoryScope<Type> scope : memoryScopeSet) {
+            for (Map.Entry<String, Type> entry : scope.getMemory().entrySet()) {
+                if (entry.getValue().getSubType() == SubType.FUNCTION) {
+                    FunctionModel old;
+                    if (entry.getValue().getFunction().isDefined()) {
+                        old = defined.put(entry.getKey(), entry.getValue().getFunction());
+                    } else {
+                        old = declared.put(entry.getKey(), entry.getValue().getFunction());
+                    }
+                    if (old != null && !old.equals(entry.getValue().getFunction())) {
+                        functionOK = false;
+                    }
+                }
+            }
+        }
+
+        if (!defined.containsKey("main") || !defined.get("main").acceptsVoid() || !defined.get("main").getReturnValueType()
+                .equals(Type.createNumber(NumberType.INT))) {
+            mainOK = false;
+        }
+
+        for (Map.Entry<String, FunctionModel> declaredFunction : declared.entrySet()) {
+            if (!defined.containsKey(declaredFunction.getKey()) || !defined.get(declaredFunction.getKey())
+                    .equals(declaredFunction.getValue())) {
+                functionOK = false;
+            }
+        }
+
+        if (!mainOK)
+            return MAIN_ERROR_MESSAGE;
+        if (!functionOK)
+            return FUNCTION_ERROR_MESSAGE;
 
         return "";
     }
