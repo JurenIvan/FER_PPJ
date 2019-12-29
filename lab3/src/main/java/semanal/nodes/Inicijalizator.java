@@ -41,21 +41,18 @@ public class Inicijalizator extends Node {
 
                 addNodeCheckToTasks(izrazPridruzivanja);
 
-                addProcedureToTasks(() -> {
+                addErrorCheckToTasks(() -> {
                     // this was spicy TODO check
-//                    if (izrazPridruzivanja.type.getSubType() == SubType.ARRAY && izrazPridruzivanja.type.getArray()
-//                            .isInitializedByString()) {
-//                        numberOfElements = izrazPridruzivanja.type.getArray().getNumberOfElements();
-//                        types = new ArrayList<>(Collections.nCopies(numberOfElements, Type.createNumber(NumberType.CHAR)));
-//                    } else {
-//                        type = izrazPridruzivanja.type;
-//                    }
                     if (izrazPridruzivanja.type.getSubType() == SubType.ARRAY) {
+                        if (!izrazPridruzivanja.type.getArray().isInitializedByString())
+                            return false;
                         numberOfElements = izrazPridruzivanja.type.getArray().getNumberOfElements();
                         types = new ArrayList<>(Collections.nCopies(numberOfElements, Type.createNumber(NumberType.CHAR)));
                     } else {
                         type = izrazPridruzivanja.type;
                     }
+
+                    return true;
                 });
                 break;
             }

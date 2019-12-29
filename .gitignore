@@ -2,6 +2,7 @@
 *.ser
 output.out
 data.out
+additional-examples
 
 # Compiled class file
 *.class
