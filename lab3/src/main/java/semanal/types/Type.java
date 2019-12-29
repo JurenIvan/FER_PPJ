@@ -36,13 +36,19 @@ public class Type {
 
     public static Type createArray(NumberType numberType, int numberOfElements) {
         Type array = new Type(SubType.ARRAY);
-        array.array = new ArrayModel(numberType, numberOfElements, false);
+        array.array = new ArrayModel(numberType, numberOfElements, false, false);
         return array;
     }
 
     public static Type createArrayFromString(NumberType numberType, int numberOfElements) {
         Type array = new Type(SubType.ARRAY);
-        array.array = new ArrayModel(numberType, numberOfElements, true);
+        array.array = new ArrayModel(numberType, numberOfElements, true, false);
+        return array;
+    }
+
+    public static Type createArrayFromIDN(Type arrayType) {
+        Type array = new Type(SubType.ARRAY);
+        array.array = new ArrayModel(arrayType.getArray().getNumberType(), arrayType.getArray().getNumberOfElements(), false, true);
         return array;
     }
 

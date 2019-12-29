@@ -9,11 +9,13 @@ public class ArrayModel {
     private Type elementType;
     private int numberOfElements;
     private boolean initializedByString; // for example "abc"
+    private boolean copiedFromIDN;
 
-    public ArrayModel(NumberType numberType, int numberOfElements, boolean initializedByString) {
+    public ArrayModel(NumberType numberType, int numberOfElements, boolean initializedByString, boolean copiedFromIDN) {
         this.elementType = Type.createNumber(numberType);
         this.numberOfElements = numberOfElements;
         this.initializedByString = initializedByString;
+        this.copiedFromIDN = copiedFromIDN;
     }
 
     public static boolean isValidArraySize(String size) {
@@ -69,6 +71,10 @@ public class ArrayModel {
 
     public NumberType getNumberType() {
         return elementType.getNumber();
+    }
+
+    public boolean isCopiedFromIDN() {
+        return copiedFromIDN;
     }
 
     @Override public boolean equals(Object o) {

@@ -2,6 +2,7 @@ package semanal.nodes;
 
 import semanal.Node;
 import semanal.TerminalType;
+import semanal.Utils;
 import semanal.types.ArrayModel;
 import semanal.types.FunctionModel;
 import semanal.types.SubType;
@@ -9,7 +10,6 @@ import semanal.types.Type;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static semanal.NodeType.IZRAVNI_DEKLARATOR;
 
@@ -83,7 +83,7 @@ public class IzravniDeklarator extends Node {
                     addErrorCheckToTasks(() -> {
                         if (!getVariableMemory().checkLocal(functionName)) {
                             try {
-                                type = Type.createFunctionDeclaration(List.of(Type.VOID_TYPE), Collections.emptyList(), nType);
+                                type = Type.createFunctionDeclaration(Utils.listOf(Type.VOID_TYPE), Collections.emptyList(), nType);
                             } catch (IllegalArgumentException ex) {
                                 return false;
                             }

@@ -71,6 +71,10 @@ public class InitDeklarator extends Node {
                         if (izravniDeklarator.type.getArray().getNumberOfElements() < inicijalizator.numberOfElements)
                             return false;
 
+                        if (inicijalizator.type != null && inicijalizator.type.getArray().isCopiedFromIDN()
+                                && inicijalizator.numberOfElements != izravniDeklarator.type.getArray().getNumberOfElements())
+                            return false;
+
                         if (inicijalizator.type != null && inicijalizator.type.getArray().getNumberType().isNotConst())
                             return false;
 
