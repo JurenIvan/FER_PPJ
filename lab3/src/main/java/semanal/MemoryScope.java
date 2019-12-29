@@ -11,16 +11,24 @@ public class MemoryScope<OF> {
         this.previous = previous;
     }
 
-    public boolean check(String variable) {
+    public boolean checkGlobal(String variable) {
         if (memory.containsKey(variable)) return true;
-        if (previous != null) return previous.check(variable);
+        if (previous != null) return previous.checkGlobal(variable);
         return false;
+    }
+
+    public boolean checkLocal(String variable) {
+        return memory.containsKey(variable);
     }
 
     public OF get(String variable) {
         if (memory.containsKey(variable)) return memory.get(variable);
         if (previous != null) return previous.get(variable);
         throw new IllegalArgumentException("Variable not in memory.");
+    }
+
+    public HashMap<String, OF> getMemory() {
+        return memory;
     }
 
     public void define(String variable, OF value) {

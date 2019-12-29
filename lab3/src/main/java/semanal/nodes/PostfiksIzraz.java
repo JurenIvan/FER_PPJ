@@ -100,12 +100,12 @@ public class PostfiksIzraz extends Node {
                     // 3.
                     addNodeCheckToTasks(izraz);
                     // 4.
-                    addErrorCheckToTasks(() -> NumberType.implicitConvertInto(postfiksIzraz.type, NumberType.INT));
+                    addErrorCheckToTasks(() -> NumberType.implicitConvertInto(izraz.type, NumberType.INT));
 
                     // final step, after 1-4 tests
                     addProcedureToTasks(() -> {
                         type = postfiksIzraz.type.getArray().getElementType();
-                        leftAssignableExpression = !type.getNumber().isConst();
+                        leftAssignableExpression = type.getNumber().isNotConst();
                     });
                 } else {
                     ListaArgumenata listaArgumenata = getChild(2);

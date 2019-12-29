@@ -48,13 +48,13 @@ public class OdnosniIzraz extends Node {
                 break;
             }
             case 3: {
-                OdnosniIzraz odnosniIzraz = getChild(2);
-                AditivniIzraz aditivniIzraz = getChild(0);
+                OdnosniIzraz odnosniIzraz = getChild(0);
+                AditivniIzraz aditivniIzraz = getChild(2);
 
                 addNodeCheckToTasks(odnosniIzraz);
-                addErrorCheckToTasks(() -> odnosniIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> odnosniIzraz.type.implicitConvertInto(INT));
                 addNodeCheckToTasks(aditivniIzraz);
-                addErrorCheckToTasks(() -> aditivniIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> aditivniIzraz.type.implicitConvertInto(INT));
 
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);
@@ -65,8 +65,6 @@ public class OdnosniIzraz extends Node {
             default:
                 throw new IllegalStateException("Invalid syntax tree structure.");
         }
-
-        // TODO
 
     }
 }

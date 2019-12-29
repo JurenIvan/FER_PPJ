@@ -19,11 +19,6 @@ public abstract class Node {
     public Node(Node parent, NodeType nodeType) {
         this.parent = parent;
         this.nodeType = nodeType;
-        if (parent != null) {
-            variableMemory = parent.variableMemory;
-        } else {
-            variableMemory = new MemoryScope<>(null);
-        }
     }
 
     public void createLocalVariableMemory() {
@@ -72,17 +67,19 @@ public abstract class Node {
 
     public TaskResult nextTask() {
         if (tasks == null) {
-            initializeTasks();
+            initialize();
+            // System.out.println("::::::::INIT::::::::" + getNodeType().symbolName); // TODO remove debug
 
-            // <! DUMMY -- adding dummy tasks, only to visit all tree nodes>
-            for (var child : children) {
-                if (child.nodeType == NodeType.TERMINAL)
-                    continue;
-                tasks.add(() -> {
-                    return TaskResult.success(child);
-                });
-            }
-            // <DUMMY !>
+            //                  TODO remove dummy
+            //            // <! DUMMY -- adding dummy tasks, only to visit all tree nodes>
+            //            for (var child : children) {
+            //                if (child.nodeType == NodeType.TERMINAL)
+            //                    continue;
+            //                tasks.add(() -> {
+            //                    return TaskResult.success(child);
+            //                });
+            //            }
+            //            // <DUMMY !>
 
         }
 
@@ -90,7 +87,22 @@ public abstract class Node {
             return TaskResult.success(parent);
         }
 
+        //        try {
         return tasks.get(currentTaskNumber++).get();
+        //        } catch (Exception e) {
+        //            throw new IllegalStateException(e);  // TODO remove debug
+        //            // return TaskResult.failure(this);
+        //        }
+    }
+
+    private void initialize() {
+        if (parent != null) {
+            variableMemory = parent.variableMemory;
+        } else {
+            variableMemory = new MemoryScope<>(null);
+        }
+
+        initializeTasks();
     }
 
     protected void addNodeCheckToTasks(Node node) {
@@ -145,5 +157,9 @@ public abstract class Node {
         }
 
         return sb.toString();
+    }
+
+    public List<Node> getChildren() {
+        return children;
     }
 }

@@ -39,7 +39,7 @@ public class IzrazNaredba extends Node {
                 Izraz izraz = getChild(0);
                 addNodeCheckToTasks(izraz);
 
-                type = izraz.type;
+                addProcedureToTasks(() -> type = izraz.type);
                 break;
             }
             default:

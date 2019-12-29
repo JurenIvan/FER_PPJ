@@ -42,11 +42,11 @@ public class PrimarniIzraz extends Node {
                 if (firstChild.getTerminalType() == TerminalType.IDN) {
 
                     tasks.add(() -> {
-                        if (!getVariableMemory().check(firstChild.getSourceCode())) {
+                        if (!getVariableMemory().checkGlobal(firstChild.getSourceCode())) {
                             return TaskResult.failure(this);
                         }
-                        type = Type.createNumber(NumberType.INT);
-                        leftAssignableExpression = false;
+                        type = getVariableMemory().get(firstChild.getSourceCode());
+                        leftAssignableExpression = type.isLeftAssignable();
                         return TaskResult.success(this);
                     });
                     //same as:
@@ -77,7 +77,8 @@ public class PrimarniIzraz extends Node {
 
                 } else if (firstChild.getTerminalType() == TerminalType.NIZ_ZNAKOVA) {
 
-                    Type array = Type.createArray(NumberType.CONST_CHAR);
+                    // TODO is the length check needed?
+                    Type array = Type.createArray(NumberType.CONST_CHAR, firstChild.getSourceCode().length());
 
                     tasks.add(() -> {
                         if (!ArrayModel.isValidCharArray(firstChild.getSourceCode())) {

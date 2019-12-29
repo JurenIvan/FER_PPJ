@@ -1,6 +1,8 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.types.NumberType;
+import semanal.types.SubType;
 import semanal.types.Type;
 
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ import static semanal.NodeType.INIT_DEKLARATOR;
 
 public class InitDeklarator extends Node {
 
+    public Type nType;
     public Type type;
 
     public InitDeklarator(Node parent) {
@@ -16,7 +19,9 @@ public class InitDeklarator extends Node {
     }
 
     /*
-      69. str
+    o---------------o
+    o--> 69. str <--o
+    o---------------o
 
      <init_deklarator> ::=
 			<izravni_deklarator>
@@ -24,22 +29,56 @@ public class InitDeklarator extends Node {
 
      */
 
-    @Override
-    protected void initializeTasks() {
+    @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
 
-        if (hasNChildren(2)) {
-            ImeTipa imeTipa = getChild(0);
-            ListaInitDeklaratora listaInitDeklaratora = getChild(1);
+        switch (getChildrenNumber()) {
+            case 1: {
+                IzravniDeklarator izravniDeklarator = getChild(0);
 
-            this.type = imeTipa.type;
+                // 1.
+                addProcedureToTasks(() -> izravniDeklarator.nType = nType);
+                addNodeCheckToTasks(izravniDeklarator);
+                // 2.
+                addErrorCheckToTasks(
+                        () -> izravniDeklarator.type.getSubType() != SubType.NUMBER || izravniDeklarator.type.getNumber().isNotConst());
+                addErrorCheckToTasks(
+                        () -> izravniDeklarator.type.getSubType() != SubType.ARRAY || izravniDeklarator.type.getArray().getNumberType()
+                                .isNotConst());
 
-            listaInitDeklaratora.type = this.type;
+                break;
+            }
+            case 3: {
+                IzravniDeklarator izravniDeklarator = getChild(0);
+                Inicijalizator inicijalizator = getChild(2);
 
-            addNodeCheckToTasks(imeTipa);
-            addNodeCheckToTasks(listaInitDeklaratora);
-        } else {
-            throw new IllegalStateException("Invalid syntax tree structure.");
+                // 1.
+                addProcedureToTasks(() -> izravniDeklarator.nType = nType);
+                addNodeCheckToTasks(izravniDeklarator);
+                // 2.
+                addNodeCheckToTasks(inicijalizator);
+                // 3.
+                addErrorCheckToTasks(() -> {
+                    if (izravniDeklarator.type.getSubType() == SubType.NUMBER) {
+                        return inicijalizator.type.implicitConvertInto(izravniDeklarator.type.getNumber().toNonConst());
+                    } else if (izravniDeklarator.type.getSubType() == SubType.ARRAY) {
+                        if (izravniDeklarator.numberOfElements < inicijalizator.numberOfElements)
+                            return false;
+
+                        NumberType arrayNumberType = izravniDeklarator.type.getArray().getNumberType().toNonConst();
+                        for (Type type : inicijalizator.types) {
+                            if (!type.implicitConvertInto(arrayNumberType))
+                                return false;
+                        }
+                        return true;
+                    } else {
+                        return false;
+                    }
+                });
+                break;
+            }
+            default:
+                throw new IllegalStateException("Invalid syntax tree structure.");
         }
     }
 }

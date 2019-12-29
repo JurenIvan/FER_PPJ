@@ -42,12 +42,12 @@ public class CastIzraz extends Node {
                 break;
             }
             case 4: {
-                ImeTipa imeTipa = getChild(0);
-                CastIzraz castIzraz = getChild(2);
+                ImeTipa imeTipa = getChild(1);
+                CastIzraz castIzraz = getChild(3);
 
                 addNodeCheckToTasks(imeTipa);
                 addNodeCheckToTasks(castIzraz);
-                //            addErrorCheckToTasks(() -> castIzraz.type.); //todo check
+                addErrorCheckToTasks(() -> castIzraz.type.explicitConvertInto(imeTipa.type));
 
                 addProcedureToTasks(() -> {
                     type = imeTipa.type;

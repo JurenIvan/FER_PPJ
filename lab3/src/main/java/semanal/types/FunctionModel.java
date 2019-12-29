@@ -19,14 +19,13 @@ public class FunctionModel {
             throw new IllegalArgumentException("Parameters cannot be missing");
         }
 
-        if (!validNumberParameter(returnValueType) && returnValueType.getSubType() != SubType.VOID) {
-            throw new IllegalArgumentException("Return value type of function must be either int/char or void.");
+        if (!validReturnType(returnValueType)) {
+            throw new IllegalArgumentException("Return value type of function must be either non const int/char or void.");
         }
 
         if (!voidParameters(parameterTypes)) {
-            if (parameterTypes.stream().anyMatch(x -> !validNumberParameter(x))) {
-                throw new IllegalArgumentException(
-                        "Illegal parameters given. Function parameters can either be of type char/int or a single parameter of type void.");
+            if (parameterTypes.stream().anyMatch(x -> !validParamType(x))) {
+                throw new IllegalArgumentException("Illegal parameters given.");
             }
 
             if (parameterNames.size() != parameterTypes.size() || parameterNames.stream().anyMatch(String::isEmpty)) {
@@ -59,8 +58,12 @@ public class FunctionModel {
         return voidParameters(parameterTypes);
     }
 
-    private boolean validNumberParameter(Type type) {
-        return type.getSubType() == SubType.NUMBER && !type.getNumber().isConst();
+    public static boolean validReturnType(Type type) {
+        return type.getSubType() == SubType.NUMBER && type.getNumber().isNotConst() || Type.VOID_TYPE.equals(type);
+    }
+
+    public static boolean validParamType(Type type) {
+        return type.getSubType() == SubType.ARRAY || type.getSubType() == SubType.NUMBER; // TODO mogu li biti const?
     }
 
     public boolean parameterCheck(List<Type> types, List<String> names) {
@@ -81,6 +84,9 @@ public class FunctionModel {
     }
 
     public boolean argumentCheck(List<Type> arguments) {
+        if (arguments == null || arguments.size() != parameterTypes.size())
+            return false;
+
         for (int i = 0; i < arguments.size(); i++) {
             Type argType = arguments.get(i);
             Type paramType = parameterTypes.get(i);
@@ -88,7 +94,7 @@ public class FunctionModel {
             if (argType.getSubType() != paramType.getSubType())
                 return false;
 
-            if (argType.getSubType() == SubType.NUMBER && NumberType.implicitConvertInto(argType, paramType.getNumber()))
+            if (argType.getSubType() == SubType.NUMBER && !NumberType.implicitConvertInto(argType, paramType.getNumber()))
                 return false;
         }
         return true;
