@@ -36,7 +36,7 @@ public class ListaInitDeklaratora extends Node {
             addNodeCheckToTasks(initDeklarator);
         } else if (hasNChildren(3)) {
             ListaInitDeklaratora listaInitDeklaratora = getChild(0);
-            InitDeklarator initDeklarator = getChild(1);
+            InitDeklarator initDeklarator = getChild(2  );
 
             listaInitDeklaratora.nType = this.nType;
             addNodeCheckToTasks(listaInitDeklaratora);

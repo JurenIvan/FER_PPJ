@@ -44,7 +44,7 @@ public class ImeTipa extends Node {
                 addNodeCheckToTasks(specifikatorTipa);
                 addErrorCheckToTasks(() -> !specifikatorTipa.type.equals(Type.VOID_TYPE));
 
-                addProcedureToTasks(() -> type = specifikatorTipa.type);
+                addProcedureToTasks(() -> type = Type.createNumber(specifikatorTipa.type.getNumber().toConst()));
                 break;
             }
             default:

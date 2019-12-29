@@ -8,6 +8,8 @@ import static semanal.NodeType.SLOZENA_NAREDBA;
 
 public class SlozenaNaredba extends Node {
 
+    public boolean createLocalScope = true;
+
     public SlozenaNaredba(Node parent) {
         super(parent, SLOZENA_NAREDBA);
     }
@@ -26,7 +28,12 @@ public class SlozenaNaredba extends Node {
 
          */
 
-        createLocalVariableMemory();
+        addProcedureToTasks(() -> {
+            if (createLocalScope) {
+                createLocalVariableMemory();
+            }
+        });
+
         switch (getChildrenNumber()) {
             case 3: {
                 addNodeCheckToTasks(getChild(1));

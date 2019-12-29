@@ -47,7 +47,7 @@ public class IzravniDeklarator extends Node {
                 // 1.
                 addErrorCheckToTasks(() -> !Type.VOID_TYPE.equals(nType));
                 // 2.
-                addErrorCheckToTasks(() -> !getVariableMemory().check(functionName));
+                addErrorCheckToTasks(() -> !getVariableMemory().checkLocal(functionName));
                 // 3. & post processing
                 addProcedureToTasks(() -> {
                     type = nType;
@@ -66,10 +66,11 @@ public class IzravniDeklarator extends Node {
                     // 1.
                     addErrorCheckToTasks(() -> !Type.VOID_TYPE.equals(nType));
                     // 2.
-                    addErrorCheckToTasks(() -> !getVariableMemory().check(functionName));
+                    addErrorCheckToTasks(() -> !getVariableMemory().checkLocal(functionName));
                     // 3.
                     addErrorCheckToTasks(() -> ArrayModel.isValidArraySize(broj.getSourceCode()));
                     // 4. & post processing
+                    addErrorCheckToTasks(() -> nType.getSubType() == SubType.NUMBER);
                     addProcedureToTasks(() -> {
                         numberOfElements = Integer.parseInt(broj.getSourceCode());
                         type = Type.createArray(nType.getNumber(), numberOfElements);
@@ -80,8 +81,12 @@ public class IzravniDeklarator extends Node {
 
                     // 1. & 2. & post processing
                     addErrorCheckToTasks(() -> {
-                        if (!getVariableMemory().check(functionName)) {
-                            type = Type.createFunctionDeclaration(List.of(Type.VOID_TYPE), Collections.emptyList(), nType);
+                        if (!getVariableMemory().checkLocal(functionName)) {
+                            try {
+                                type = Type.createFunctionDeclaration(List.of(Type.VOID_TYPE), Collections.emptyList(), nType);
+                            } catch (IllegalArgumentException ex) {
+                                return false;
+                            }
                             getVariableMemory().define(functionName, type);
 
                             return true;
@@ -102,15 +107,24 @@ public class IzravniDeklarator extends Node {
                     addNodeCheckToTasks(listaParametara);
                     // 2. & 3. & post processing
                     addErrorCheckToTasks(() -> {
-                        if (getVariableMemory().check(functionName)) {
-                            FunctionModel functionModel = getVariableMemory().get(functionName).getFunction();
+                        Node node = this;
+                        if (getVariableMemory().checkLocal(functionName)) {
+                            type = getVariableMemory().get(functionName);
+                            if (type.getSubType() != SubType.FUNCTION)
+                                return false;
 
+                            FunctionModel functionModel = type.getFunction();
                             if (!functionModel.getReturnValueType().equals(nType))
                                 return false;
                             if (functionModel.parameterCheck(listaParametara.types, listaParametara.names))
                                 return false;
+
                         } else {
-                            type = Type.createFunctionDefinition(listaParametara.types, listaParametara.names, nType);
+                            try {
+                                type = Type.createFunctionDefinition(listaParametara.types, listaParametara.names, nType);
+                            } catch (IllegalArgumentException ex) {
+                                return false;
+                            }
                             getVariableMemory().define(functionName, type);
 
                         }

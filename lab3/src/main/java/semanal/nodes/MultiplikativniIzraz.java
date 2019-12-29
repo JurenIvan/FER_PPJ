@@ -51,9 +51,9 @@ public class MultiplikativniIzraz extends Node {
                 CastIzraz castIzraz = getChild(0);
 
                 addNodeCheckToTasks(multiplikativniIzraz);
-                addErrorCheckToTasks(() -> multiplikativniIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> multiplikativniIzraz.type.implicitConvertInto(INT));
                 addNodeCheckToTasks(castIzraz);
-                addErrorCheckToTasks(() -> castIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> castIzraz.type.implicitConvertInto(INT));
 
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);

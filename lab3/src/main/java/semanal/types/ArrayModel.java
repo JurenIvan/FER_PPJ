@@ -89,7 +89,7 @@ public class ArrayModel {
         if (getNumberType().getPrimitiveNumberType() != other.getNumberType().getPrimitiveNumberType())
             return false;
 
-        return !getNumberType().isConst();
+        return getNumberType().isNotConst();
     }
 
 }

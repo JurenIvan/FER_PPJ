@@ -105,4 +105,17 @@ public class Type {
         return subType == SubType.NUMBER && other.subType == SubType.NUMBER;
         // return (subType == other.subType) && (subType == SubType.NUMBER || subType == SubType.ARRAY);
     }
+
+    public boolean isLeftAssignable() { // TODO is this check good?
+        switch (subType){
+            case NUMBER:{
+                return getNumber().isNotConst();
+            }
+            case ARRAY:{
+                return getArray().getNumberType().isNotConst();
+            }
+            default:
+                return false;
+        }
+    }
 }

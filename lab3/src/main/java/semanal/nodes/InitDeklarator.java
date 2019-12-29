@@ -20,7 +20,7 @@ public class InitDeklarator extends Node {
 
     /*
     o---------------o
-    o--> 66. str <--o
+    o--> 69. str <--o
     o---------------o
 
      <init_deklarator> ::=
@@ -37,14 +37,14 @@ public class InitDeklarator extends Node {
                 IzravniDeklarator izravniDeklarator = getChild(0);
 
                 // 1.
-                izravniDeklarator.nType = nType;
+                addProcedureToTasks(() -> izravniDeklarator.nType = nType);
                 addNodeCheckToTasks(izravniDeklarator);
                 // 2.
                 addErrorCheckToTasks(
-                        () -> izravniDeklarator.type.getSubType() != SubType.NUMBER || !izravniDeklarator.type.getNumber().isConst());
+                        () -> izravniDeklarator.type.getSubType() != SubType.NUMBER || izravniDeklarator.type.getNumber().isNotConst());
                 addErrorCheckToTasks(
-                        () -> izravniDeklarator.type.getSubType() != SubType.ARRAY || !izravniDeklarator.type.getArray().getNumberType()
-                                .isConst());
+                        () -> izravniDeklarator.type.getSubType() != SubType.ARRAY || izravniDeklarator.type.getArray().getNumberType()
+                                .isNotConst());
 
                 break;
             }
@@ -65,9 +65,9 @@ public class InitDeklarator extends Node {
                         if (izravniDeklarator.numberOfElements < inicijalizator.numberOfElements)
                             return false;
 
-                        NumberType arrayType = izravniDeklarator.type.getArray().getNumberType();
+                        NumberType arrayNumberType = izravniDeklarator.type.getArray().getNumberType().toNonConst();
                         for (Type type : inicijalizator.types) {
-                            if (type.implicitConvertInto(arrayType))
+                            if (!type.implicitConvertInto(arrayNumberType))
                                 return false;
                         }
                         return true;

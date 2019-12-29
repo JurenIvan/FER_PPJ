@@ -49,9 +49,9 @@ public class LogIliIzraz extends Node {
                 LogIIzraz logIIzraz = getChild(2);
 
                 addNodeCheckToTasks(logIliIzraz);
-                addErrorCheckToTasks(() -> logIliIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> logIliIzraz.type.implicitConvertInto(INT));
                 addNodeCheckToTasks(logIIzraz);
-                addErrorCheckToTasks(() -> logIIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> logIIzraz.type.implicitConvertInto(INT));
 
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);

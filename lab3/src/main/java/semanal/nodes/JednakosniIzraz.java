@@ -50,9 +50,9 @@ public class JednakosniIzraz extends Node {
                 OdnosniIzraz odnosniIzraz = getChild(2);
 
                 addNodeCheckToTasks(jednakosniIzraz);
-                addErrorCheckToTasks(() -> jednakosniIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> jednakosniIzraz.type.implicitConvertInto(INT));
                 addNodeCheckToTasks(odnosniIzraz);
-                addErrorCheckToTasks(() -> odnosniIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> odnosniIzraz.type.implicitConvertInto(INT));
 
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);

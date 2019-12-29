@@ -43,8 +43,14 @@ public class Inicijalizator extends Node {
 
                 addProcedureToTasks(() -> {
                     // this was spicy TODO check
-                    if (izrazPridruzivanja.type.getSubType() == SubType.ARRAY && izrazPridruzivanja.type.getArray()
-                            .isInitializedByString()) {
+//                    if (izrazPridruzivanja.type.getSubType() == SubType.ARRAY && izrazPridruzivanja.type.getArray()
+//                            .isInitializedByString()) {
+//                        numberOfElements = izrazPridruzivanja.type.getArray().getNumberOfElements();
+//                        types = new ArrayList<>(Collections.nCopies(numberOfElements, Type.createNumber(NumberType.CHAR)));
+//                    } else {
+//                        type = izrazPridruzivanja.type;
+//                    }
+                    if (izrazPridruzivanja.type.getSubType() == SubType.ARRAY) {
                         numberOfElements = izrazPridruzivanja.type.getArray().getNumberOfElements();
                         types = new ArrayList<>(Collections.nCopies(numberOfElements, Type.createNumber(NumberType.CHAR)));
                     } else {

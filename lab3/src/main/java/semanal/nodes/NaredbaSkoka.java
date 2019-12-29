@@ -45,8 +45,12 @@ public class NaredbaSkoka extends Node {
                 Izraz izraz = getChild(1);
 
                 addNodeCheckToTasks(izraz);
-                addErrorCheckToTasks(
-                        () -> izraz.type.implicitConvertInto(this.getFunctionIfNodeNestedInADefinition().getReturnValueType()));
+                addErrorCheckToTasks(() -> {
+                    FunctionModel function = this.getFunctionIfNodeNestedInADefinition();
+                    if (function == null)
+                        return false;
+                    return izraz.type.implicitConvertInto(function.getReturnValueType());
+                });
 
                 break;
             }

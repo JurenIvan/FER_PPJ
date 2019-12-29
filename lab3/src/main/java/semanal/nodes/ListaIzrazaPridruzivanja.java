@@ -38,7 +38,7 @@ public class ListaIzrazaPridruzivanja extends Node {
                 numberOfElements = 1;
                 argumentTypes.add(izrazPridruzivanja.type);
             });
-        } else if (hasNChildren(2)) {
+        } else if (hasNChildren(3)) {
             ListaIzrazaPridruzivanja listaIzrazaPridruzivanja = getChild(0);
             IzrazPridruzivanja izrazPridruzivanja = getChild(2);
 

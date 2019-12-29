@@ -8,6 +8,7 @@ import semanal.types.Type;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.function.Function;
 
 import static semanal.NodeType.DEFINICIJA_FUNKCIJE;
 import static semanal.NodeType.TERMINAL;
@@ -41,7 +42,7 @@ public class DefinicijaFunkcije extends Node {
             // 1.
             addNodeCheckToTasks(imeTipa);
             // 2.
-            addErrorCheckToTasks(() -> imeTipa.type.getSubType() == SubType.NUMBER && !imeTipa.type.getNumber().isConst());
+            addErrorCheckToTasks(() -> FunctionModel.validReturnType(imeTipa.type));
 
             String functionName = idn.getSourceCode();
 
@@ -49,7 +50,7 @@ public class DefinicijaFunkcije extends Node {
 
                 // 3. 4. 5.
                 addErrorCheckToTasks(() -> {
-                    if (getVariableMemory().check(functionName)) {
+                    if (getVariableMemory().checkGlobal(functionName)) {
                         Type functionType = getVariableMemory().get(functionName);
                         if (functionType.getSubType() != SubType.FUNCTION)
                             return false;
@@ -66,11 +67,13 @@ public class DefinicijaFunkcije extends Node {
                     }
 
                     try {
-                        // TODO should a new function variable be created (as is done)
-                        //      or rather modify the existing, already fetched function variable?
-                        Type functionType = Type
-                                .createFunctionDeclaration(Utils.listOf(Type.VOID_TYPE), Collections.emptyList(), imeTipa.type);
-
+                        Type functionType;
+                        try {
+                            functionType = Type
+                                    .createFunctionDefinition(Utils.listOf(Type.VOID_TYPE), Collections.emptyList(), imeTipa.type);
+                        } catch (IllegalArgumentException ex) {
+                            return false;
+                        }
                         function = functionType.getFunction();
                         getVariableMemory().define(functionName, functionType);
                         return true;
@@ -86,9 +89,10 @@ public class DefinicijaFunkcije extends Node {
 
                 ListaParametara listaParametara = getChild(3);
 
+
                 // 3.
                 addErrorCheckToTasks(() -> {
-                    if (getVariableMemory().check(functionName)) {
+                    if (getVariableMemory().checkGlobal(functionName)) {
                         Type functionType = getVariableMemory().get(functionName);
                         if (functionType.getSubType() != SubType.FUNCTION)
                             return false;
@@ -103,7 +107,7 @@ public class DefinicijaFunkcije extends Node {
                 addNodeCheckToTasks(listaParametara);
                 // 5.
                 addErrorCheckToTasks(() -> {
-                    if (getVariableMemory().check(functionName)) {
+                    if (getVariableMemory().checkGlobal(functionName)) {
                         FunctionModel functionModel = getVariableMemory().get(functionName).getFunction();
 
                         if (!functionModel.getReturnValueType().equals(imeTipa.type))
@@ -114,21 +118,26 @@ public class DefinicijaFunkcije extends Node {
                     return true;
                 });
                 // 6.
-                addProcedureToTasks(() -> {
-                    createLocalVariableMemory();
-
-                    // TODO should a new function variable be created (as is done)
-                    //      or rather modify the existing, already fetched function variable?
-                    Type functionType = Type.createFunctionDefinition(listaParametara.types, listaParametara.names, imeTipa.type);
+                addErrorCheckToTasks(() -> {
+                    Type functionType;
+                    try {
+                        functionType = Type.createFunctionDefinition(listaParametara.types, listaParametara.names, imeTipa.type);
+                    } catch (IllegalArgumentException ex) {
+                        return false;
+                    }
                     getVariableMemory().define(functionName, functionType);
                     function = functionType.getFunction();
+                    return true;
                 });
                 // 7.
                 addProcedureToTasks(() -> {
+                    createLocalVariableMemory();
+                    slozenaNaredba.createLocalScope = false;
                     for (int i = 0; i < listaParametara.types.size(); i++) {
                         getVariableMemory().define(listaParametara.names.get(i), listaParametara.types.get(i));
                     }
                 });
+                addNodeCheckToTasks(slozenaNaredba);
 
             }
         } else {

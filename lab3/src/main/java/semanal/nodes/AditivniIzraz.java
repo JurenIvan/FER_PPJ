@@ -49,9 +49,9 @@ public class AditivniIzraz extends Node {
                 MultiplikativniIzraz multiplikativniIzraz = getChild(2);
 
                 addNodeCheckToTasks(aditivniIzraz);
-                addErrorCheckToTasks(() -> aditivniIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> aditivniIzraz.type.implicitConvertInto(INT));
                 addNodeCheckToTasks(multiplikativniIzraz);
-                addErrorCheckToTasks(() -> multiplikativniIzraz.type.getNumber().implicitConvertInto(INT));
+                addErrorCheckToTasks(() -> multiplikativniIzraz.type.implicitConvertInto(INT));
 
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);
