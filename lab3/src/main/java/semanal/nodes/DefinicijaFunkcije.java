@@ -59,16 +59,17 @@ public class DefinicijaFunkcije extends Node {
                             return false;
                         if (!functionModel.acceptsVoid())
                             return false;
-                        if (!functionModel.getReturnValueType().equals(imeTipa))
+                        if (!functionModel.getReturnValueType().equals(imeTipa.type))
                             return false;
-
-                        functionModel.setDefined(true);
-                        return true;
                     }
 
                     Type functionType = Type.createFunctionDefinition(Utils.listOf(Type.VOID_TYPE), Collections.emptyList(), imeTipa.type);
                     function = functionType.getFunction();
-                    getVariableMemory().define(functionName, functionType);
+                    if (getVariableMemory().checkGlobal(functionName)) {
+                        getVariableMemory().set(functionName, functionType);
+                    } else {
+                        getVariableMemory().define(functionName, functionType);
+                    }
                     return true;
                 });
 
