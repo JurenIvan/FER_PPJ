@@ -44,8 +44,8 @@ public class Inicijalizator extends Node {
                 addErrorCheckToTasks(() -> {
                     // this was spicy TODO check
                     if (izrazPridruzivanja.type.getSubType() == SubType.ARRAY) {
-                        if (!izrazPridruzivanja.type.getArray().isInitializedByString())
-                            return false;
+//                        if (!izrazPridruzivanja.type.getArray().isInitializedByString())
+//                            return false;
                         numberOfElements = izrazPridruzivanja.type.getArray().getNumberOfElements();
                         types = new ArrayList<>(Collections.nCopies(numberOfElements, Type.createNumber(NumberType.CHAR)));
                     } else {
