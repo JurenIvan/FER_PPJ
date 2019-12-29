@@ -8,7 +8,6 @@ import semanal.types.Type;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.function.Function;
 
 import static semanal.NodeType.DEFINICIJA_FUNKCIJE;
 import static semanal.NodeType.TERMINAL;
@@ -63,23 +62,14 @@ public class DefinicijaFunkcije extends Node {
                         if (!functionModel.getReturnValueType().equals(imeTipa))
                             return false;
 
+                        functionModel.setDefined(true);
                         return true;
                     }
 
-                    try {
-                        Type functionType;
-                        try {
-                            functionType = Type
-                                    .createFunctionDefinition(Utils.listOf(Type.VOID_TYPE), Collections.emptyList(), imeTipa.type);
-                        } catch (IllegalArgumentException ex) {
-                            return false;
-                        }
-                        function = functionType.getFunction();
-                        getVariableMemory().define(functionName, functionType);
-                        return true;
-                    } catch (IllegalArgumentException ex) {
-                        return false;
-                    }
+                    Type functionType = Type.createFunctionDefinition(Utils.listOf(Type.VOID_TYPE), Collections.emptyList(), imeTipa.type);
+                    function = functionType.getFunction();
+                    getVariableMemory().define(functionName, functionType);
+                    return true;
                 });
 
                 // 6.
@@ -88,7 +78,6 @@ public class DefinicijaFunkcije extends Node {
             } else {
 
                 ListaParametara listaParametara = getChild(3);
-
 
                 // 3.
                 addErrorCheckToTasks(() -> {
@@ -112,7 +101,7 @@ public class DefinicijaFunkcije extends Node {
 
                         if (!functionModel.getReturnValueType().equals(imeTipa.type))
                             return false;
-                        if (functionModel.parameterCheck(listaParametara.types, listaParametara.names))
+                        if (!functionModel.parameterCheck(listaParametara.types, listaParametara.names))
                             return false;
                     }
                     return true;
@@ -125,7 +114,11 @@ public class DefinicijaFunkcije extends Node {
                     } catch (IllegalArgumentException ex) {
                         return false;
                     }
-                    getVariableMemory().define(functionName, functionType);
+                    if (getVariableMemory().checkGlobal(functionName)) {
+                        getVariableMemory().set(functionName, functionType);
+                    } else {
+                        getVariableMemory().define(functionName, functionType);
+                    }
                     function = functionType.getFunction();
                     return true;
                 });

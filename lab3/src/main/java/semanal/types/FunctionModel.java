@@ -15,15 +15,15 @@ public class FunctionModel {
         Objects.requireNonNull(parameterTypes);
         Objects.requireNonNull(parameterNames);
 
-        if (parameterTypes.isEmpty() || parameterNames.stream().anyMatch(String::isEmpty)) {
-            throw new IllegalArgumentException("Parameters cannot be missing");
-        }
-
         if (!validReturnType(returnValueType)) {
             throw new IllegalArgumentException("Return value type of function must be either non const int/char or void.");
         }
 
         if (!voidParameters(parameterTypes)) {
+            if (parameterTypes.isEmpty() || parameterNames.stream().anyMatch(String::isEmpty)) {
+                throw new IllegalArgumentException("Parameters cannot be missing");
+            }
+
             if (parameterTypes.stream().anyMatch(x -> !validParamType(x))) {
                 throw new IllegalArgumentException("Illegal parameters given.");
             }
@@ -34,6 +34,7 @@ public class FunctionModel {
         }
 
         this.parameterTypes = parameterTypes;
+        this.parameterNames = parameterNames;
         this.returnValueType = returnValueType;
     }
 
@@ -59,6 +60,9 @@ public class FunctionModel {
     }
 
     public static boolean validReturnType(Type type) {
+        if (type == null)
+            return false;
+
         return type.getSubType() == SubType.NUMBER && type.getNumber().isNotConst() || Type.VOID_TYPE.equals(type);
     }
 
@@ -75,10 +79,10 @@ public class FunctionModel {
                 return false;
         }
 
-        for (int i = 0; i < parameterNames.size(); i++) {
-            if (!parameterNames.get(i).equals(names.get(i)))
-                return false;
-        }
+//        for (int i = 0; i < parameterNames.size(); i++) {
+//            if (!parameterNames.get(i).equals(names.get(i)))
+//                return false;
+//        }
 
         return true;
     }

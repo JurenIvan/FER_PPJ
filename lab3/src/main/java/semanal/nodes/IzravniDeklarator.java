@@ -17,7 +17,7 @@ public class IzravniDeklarator extends Node {
 
     public Type type;
     public Type nType;
-    public Integer numberOfElements;
+    private Integer numberOfElements;
 
     public IzravniDeklarator(Node parent) {
         super(parent, IZRAVNI_DEKLARATOR);
@@ -107,7 +107,6 @@ public class IzravniDeklarator extends Node {
                     addNodeCheckToTasks(listaParametara);
                     // 2. & 3. & post processing
                     addErrorCheckToTasks(() -> {
-                        Node node = this;
                         if (getVariableMemory().checkLocal(functionName)) {
                             type = getVariableMemory().get(functionName);
                             if (type.getSubType() != SubType.FUNCTION)
@@ -116,12 +115,12 @@ public class IzravniDeklarator extends Node {
                             FunctionModel functionModel = type.getFunction();
                             if (!functionModel.getReturnValueType().equals(nType))
                                 return false;
-                            if (functionModel.parameterCheck(listaParametara.types, listaParametara.names))
+                            if (!functionModel.parameterCheck(listaParametara.types, listaParametara.names))
                                 return false;
 
                         } else {
                             try {
-                                type = Type.createFunctionDefinition(listaParametara.types, listaParametara.names, nType);
+                                type = Type.createFunctionDeclaration(listaParametara.types, listaParametara.names, nType);
                             } catch (IllegalArgumentException ex) {
                                 return false;
                             }

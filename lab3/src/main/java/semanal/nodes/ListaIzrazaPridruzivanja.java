@@ -46,7 +46,7 @@ public class ListaIzrazaPridruzivanja extends Node {
             addNodeCheckToTasks(izrazPridruzivanja);
 
             addProcedureToTasks(() -> {
-                numberOfElements = listaIzrazaPridruzivanja.numberOfElements++;
+                numberOfElements = listaIzrazaPridruzivanja.numberOfElements + 1;
                 argumentTypes.addAll(listaIzrazaPridruzivanja.argumentTypes);
                 argumentTypes.add(izrazPridruzivanja.type);
             });

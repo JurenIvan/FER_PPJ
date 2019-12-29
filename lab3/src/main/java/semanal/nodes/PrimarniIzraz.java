@@ -78,7 +78,7 @@ public class PrimarniIzraz extends Node {
                 } else if (firstChild.getTerminalType() == TerminalType.NIZ_ZNAKOVA) {
 
                     // TODO is the length check needed?
-                    Type array = Type.createArray(NumberType.CONST_CHAR, firstChild.getSourceCode().length());
+                    Type array = Type.createArrayFromString(NumberType.CONST_CHAR, firstChild.getSourceCode().length() - 2 + 1);
 
                     tasks.add(() -> {
                         if (!ArrayModel.isValidCharArray(firstChild.getSourceCode())) {
