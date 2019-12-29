@@ -29,28 +29,33 @@ public class ArrayModel {
     }
 
     public static boolean isValidCharArray(String string) {
+        return getNumberOfCharElementsOfString(string) != -1;
+    }
+
+    public static int getNumberOfCharElementsOfString(String string) {
         if (!Utils.isAscii(string)) {
-            return false;
+            return -1;
         }
 
         string = string.substring(1, string.length() - 1); // remove surrounding quotation marks
+        int charCount = 0;
         for (int i = 0; i < string.length(); i++) {
             char c = string.charAt(i);
             if (c == '\\') {
                 if (i == string.length() - 1) {
-                    return false;
+                    return -1;
                 }
 
                 c = string.charAt(i + 1);
                 if (!(c == 't' || c == 'n' || c == '\\' || c == '0' || c == '\'' || c == '\"')) {
-                    return false;
+                    return -1;
                 }
 
                 i++;
+                charCount++;
             }
         }
-
-        return true;
+        return charCount + 1;
     }
 
     public int getNumberOfElements() {
