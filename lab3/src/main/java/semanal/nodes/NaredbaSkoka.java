@@ -6,6 +6,7 @@ import semanal.types.FunctionModel;
 import semanal.types.Type;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static semanal.NodeType.*;
 
@@ -74,7 +75,7 @@ public class NaredbaSkoka extends Node {
         Node node = this.getParent();
         while (node != null) {
             if (node.getNodeType() == DEFINICIJA_FUNKCIJE)
-                return ((DefinicijaFunkcije) node).function;
+                return Objects.requireNonNull(((DefinicijaFunkcije) node).function);
             node = node.getParent();
         }
         return null;

@@ -51,7 +51,7 @@ public class NodeFactory {
         nodes.put(NodeType.VANJSKA_DEKLARACIJA.symbolName, VanjskaDeklaracija::new);
     }
 
-    static Node create(String input, Node parent) {
+    public static Node create(String input, Node parent) {
         return nodes.get(input).apply(parent);
     }
 }

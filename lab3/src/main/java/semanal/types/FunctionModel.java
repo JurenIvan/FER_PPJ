@@ -15,15 +15,15 @@ public class FunctionModel {
         Objects.requireNonNull(parameterTypes);
         Objects.requireNonNull(parameterNames);
 
-        if (parameterTypes.isEmpty() || parameterNames.stream().anyMatch(String::isEmpty)) {
-            throw new IllegalArgumentException("Parameters cannot be missing");
-        }
-
         if (!validReturnType(returnValueType)) {
             throw new IllegalArgumentException("Return value type of function must be either non const int/char or void.");
         }
 
         if (!voidParameters(parameterTypes)) {
+            if (parameterTypes.isEmpty() || parameterNames.stream().anyMatch(String::isEmpty)) {
+                throw new IllegalArgumentException("Parameters cannot be missing");
+            }
+
             if (parameterTypes.stream().anyMatch(x -> !validParamType(x))) {
                 throw new IllegalArgumentException("Illegal parameters given.");
             }
@@ -34,6 +34,7 @@ public class FunctionModel {
         }
 
         this.parameterTypes = parameterTypes;
+        this.parameterNames = parameterNames;
         this.returnValueType = returnValueType;
     }
 
@@ -44,6 +45,17 @@ public class FunctionModel {
 
     private static boolean voidParameters(List<Type> parameters) {
         return parameters.size() == 1 && parameters.get(0).getSubType() == SubType.VOID;
+    }
+
+    public static boolean validReturnType(Type type) {
+        if (type == null)
+            return false;
+
+        return type.getSubType() == SubType.NUMBER && type.getNumber().isNotConst() || Type.VOID_TYPE.equals(type);
+    }
+
+    public static boolean validParamType(Type type) {
+        return type.getSubType() == SubType.ARRAY || type.getSubType() == SubType.NUMBER;
     }
 
     public boolean isDefined() {
@@ -58,25 +70,12 @@ public class FunctionModel {
         return voidParameters(parameterTypes);
     }
 
-    public static boolean validReturnType(Type type) {
-        return type.getSubType() == SubType.NUMBER && type.getNumber().isNotConst() || Type.VOID_TYPE.equals(type);
-    }
-
-    public static boolean validParamType(Type type) {
-        return type.getSubType() == SubType.ARRAY || type.getSubType() == SubType.NUMBER; // TODO mogu li biti const?
-    }
-
     public boolean parameterCheck(List<Type> types, List<String> names) {
         if (types.size() != parameterTypes.size() || names.size() != parameterNames.size())
             return false;
 
         for (int i = 0; i < parameterTypes.size(); i++) {
             if (!parameterTypes.get(i).equals(types.get(i)))
-                return false;
-        }
-
-        for (int i = 0; i < parameterNames.size(); i++) {
-            if (!parameterNames.get(i).equals(names.get(i)))
                 return false;
         }
 
@@ -95,6 +94,9 @@ public class FunctionModel {
                 return false;
 
             if (argType.getSubType() == SubType.NUMBER && !NumberType.implicitConvertInto(argType, paramType.getNumber()))
+                return false;
+
+            if (argType.getSubType() == SubType.ARRAY && !argType.getArray().getNumberType().equals(paramType.getArray().getNumberType()))
                 return false;
         }
         return true;

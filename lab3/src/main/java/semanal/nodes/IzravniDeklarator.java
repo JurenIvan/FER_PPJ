@@ -2,6 +2,7 @@ package semanal.nodes;
 
 import semanal.Node;
 import semanal.TerminalType;
+import semanal.Utils;
 import semanal.types.ArrayModel;
 import semanal.types.FunctionModel;
 import semanal.types.SubType;
@@ -9,7 +10,6 @@ import semanal.types.Type;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import static semanal.NodeType.IZRAVNI_DEKLARATOR;
 
@@ -17,7 +17,7 @@ public class IzravniDeklarator extends Node {
 
     public Type type;
     public Type nType;
-    public Integer numberOfElements;
+    private Integer numberOfElements;
 
     public IzravniDeklarator(Node parent) {
         super(parent, IZRAVNI_DEKLARATOR);
@@ -83,7 +83,7 @@ public class IzravniDeklarator extends Node {
                     addErrorCheckToTasks(() -> {
                         if (!getVariableMemory().checkLocal(functionName)) {
                             try {
-                                type = Type.createFunctionDeclaration(List.of(Type.VOID_TYPE), Collections.emptyList(), nType);
+                                type = Type.createFunctionDeclaration(Utils.listOf(Type.VOID_TYPE), Collections.emptyList(), nType);
                             } catch (IllegalArgumentException ex) {
                                 return false;
                             }
@@ -107,7 +107,6 @@ public class IzravniDeklarator extends Node {
                     addNodeCheckToTasks(listaParametara);
                     // 2. & 3. & post processing
                     addErrorCheckToTasks(() -> {
-                        Node node = this;
                         if (getVariableMemory().checkLocal(functionName)) {
                             type = getVariableMemory().get(functionName);
                             if (type.getSubType() != SubType.FUNCTION)
@@ -116,12 +115,12 @@ public class IzravniDeklarator extends Node {
                             FunctionModel functionModel = type.getFunction();
                             if (!functionModel.getReturnValueType().equals(nType))
                                 return false;
-                            if (functionModel.parameterCheck(listaParametara.types, listaParametara.names))
+                            if (!functionModel.parameterCheck(listaParametara.types, listaParametara.names))
                                 return false;
 
                         } else {
                             try {
-                                type = Type.createFunctionDefinition(listaParametara.types, listaParametara.names, nType);
+                                type = Type.createFunctionDeclaration(listaParametara.types, listaParametara.names, nType);
                             } catch (IllegalArgumentException ex) {
                                 return false;
                             }

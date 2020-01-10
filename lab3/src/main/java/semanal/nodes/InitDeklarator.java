@@ -60,9 +60,22 @@ public class InitDeklarator extends Node {
                 // 3.
                 addErrorCheckToTasks(() -> {
                     if (izravniDeklarator.type.getSubType() == SubType.NUMBER) {
+                        if (inicijalizator.type == null) {
+                            return false;
+                        }
                         return inicijalizator.type.implicitConvertInto(izravniDeklarator.type.getNumber().toNonConst());
                     } else if (izravniDeklarator.type.getSubType() == SubType.ARRAY) {
-                        if (izravniDeklarator.numberOfElements < inicijalizator.numberOfElements)
+                        if (inicijalizator.types == null || inicijalizator.types.isEmpty())
+                            return false;
+
+                        if (izravniDeklarator.type.getArray().getNumberOfElements() < inicijalizator.numberOfElements)
+                            return false;
+
+                        if (inicijalizator.type != null && inicijalizator.type.getArray().isCopiedFromIDN()
+                                && inicijalizator.numberOfElements != izravniDeklarator.type.getArray().getNumberOfElements())
+                            return false;
+
+                        if (inicijalizator.type != null && inicijalizator.type.getArray().getNumberType().isNotConst())
                             return false;
 
                         NumberType arrayNumberType = izravniDeklarator.type.getArray().getNumberType().toNonConst();

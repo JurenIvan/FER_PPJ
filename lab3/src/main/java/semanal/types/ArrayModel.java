@@ -9,11 +9,13 @@ public class ArrayModel {
     private Type elementType;
     private int numberOfElements;
     private boolean initializedByString; // for example "abc"
+    private boolean copiedFromIDN;
 
-    public ArrayModel(NumberType numberType, int numberOfElements, boolean initializedByString) {
+    public ArrayModel(NumberType numberType, int numberOfElements, boolean initializedByString, boolean copiedFromIDN) {
         this.elementType = Type.createNumber(numberType);
         this.numberOfElements = numberOfElements;
         this.initializedByString = initializedByString;
+        this.copiedFromIDN = copiedFromIDN;
     }
 
     public static boolean isValidArraySize(String size) {
@@ -29,28 +31,34 @@ public class ArrayModel {
     }
 
     public static boolean isValidCharArray(String string) {
+        return getNumberOfCharElementsOfString(string) != -1;
+    }
+
+    public static int getNumberOfCharElementsOfString(String string) {
         if (!Utils.isAscii(string)) {
-            return false;
+            return -1;
         }
 
         string = string.substring(1, string.length() - 1); // remove surrounding quotation marks
-        for (int i = 0; i < string.length(); i++) {
+        int charCount = 0;
+        for (int i = 0; i < string.length(); i++, charCount++) {
             char c = string.charAt(i);
             if (c == '\\') {
                 if (i == string.length() - 1) {
-                    return false;
+                    return -1;
                 }
 
                 c = string.charAt(i + 1);
                 if (!(c == 't' || c == 'n' || c == '\\' || c == '0' || c == '\'' || c == '\"')) {
-                    return false;
+                    return -1;
                 }
-
                 i++;
+
+            } else if (c == '\"') {
+                return -1;
             }
         }
-
-        return true;
+        return charCount + 1;
     }
 
     public int getNumberOfElements() {
@@ -63,6 +71,10 @@ public class ArrayModel {
 
     public NumberType getNumberType() {
         return elementType.getNumber();
+    }
+
+    public boolean isCopiedFromIDN() {
+        return copiedFromIDN;
     }
 
     @Override public boolean equals(Object o) {

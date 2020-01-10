@@ -5,6 +5,7 @@ import semanal.TaskResult;
 import semanal.TerminalType;
 import semanal.types.ArrayModel;
 import semanal.types.NumberType;
+import semanal.types.SubType;
 import semanal.types.Type;
 
 import java.util.ArrayList;
@@ -46,6 +47,9 @@ public class PrimarniIzraz extends Node {
                             return TaskResult.failure(this);
                         }
                         type = getVariableMemory().get(firstChild.getSourceCode());
+                        if (type.getSubType() == SubType.ARRAY) {
+                            type = Type.createArrayFromIDN(type);
+                        }
                         leftAssignableExpression = type.isLeftAssignable();
                         return TaskResult.success(this);
                     });
@@ -78,7 +82,8 @@ public class PrimarniIzraz extends Node {
                 } else if (firstChild.getTerminalType() == TerminalType.NIZ_ZNAKOVA) {
 
                     // TODO is the length check needed?
-                    Type array = Type.createArray(NumberType.CONST_CHAR, firstChild.getSourceCode().length());
+                    Type array = Type.createArrayFromString(NumberType.CONST_CHAR,
+                            ArrayModel.getNumberOfCharElementsOfString(firstChild.getSourceCode()));
 
                     tasks.add(() -> {
                         if (!ArrayModel.isValidCharArray(firstChild.getSourceCode())) {

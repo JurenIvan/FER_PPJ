@@ -47,8 +47,8 @@ public class MultiplikativniIzraz extends Node {
                 break;
             }
             case 3: {
-                MultiplikativniIzraz multiplikativniIzraz = getChild(2);
-                CastIzraz castIzraz = getChild(0);
+                MultiplikativniIzraz multiplikativniIzraz = getChild(0);
+                CastIzraz castIzraz = getChild(2);
 
                 addNodeCheckToTasks(multiplikativniIzraz);
                 addErrorCheckToTasks(() -> multiplikativniIzraz.type.implicitConvertInto(INT));

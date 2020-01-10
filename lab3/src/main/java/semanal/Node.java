@@ -68,19 +68,6 @@ public abstract class Node {
     public TaskResult nextTask() {
         if (tasks == null) {
             initialize();
-            // System.out.println("::::::::INIT::::::::" + getNodeType().symbolName); // TODO remove debug
-
-            //                  TODO remove dummy
-            //            // <! DUMMY -- adding dummy tasks, only to visit all tree nodes>
-            //            for (var child : children) {
-            //                if (child.nodeType == NodeType.TERMINAL)
-            //                    continue;
-            //                tasks.add(() -> {
-            //                    return TaskResult.success(child);
-            //                });
-            //            }
-            //            // <DUMMY !>
-
         }
 
         if (tasks.isEmpty() || currentTaskNumber == tasks.size()) {

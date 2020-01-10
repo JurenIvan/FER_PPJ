@@ -36,13 +36,19 @@ public class Type {
 
     public static Type createArray(NumberType numberType, int numberOfElements) {
         Type array = new Type(SubType.ARRAY);
-        array.array = new ArrayModel(numberType, numberOfElements, false);
+        array.array = new ArrayModel(numberType, numberOfElements, false, false);
         return array;
     }
 
     public static Type createArrayFromString(NumberType numberType, int numberOfElements) {
         Type array = new Type(SubType.ARRAY);
-        array.array = new ArrayModel(numberType, numberOfElements, true);
+        array.array = new ArrayModel(numberType, numberOfElements, true, false);
+        return array;
+    }
+
+    public static Type createArrayFromIDN(Type arrayType) {
+        Type array = new Type(SubType.ARRAY);
+        array.array = new ArrayModel(arrayType.getArray().getNumberType(), arrayType.getArray().getNumberOfElements(), false, true);
         return array;
     }
 
@@ -88,14 +94,10 @@ public class Type {
             return false;
         }
 
-        switch (subType) {
-            case NUMBER:
-                return getNumber().implicitConvertInto(other.getNumber());
-            case ARRAY:
-                return getArray().implicitConvertInto(other.getArray());
-            default:
-                return false;
+        if (subType == SubType.NUMBER) {
+            return getNumber().implicitConvertInto(other.getNumber());
         }
+        return false;
     }
 
     public boolean explicitConvertInto(Type other) {
@@ -103,19 +105,12 @@ public class Type {
             return false;
 
         return subType == SubType.NUMBER && other.subType == SubType.NUMBER;
-        // return (subType == other.subType) && (subType == SubType.NUMBER || subType == SubType.ARRAY);
     }
 
-    public boolean isLeftAssignable() { // TODO is this check good?
-        switch (subType){
-            case NUMBER:{
-                return getNumber().isNotConst();
-            }
-            case ARRAY:{
-                return getArray().getNumberType().isNotConst();
-            }
-            default:
-                return false;
+    public boolean isLeftAssignable() {
+        if (subType == SubType.NUMBER) {
+            return getNumber().isNotConst();
         }
+        return false;
     }
 }
