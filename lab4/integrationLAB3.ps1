@@ -10,11 +10,10 @@ Foreach ($dir in $dir_array)
 }
 
 $dir_array = "01_ret_broj", "02_ret_global", "03_veliki_broj", "04_neg_broj", "05_plus", "06_plus_signed", "07_minus", "08_bitor", "09_bitand", "10_bitxor", "11_fun1", "12_fun2", "13_fun3", "13_scope1", "14_scope2", "15_scope3", "16_scope4", "17_char", "18_init_izraz", "19_if1", "20_if2", "21_if3", "22_if4", "23_niz1", "24_niz2", "25_niz3", "26_niz4", "27_rek", "28_rek_main", "29_for", "30_while", "31_inc", "32_gcd", "33_short", "34_izraz", "35_params", "36_params2", "37_funcloop", "integration1", "integration2"
-
 Foreach ($dir in $dir_array)
 {
     $current = ".\data\tests\" + $dir + "\test"
     $current
     Get-Content ($current+".in") | java -cp target/classes semanal.SemantickiAnalizator > output.out
-    Compare-Object (Get-Content output.out) (Get-Content ($current+".out"))
+    Compare-Object (Get-Content output.out) (echo "`0")
 }
