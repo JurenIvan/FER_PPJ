@@ -15,10 +15,12 @@ public abstract class Node {
     private int currentTaskNumber = 0;
     private MemoryScope<Type> variableMemory;
     private boolean alreadyCreatedLocalMemoryScope = false;
+    protected FriscCodeAppender friscCodeAppender;
 
     public Node(Node parent, NodeType nodeType) {
         this.parent = parent;
         this.nodeType = nodeType;
+        friscCodeAppender = FriscCodeAppender.getFriscCodeAppender();
     }
 
     public void createLocalVariableMemory() {
