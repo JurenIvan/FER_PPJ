@@ -1,6 +1,7 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.TaskResult;
 import semanal.Utils;
 import semanal.types.FunctionModel;
 import semanal.types.SubType;
@@ -20,7 +21,8 @@ public class DefinicijaFunkcije extends Node {
         super(parent, DEFINICIJA_FUNKCIJE);
     }
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
         /*
         o---------------o
@@ -32,6 +34,11 @@ public class DefinicijaFunkcije extends Node {
 			| <ime_tipa> IDN L_ZAGRADA <lista_parametara> D_ZAGRADA <slozena_naredba>
 
          */
+
+        tasks.add(() -> {
+            friscCodeAppender.appendCommand(((TerminalNode) getChild(1)).getSourceCode(), "POP R4");
+            return TaskResult.success(this);
+        });
 
         if (hasNChildren(6)) {
             ImeTipa imeTipa = getChild(0);

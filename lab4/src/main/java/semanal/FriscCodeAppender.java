@@ -16,8 +16,7 @@ public class FriscCodeAppender {
     private static final String initBlock =
             "    MOVE 40000, R7\n" +
                     "    CALL main\n" +
-                    "    HALT\n" +
-                    "main POP R4"; // TODO Privremeno
+                    "    HALT\n";
 
     private StringBuilder init = new StringBuilder();
     private StringBuilder main = new StringBuilder();

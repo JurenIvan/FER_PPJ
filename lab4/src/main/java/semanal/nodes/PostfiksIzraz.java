@@ -1,6 +1,7 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.TaskResult;
 import semanal.types.NumberType;
 import semanal.types.SubType;
 import semanal.types.Type;
@@ -19,7 +20,8 @@ public class PostfiksIzraz extends Node {
         super(parent, POSTFIKS_IZRAZ);
     }
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -84,6 +86,15 @@ public class PostfiksIzraz extends Node {
                 addProcedureToTasks(() -> {
                     type = postfiksIzraz.type.getFunction().getReturnValueType();
                     leftAssignableExpression = false;
+                });
+
+                tasks.add(() -> {
+                    friscCodeAppender.appendCommand("PUSH R4");
+                    friscCodeAppender.appendCommand("CALL " + ((TerminalNode)((PostfiksIzraz)getChild(0)).getChild(0).getChild(0)).getSourceCode());
+                    friscCodeAppender.appendCommand("POP R6");
+                    friscCodeAppender.appendCommand("POP R4");
+                    friscCodeAppender.appendCommand("PUSH R6");
+                    return TaskResult.success(this);
                 });
                 break;
             }

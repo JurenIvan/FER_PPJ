@@ -55,6 +55,7 @@ public class NaredbaSkoka extends Node {
                 });
                 tasks.add(() -> {
                     friscCodeAppender.appendCommand("POP R6");
+                    friscCodeAppender.appendCommand("PUSH R6");
                     friscCodeAppender.appendCommand("PUSH R4");
                     friscCodeAppender.appendCommand("RET");
                     return TaskResult.success(this);
