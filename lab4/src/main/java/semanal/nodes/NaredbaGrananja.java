@@ -1,6 +1,7 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.TaskResult;
 import semanal.types.NumberType;
 
 import java.util.ArrayList;
@@ -13,7 +14,8 @@ public class NaredbaGrananja extends Node {
         super(parent, NAREDBA_GRANANJA);
     }
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -33,8 +35,21 @@ public class NaredbaGrananja extends Node {
 
                 addNodeCheckToTasks(izraz);
                 addErrorCheckToTasks(() -> izraz.type.implicitConvertInto(NumberType.INT));
+                String label = friscCodeAppender.generateLabel();
+                tasks.add(() -> {
+                    friscCodeAppender.appendCommand("POP R0");
+                    friscCodeAppender.appendCommand("CMP R0, 0");
+                    friscCodeAppender.appendCommand("JP_EQ " + label);
+                    return TaskResult.success(this);
+                });
 
                 addNodeCheckToTasks(getChild(4));
+
+                tasks.add(() -> {
+                    friscCodeAppender.appendLabel(label);
+                    return TaskResult.success(this);
+                });
+
                 break;
             }
             case 7: {
@@ -43,8 +58,27 @@ public class NaredbaGrananja extends Node {
                 addNodeCheckToTasks(izraz);
                 addErrorCheckToTasks(() -> izraz.type.implicitConvertInto(NumberType.INT));
 
+                String label1 = friscCodeAppender.generateLabel();
+                String label2 = friscCodeAppender.generateLabel();
+                tasks.add(() -> {
+                    friscCodeAppender.appendCommand("POP R0");
+                    friscCodeAppender.appendCommand("CMP R0, 0");
+                    friscCodeAppender.appendCommand("JP_EQ " + label1);
+                    return TaskResult.success(this);
+                });
+
+
                 addNodeCheckToTasks(getChild(4));
+                tasks.add(() -> {
+                    friscCodeAppender.appendCommand("JP " + label2);
+                    friscCodeAppender.appendLabel(label1);
+                    return TaskResult.success(this);
+                });
                 addNodeCheckToTasks(getChild(6));
+                tasks.add(() -> {
+                    friscCodeAppender.appendLabel(label2);
+                    return TaskResult.success(this);
+                });
                 break;
             }
             default:

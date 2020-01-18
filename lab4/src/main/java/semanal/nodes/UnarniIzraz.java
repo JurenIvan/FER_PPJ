@@ -7,8 +7,7 @@ import semanal.types.Type;
 import java.util.ArrayList;
 
 import static semanal.NodeType.UNARNI_IZRAZ;
-import static semanal.TerminalType.OP_DEC;
-import static semanal.TerminalType.OP_INC;
+import static semanal.TerminalType.*;
 import static semanal.types.NumberType.INT;
 
 public class UnarniIzraz extends Node {
@@ -61,16 +60,9 @@ public class UnarniIzraz extends Node {
                         type = Type.createNumber(INT);
                         leftAssignableExpression = false;
                     });
-                    if (isChildOfTerminalType(0, OP_DEC)) {
-                        tasks.add(() -> {
-                            friscCodeAppender.appendCommand("POP R1");
-                            friscCodeAppender.appendCommand("MOVE 0, R1");
-                            friscCodeAppender.appendCommand("SUB R0,R1,R0");
-                            friscCodeAppender.appendCommand("PUSH R0");
-                            return TaskResult.success(this);
-                        });
-                    }
+
                 } else {
+                    UnarniOperator unarniOperator = getChild(0);
                     CastIzraz castIzraz = getChild(1);
 
                     addNodeCheckToTasks(castIzraz);
@@ -80,6 +72,16 @@ public class UnarniIzraz extends Node {
                         type = Type.createNumber(INT);
                         leftAssignableExpression = false;
                     });
+
+                    if (unarniOperator.isChildOfTerminalType(0, MINUS)) {
+                        tasks.add(() -> {
+                            friscCodeAppender.appendCommand("POP R1");
+                            friscCodeAppender.appendCommand("MOVE 0, R1");
+                            friscCodeAppender.appendCommand("SUB R1,R0,R0");
+                            friscCodeAppender.appendCommand("PUSH R0");
+                            return TaskResult.success(this);
+                        });
+                    }
                 }
                 break;
             }

@@ -1,6 +1,5 @@
 package semanal.nodes;
 
-import semanal.GeneratorKoda;
 import semanal.Node;
 import semanal.TaskResult;
 import semanal.TerminalType;
@@ -11,6 +10,7 @@ import semanal.types.Type;
 
 import java.util.ArrayList;
 
+import static java.lang.String.format;
 import static semanal.NodeType.PRIMARNI_IZRAZ;
 
 public class PrimarniIzraz extends Node {
@@ -22,7 +22,8 @@ public class PrimarniIzraz extends Node {
         super(parent, PRIMARNI_IZRAZ);
     }
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -64,7 +65,14 @@ public class PrimarniIzraz extends Node {
                     if (firstChild.getTerminalType() == TerminalType.BROJ) {
                         numberType = NumberType.INT;
                         tasks.add(() -> {
-                            friscCodeAppender.appendCommand("MOVE %D " + firstChild.getSourceCode() + ", R0");
+                            int number = Integer.parseInt(firstChild.getSourceCode());
+                            if (number < Math.pow(2, 16)) {
+                                friscCodeAppender.appendCommand("MOVE %D " + number + ", R0");
+                                friscCodeAppender.appendCommand("PUSH R0");
+                                return TaskResult.success(this);
+                            }
+                            String labela = friscCodeAppender.appendConstant(number);
+                            friscCodeAppender.appendCommand(format("LOAD R0, (%s)", labela));
                             friscCodeAppender.appendCommand("PUSH R0");
                             return TaskResult.success(this);
                         });

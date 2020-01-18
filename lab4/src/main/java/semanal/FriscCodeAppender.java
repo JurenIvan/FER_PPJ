@@ -1,27 +1,23 @@
 package semanal;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.*;
 import java.util.Random;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.nio.file.StandardOpenOption.CREATE_NEW;
-import java.io.*;
 
 public class FriscCodeAppender {
 
     private static FriscCodeAppender friscCodeAppender;
 
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    private static final int LABEL_LENGTH = 5;
+    private static final int LABEL_LENGTH = 6;
     private static final Random random = new Random();
 
     private static final String initBlock =
             "    MOVE 40000, R7\n" +
-            "    CALL main\n" +
-            "    HALT\n" +
-            "main POP R4"; // TODO Privremeno
+                    "    CALL main\n" +
+                    "    HALT\n" +
+                    "main POP R4"; // TODO Privremeno
 
     private StringBuilder init = new StringBuilder();
     private StringBuilder main = new StringBuilder();
@@ -41,20 +37,31 @@ public class FriscCodeAppender {
      * @param value to be saved
      * @return labes
      */
-    public String appendConstant(String value) {
+    public String appendConstant(int value) {
+        String label = generateLabel();
+        init.append(label).append(" \t DW %D ").append(value).append("\n");
+        return label;
+    }
+
+    public String generateLabel() {
         StringBuilder sb = new StringBuilder();
-
-
         for (int i = 0; i < LABEL_LENGTH; i++)
             sb.append(ALPHABET.charAt(random.nextInt(ALPHABET.length())));
 
-        String label = sb.toString();
-        init.append(label).append(" \t ").append(value).append("\n");
-        return label;
+        return sb.toString();
+    }
+
+    public String appendConstant(int value, String name) {
+        init.append(name).append(" \t DW %D ").append(value).append("\n");
+        return name;
     }
 
     public void appendCommand(String command) {
         main.append("\t\t").append(command).append("\n");
+    }
+
+    public void appendLabel(String label) {
+        main.append(label).append("\n");
     }
 
     public void appendCommand(String label, String command) {
@@ -73,8 +80,8 @@ public class FriscCodeAppender {
     public String getCode() {
         return new StringBuilder()
                 .append(initBlock).append("\n")
-                .append(toStringInit()).append("\n")
                 .append(toStringMain()).append("\n")
+                .append(toStringInit()).append("\n")
                 .toString();
     }
 
