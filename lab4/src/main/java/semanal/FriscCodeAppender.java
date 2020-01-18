@@ -14,9 +14,9 @@ public class FriscCodeAppender {
     private static final Random random = new Random();
 
     private static final String initBlock =
-            "    MOVE 40000, R7\n" +
-                    "    CALL main\n" +
-                    "    HALT\n";
+            "\t\tMOVE 40000, R7\n" +
+                    "\t\tCALL main\n" +
+                    "\t\tHALT\n";
 
     private StringBuilder init = new StringBuilder();
     private StringBuilder main = new StringBuilder();
@@ -38,7 +38,7 @@ public class FriscCodeAppender {
      */
     public String appendConstant(int value) {
         String label = generateLabel();
-        init.append(label).append(" \t DW %D ").append(value).append("\n");
+        init.append(label).append("\tDW %D ").append(value).append("\n");
         return label;
     }
 
@@ -51,7 +51,7 @@ public class FriscCodeAppender {
     }
 
     public String appendConstant(int value, String name) {
-        init.append(name).append(" \t DW %D ").append(value).append("\n");
+        init.append(name).append("\tDW %D ").append(value).append("\n");
         return name;
     }
 
@@ -64,7 +64,7 @@ public class FriscCodeAppender {
     }
 
     public void appendCommand(String label, String command) {
-        main.append(label).append(" \t ").append(command).append("\n");
+        main.append(label).append("\t").append(command).append("\n");
     }
 
 
