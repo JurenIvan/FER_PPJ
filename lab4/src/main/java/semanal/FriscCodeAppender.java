@@ -55,6 +55,11 @@ public class FriscCodeAppender {
         return name;
     }
 
+    public String appendConstant(int value, String name) {
+        init.append(name).append(" \t DW %D ").append(value).append("\n");
+        return name;
+    }
+
     public void appendCommand(String command) {
         main.append("\t\t").append(command).append("\n");
     }
@@ -85,13 +90,11 @@ public class FriscCodeAppender {
     }
 
     public void writeToFile(String filename) {
-        //System.out.println(getCode());
         Writer writter = null;
         try {
             writter = (new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), UTF_8)));
             writter.write(getCode());
             writter.close();
-            //   Files.writeString(Paths.get(filename), getCode(), UTF_8, CREATE_NEW);
         } catch (IOException e) {
             System.out.println("Failed to write into directory");
             throw new IllegalArgumentException(e.getCause());

@@ -2,6 +2,7 @@ package semanal;
 
 import semanal.nodes.TerminalNode;
 import semanal.types.Type;
+import semanal.variables.Variable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ public abstract class Node {
     private List<Node> children = new ArrayList<>();
     private NodeType nodeType;
     private int currentTaskNumber = 0;
-    private MemoryScope<Type> variableMemory;
+    private MemoryScope<Variable> variableMemory;
     private boolean alreadyCreatedLocalMemoryScope = false;
     protected FriscCodeAppender friscCodeAppender;
 
@@ -29,7 +30,7 @@ public abstract class Node {
         variableMemory = new MemoryScope<>(variableMemory);
     }
 
-    public MemoryScope<Type> getVariableMemory() {
+    public MemoryScope<Variable> getVariableMemory() {
         return variableMemory;
     }
 

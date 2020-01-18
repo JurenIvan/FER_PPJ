@@ -45,10 +45,10 @@ public class PrimarniIzraz extends Node {
                 if (firstChild.getTerminalType() == TerminalType.IDN) {
 
                     tasks.add(() -> {
-                        if (!getVariableMemory().checkGlobal(firstChild.getSourceCode())) {
+                        if (!getVariableMemory().check(firstChild.getSourceCode())) {
                             return TaskResult.failure(this);
                         }
-                        type = getVariableMemory().get(firstChild.getSourceCode());
+                        type = getVariableMemory().get(firstChild.getSourceCode()).getElementType();
                         if (type.getSubType() == SubType.ARRAY) {
                             type = Type.createArrayFromIDN(type);
                         }

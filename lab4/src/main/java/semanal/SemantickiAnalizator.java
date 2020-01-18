@@ -5,6 +5,7 @@ import semanal.types.FunctionModel;
 import semanal.types.NumberType;
 import semanal.types.SubType;
 import semanal.types.Type;
+import semanal.variables.Variable;
 
 import java.util.*;
 
@@ -44,7 +45,7 @@ public class SemantickiAnalizator {
 
         List<Node> nodesToVisit = new ArrayList<>();
         nodesToVisit.add(rootNode);
-        Set<MemoryScope<Type>> memoryScopeSet = new HashSet<>();
+        Set<MemoryScope<Variable>> memoryScopeSet = new HashSet<>();
 
         while (!nodesToVisit.isEmpty()) {
             Node node = nodesToVisit.remove(nodesToVisit.size() - 1);
@@ -60,24 +61,24 @@ public class SemantickiAnalizator {
         boolean functionOK = true;
         HashMap<String, FunctionModel> declared = new HashMap<>();
         HashMap<String, FunctionModel> defined = new HashMap<>();
-        for (MemoryScope<Type> scope : memoryScopeSet) {
-            for (Map.Entry<String, Type> entry : scope.getMemory().entrySet()) {
-                if (entry.getValue().getSubType() == SubType.FUNCTION) {
+        for (MemoryScope<Variable> scope : memoryScopeSet) {
+            for (Variable var : scope.getMemory()) {
+                if (var.getElementType().getSubType() == SubType.FUNCTION) {
                     FunctionModel old;
-                    if (entry.getValue().getFunction().isDefined()) {
-                        old = defined.put(entry.getKey(), entry.getValue().getFunction());
+                    if (var.getElementType().getFunction().isDefined()) {
+                        old = defined.put(var.getName(), var.getElementType().getFunction());
                     } else {
-                        old = declared.put(entry.getKey(), entry.getValue().getFunction());
+                        old = declared.put(var.getName(), var.getElementType().getFunction());
                     }
-                    if (old != null && !old.equals(entry.getValue().getFunction())) {
+                    if (old != null && !old.equals(var.getElementType().getFunction())) {
                         functionOK = false;
                     }
                 }
             }
         }
 
-        if (!defined.containsKey("main") || !defined.get("main").acceptsVoid() || !defined.get("main").getReturnValueType()
-                .equals(Type.createNumber(NumberType.INT))) {
+        if (!defined.containsKey("main") || !defined.get("main").acceptsVoid()
+                || !defined.get("main").getReturnValueType().equals(Type.createNumber(NumberType.INT))) {
             mainOK = false;
         }
 
