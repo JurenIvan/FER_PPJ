@@ -11,7 +11,6 @@ public class MemoryScope<OF extends Variable> {
 
     private LinkedList<OF> memory = new LinkedList<>();
     private MemoryScope<OF> previous;
-    private boolean global = false;
 
     public MemoryScope(MemoryScope<OF> previous) {
         this.previous = previous;
@@ -36,7 +35,7 @@ public class MemoryScope<OF extends Variable> {
 
     public boolean check(String variableName) {
         Objects.requireNonNull(variableName);
-        if (global) {
+        if (isGlobal()) {
             return doesCurrentScopeContainName(variableName);
         } else {
             if (doesCurrentScopeContainName(variableName)) {
@@ -51,7 +50,7 @@ public class MemoryScope<OF extends Variable> {
 
     public boolean checkIfGlobal(String variableName) {
         Objects.requireNonNull(variableName);
-        if (global) {
+        if (isGlobal()) {
             return doesCurrentScopeContainName(variableName);
         } else {
             if (previous != null) {
@@ -119,7 +118,7 @@ public class MemoryScope<OF extends Variable> {
     public void define(OF variable) {
         Objects.requireNonNull(variable);
         if (!doesCurrentScopeContainName(variable.getName())) {
-            if (variable.getVariableType() == VariableType.LABEL_ELEMENT && !global) {
+            if (variable.getVariableType() == VariableType.LABEL_ELEMENT && !isGlobal()) {
                 throw new IllegalArgumentException("Can only add global variables to global scope, not " + variable.getVariableType());
             }
             memory.add(variable);
@@ -130,7 +129,7 @@ public class MemoryScope<OF extends Variable> {
         Objects.requireNonNull(variable);
         int index = getIndexOfVariableInCurrentScope(variable.getName());
         if (index != -1) {
-            if (variable.getVariableType() == VariableType.LABEL_ELEMENT && !global) {
+            if (variable.getVariableType() == VariableType.LABEL_ELEMENT && !isGlobal()) {
                 throw new IllegalArgumentException("Can only add global variables to global scope, not " + variable.getVariableType());
             }
             return memory.set(index, variable);
@@ -142,6 +141,6 @@ public class MemoryScope<OF extends Variable> {
     }
 
     public boolean isGlobal() {
-        return global;
+        return previous == null;
     }
 }

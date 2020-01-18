@@ -55,11 +55,6 @@ public class FriscCodeAppender {
         return name;
     }
 
-    public String appendConstant(int value, String name) {
-        init.append(name).append(" \t DW %D ").append(value).append("\n");
-        return name;
-    }
-
     public void appendCommand(String command) {
         main.append("\t\t").append(command).append("\n");
     }

@@ -65,7 +65,11 @@ public class PrimarniIzraz extends Node {
                     if (firstChild.getTerminalType() == TerminalType.BROJ) {
                         numberType = NumberType.INT;
                         tasks.add(() -> {
-                            int number = Integer.parseInt(firstChild.getSourceCode());
+                            int number = -99999999;
+                            try {
+                                number = Integer.parseInt(firstChild.getSourceCode());
+                            } catch (NumberFormatException ignored) {
+                            }
                             if (number < Math.pow(2, 16)) {
                                 friscCodeAppender.appendCommand("MOVE %D " + number + ", R0");
                                 friscCodeAppender.appendCommand("PUSH R0");
