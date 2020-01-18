@@ -5,6 +5,7 @@ import semanal.types.FunctionModel;
 import semanal.types.NumberType;
 import semanal.types.SubType;
 import semanal.types.Type;
+import semanal.variables.Variable;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -52,7 +53,7 @@ public class GeneratorKoda {
 
     List<Node> nodesToVisit = new ArrayList<>();
     nodesToVisit.add(rootNode);
-    Set<MemoryScope<Type>> memoryScopeSet = new HashSet<>();
+    Set<MemoryScope<Variable>> memoryScopeSet = new HashSet<>();
 
     while (!nodesToVisit.isEmpty()) {
       Node node = nodesToVisit.remove(nodesToVisit.size() - 1);
@@ -68,16 +69,16 @@ public class GeneratorKoda {
     boolean functionOK = true;
     HashMap<String, FunctionModel> declared = new HashMap<>();
     HashMap<String, FunctionModel> defined = new HashMap<>();
-    for (MemoryScope<Type> scope : memoryScopeSet) {
-      for (Map.Entry<String, Type> entry : scope.getMemory().entrySet()) {
-        if (entry.getValue().getSubType() == SubType.FUNCTION) {
+    for (MemoryScope<Variable> scope : memoryScopeSet) {
+      for (Variable var : scope.getMemory()) {
+        if (var.getElementType().getSubType() == SubType.FUNCTION) {
           FunctionModel old;
-          if (entry.getValue().getFunction().isDefined()) {
-            old = defined.put(entry.getKey(), entry.getValue().getFunction());
+          if (var.getElementType().getFunction().isDefined()) {
+            old = defined.put(var.getName(), var.getElementType().getFunction());
           } else {
-            old = declared.put(entry.getKey(), entry.getValue().getFunction());
+            old = declared.put(var.getName(), var.getElementType().getFunction());
           }
-          if (old != null && !old.equals(entry.getValue().getFunction())) {
+          if (old != null && !old.equals(var.getElementType().getFunction())) {
             functionOK = false;
           }
         }
@@ -107,7 +108,7 @@ public class GeneratorKoda {
     Writer writer = null;
     try {
       writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("a.frisc"), "utf-8"));
-      StringBuilder code = new StringBuilder(); 
+      StringBuilder code = new StringBuilder();
       friscCode.forEach((line) -> {
         System.out.println(line);
         // TODO all lines except labels should have 4 spaces

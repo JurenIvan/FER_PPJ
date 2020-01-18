@@ -1,47 +1,147 @@
 package semanal;
 
-import java.util.HashMap;
+import semanal.variables.Variable;
+import semanal.variables.VariableResult;
+import semanal.variables.VariableType;
 
-public class MemoryScope<OF> {
+import java.util.LinkedList;
+import java.util.Objects;
 
-    private HashMap<String, OF> memory = new HashMap<>();
+public class MemoryScope<OF extends Variable> {
+
+    private LinkedList<OF> memory = new LinkedList<>();
     private MemoryScope<OF> previous;
+    private boolean global = false;
 
     public MemoryScope(MemoryScope<OF> previous) {
         this.previous = previous;
     }
 
-    public boolean checkGlobal(String variable) {
-        if (memory.containsKey(variable)) return true;
-        if (previous != null) return previous.checkGlobal(variable);
-        return false;
+    private int getIndexOfVariableInCurrentScope(String variableName) {
+        Objects.requireNonNull(variableName);
+        int index = 0;
+        for (Variable var : memory) {
+            if (var.getName().equals(variableName)) {
+                return index;
+            }
+            index++;
+        }
+        return -1;
     }
 
-    public boolean checkLocal(String variable) {
-        return memory.containsKey(variable);
+    private boolean doesCurrentScopeContainName(String variableName) {
+        Objects.requireNonNull(variableName);
+        return getIndexOfVariableInCurrentScope(variableName) != -1;
     }
 
-    public OF get(String variable) {
-        if (memory.containsKey(variable)) return memory.get(variable);
-        if (previous != null) return previous.get(variable);
+    public boolean check(String variableName) {
+        Objects.requireNonNull(variableName);
+        if (global) {
+            return doesCurrentScopeContainName(variableName);
+        } else {
+            if (doesCurrentScopeContainName(variableName)) {
+                return true;
+            }
+            if (previous != null) {
+                return previous.check(variableName);
+            }
+            return false;
+        }
+    }
+
+    public boolean checkIfGlobal(String variableName) {
+        Objects.requireNonNull(variableName);
+        if (global) {
+            return doesCurrentScopeContainName(variableName);
+        } else {
+            if (previous != null) {
+                return previous.checkIfGlobal(variableName);
+            }
+            return false;
+        }
+    }
+
+    public boolean checkIfLocal(String variableName) {
+        Objects.requireNonNull(variableName);
+        if (doesCurrentScopeContainName(variableName)) {
+            return true;
+        } else {
+            if (previous != null && !previous.isGlobal())
+                return previous.checkInScope(variableName);
+            return false;
+        }
+    }
+
+    public boolean checkInScope(String variableName) {
+        return doesCurrentScopeContainName(variableName);
+    }
+
+    public VariableResult get(String variableName) {
+        Objects.requireNonNull(variableName);
+        return get(variableName, 0);
+    }
+
+    private VariableResult get(String variableName, int heapPosition) {
+        Objects.requireNonNull(variableName);
+        int index = getIndexOfVariableInCurrentScope(variableName);
+        if (index != -1) {
+
+            Variable var = null;
+            int deltaPosition = 0;
+            for (Variable variable : memory) {
+                if (index > 0) {
+                    deltaPosition += variable.getSize();
+                    index--;
+                } else {
+                    var = variable;
+                    break;
+                }
+            }
+
+            if (var.getVariableType() == VariableType.HEAP_ELEMENT) {
+                return VariableResult.FromHeapElement(var, deltaPosition + heapPosition);
+            } else if (var.getVariableType() == VariableType.LABEL_ELEMENT) {
+                return VariableResult.FromLabel(var);
+            } else {
+                return VariableResult.FromFunction(var);
+            }
+        }
+        if (previous != null) {
+            return previous.get(variableName, heapPosition);
+        }
         throw new IllegalArgumentException("Variable not in memory.");
     }
 
-    public HashMap<String, OF> getMemory() {
+    public LinkedList<OF> getMemory() {
         return memory;
     }
 
-    public void define(String variable, OF value) {
-        if (!memory.containsKey(variable)) memory.put(variable, value);
+    public void define(OF variable) {
+        Objects.requireNonNull(variable);
+        if (!doesCurrentScopeContainName(variable.getName())) {
+            if (variable.getVariableType() == VariableType.LABEL_ELEMENT && !global) {
+                throw new IllegalArgumentException("Can only add global variables to global scope, not " + variable.getVariableType());
+            }
+            memory.add(variable);
+        }
     }
 
-    public OF set(String variable, OF value) {
-        if (memory.containsKey(variable)) return memory.put(variable, value);
-        if (previous != null) return previous.set(variable, value);
+    public OF set(OF variable) {
+        Objects.requireNonNull(variable);
+        int index = getIndexOfVariableInCurrentScope(variable.getName());
+        if (index != -1) {
+            if (variable.getVariableType() == VariableType.LABEL_ELEMENT && !global) {
+                throw new IllegalArgumentException("Can only add global variables to global scope, not " + variable.getVariableType());
+            }
+            return memory.set(index, variable);
+        }
+        if (previous != null) {
+            return previous.set(variable);
+        }
         throw new IllegalArgumentException("Variable not in memory.");
     }
 
-    public MemoryScope<OF> getPrevious() {
-        return previous;
+    public boolean isGlobal() {
+        return global;
     }
 }

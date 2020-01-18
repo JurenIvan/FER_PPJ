@@ -5,6 +5,7 @@ import semanal.Utils;
 import semanal.types.FunctionModel;
 import semanal.types.SubType;
 import semanal.types.Type;
+import semanal.variables.Variable;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -49,8 +50,8 @@ public class DefinicijaFunkcije extends Node {
 
                 // 3. 4. 5.
                 addErrorCheckToTasks(() -> {
-                    if (getVariableMemory().checkGlobal(functionName)) {
-                        Type functionType = getVariableMemory().get(functionName);
+                    if (getVariableMemory().check(functionName)) {
+                        Type functionType = getVariableMemory().get(functionName).getElementType();
                         if (functionType.getSubType() != SubType.FUNCTION)
                             return false;
 
@@ -65,10 +66,10 @@ public class DefinicijaFunkcije extends Node {
 
                     Type functionType = Type.createFunctionDefinition(Utils.listOf(Type.VOID_TYPE), Collections.emptyList(), imeTipa.type);
                     function = functionType.getFunction();
-                    if (getVariableMemory().checkGlobal(functionName)) {
-                        getVariableMemory().set(functionName, functionType);
+                    if (getVariableMemory().check(functionName)) {
+                        getVariableMemory().set(Variable.AsFunction(functionName, functionType));
                     } else {
-                        getVariableMemory().define(functionName, functionType);
+                        getVariableMemory().define(Variable.AsFunction(functionName, functionType));
                     }
                     return true;
                 });
@@ -82,8 +83,8 @@ public class DefinicijaFunkcije extends Node {
 
                 // 3.
                 addErrorCheckToTasks(() -> {
-                    if (getVariableMemory().checkGlobal(functionName)) {
-                        Type functionType = getVariableMemory().get(functionName);
+                    if (getVariableMemory().check(functionName)) {
+                        Type functionType = getVariableMemory().get(functionName).getElementType();
                         if (functionType.getSubType() != SubType.FUNCTION)
                             return false;
 
@@ -97,8 +98,8 @@ public class DefinicijaFunkcije extends Node {
                 addNodeCheckToTasks(listaParametara);
                 // 5.
                 addErrorCheckToTasks(() -> {
-                    if (getVariableMemory().checkGlobal(functionName)) {
-                        FunctionModel functionModel = getVariableMemory().get(functionName).getFunction();
+                    if (getVariableMemory().check(functionName)) {
+                        FunctionModel functionModel = getVariableMemory().get(functionName).getElementType().getFunction();
 
                         if (!functionModel.getReturnValueType().equals(imeTipa.type))
                             return false;
@@ -115,10 +116,10 @@ public class DefinicijaFunkcije extends Node {
                     } catch (IllegalArgumentException ex) {
                         return false;
                     }
-                    if (getVariableMemory().checkGlobal(functionName)) {
-                        getVariableMemory().set(functionName, functionType);
+                    if (getVariableMemory().check(functionName)) {
+                        getVariableMemory().set(Variable.AsFunction(functionName, functionType));
                     } else {
-                        getVariableMemory().define(functionName, functionType);
+                        getVariableMemory().define(Variable.AsFunction(functionName, functionType));
                     }
                     function = functionType.getFunction();
                     return true;
@@ -128,7 +129,7 @@ public class DefinicijaFunkcije extends Node {
                     createLocalVariableMemory();
                     slozenaNaredba.createLocalScope = false;
                     for (int i = 0; i < listaParametara.types.size(); i++) {
-                        getVariableMemory().define(listaParametara.names.get(i), listaParametara.types.get(i));
+                        getVariableMemory().define(Variable.AsFunction(listaParametara.names.get(i), listaParametara.types.get(i)));
                     }
                 });
                 addNodeCheckToTasks(slozenaNaredba);

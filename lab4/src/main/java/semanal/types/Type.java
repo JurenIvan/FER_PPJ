@@ -70,6 +70,16 @@ public class Type {
         return Objects.hash(getSubType(), getNumber(), getFunction(), getArray());
     }
 
+    public int getSize() {
+        if (subType == SubType.NUMBER) {
+            return 1;
+        } else if (subType == SubType.ARRAY) {
+            return array.getNumberOfElements();
+        } else {
+            return 0;
+        }
+    }
+
     public NumberType getNumber() {
         return number;
     }

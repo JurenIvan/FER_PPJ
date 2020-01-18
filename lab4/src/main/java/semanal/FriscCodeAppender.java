@@ -1,6 +1,9 @@
 package semanal;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Random;
@@ -50,6 +53,11 @@ public class FriscCodeAppender {
         return label;
     }
 
+    public String appendConstant(int value, String name) {
+        init.append(name).append(" \t DW %D ").append(value).append("\n");
+        return name;
+    }
+
     public void appendCommand(String command) {
         main.append("\t\t").append(command).append("\n");
     }
@@ -77,7 +85,8 @@ public class FriscCodeAppender {
 
     public void writeToFile(String filename) {
         try {
-            Files.writeString(Paths.get(filename), getCode(), UTF_8, CREATE_NEW);
+            (new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), UTF_8))).write(getCode());
+            // Files.writeString(Paths.get(filename), getCode(), UTF_8, CREATE_NEW); // JAVA 11..
         } catch (IOException e) {
             System.out.println("Failed to write into directory");
             throw new IllegalArgumentException(e.getCause());
