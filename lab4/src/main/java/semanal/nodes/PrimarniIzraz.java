@@ -63,8 +63,11 @@ public class PrimarniIzraz extends Node {
                     NumberType numberType;
                     if (firstChild.getTerminalType() == TerminalType.BROJ) {
                         numberType = NumberType.INT;
-                        GeneratorKoda.addLine("MOVE %D " + firstChild.getSourceCode() + ", R0");
-                        GeneratorKoda.addLine("PUSH R0");
+                        tasks.add(() -> {
+                            friscCodeAppender.appendCommand("MOVE %D " + firstChild.getSourceCode() + ", R0");
+                            friscCodeAppender.appendCommand("PUSH R0");
+                            return TaskResult.success(this);
+                        });
                     } else {
                         numberType = NumberType.CHAR;
                     }

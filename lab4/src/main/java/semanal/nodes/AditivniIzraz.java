@@ -31,7 +31,6 @@ public class AditivniIzraz extends Node {
 			| <aditivni_izraz> MINUS <multiplikativni_izraz>
 
          */
-
         switch (getChildrenNumber()) {
             case 1: {
                 MultiplikativniIzraz multiplikativniIzraz = getChild(0);

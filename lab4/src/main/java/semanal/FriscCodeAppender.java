@@ -7,6 +7,7 @@ import java.util.Random;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.nio.file.StandardOpenOption.CREATE_NEW;
+import java.io.*;
 
 public class FriscCodeAppender {
 
@@ -18,7 +19,9 @@ public class FriscCodeAppender {
 
     private static final String initBlock =
             "    MOVE 40000, R7\n" +
-                    "    CALL main\n";
+            "    CALL main\n" +
+            "    HALT\n" +
+            "main POP R4"; // TODO Privremeno
 
     private StringBuilder init = new StringBuilder();
     private StringBuilder main = new StringBuilder();
@@ -76,8 +79,13 @@ public class FriscCodeAppender {
     }
 
     public void writeToFile(String filename) {
+        //System.out.println(getCode());
+        Writer writter = null;
         try {
-            Files.writeString(Paths.get(filename), getCode(), UTF_8, CREATE_NEW);
+            writter = (new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), UTF_8)));
+            writter.write(getCode());
+            writter.close();
+            //   Files.writeString(Paths.get(filename), getCode(), UTF_8, CREATE_NEW);
         } catch (IOException e) {
             System.out.println("Failed to write into directory");
             throw new IllegalArgumentException(e.getCause());

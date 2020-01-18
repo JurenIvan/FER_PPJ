@@ -34,7 +34,6 @@ public class GeneratorKoda {
    * @return the output of the semantic analysis
    */
   public String run() {
-    addLine("MOVE 40000, R7");
     List<String> lines = Inputter.outputListString();
 
     Node rootNode = parseTree(lines);
@@ -101,29 +100,8 @@ public class GeneratorKoda {
     if (!functionOK)
       return FUNCTION_ERROR_MESSAGE;
 
-    addLine("POP R6");
-    addLine("HALT");
-
-    Writer writer = null;
-    try {
-      writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("a.frisc"), "utf-8"));
-      StringBuilder code = new StringBuilder(); 
-      friscCode.forEach((line) -> {
-        System.out.println(line);
-        // TODO all lines except labels should have 4 spaces
-        code.append("    ");
-        code.append(line);
-        code.append("\n");
-      });
-      writer.write(code.toString());
-    } catch (IOException ex) {
-      // Report
-    } finally {
-      try {
-        writer.close();
-      } catch (Exception ex) {
-        /* ignore */}
-    }
+    FriscCodeAppender.getFriscCodeAppender().writeToFile("a.frisc");
+    
     return "";
   }
 
