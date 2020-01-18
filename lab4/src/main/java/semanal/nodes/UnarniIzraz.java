@@ -1,12 +1,12 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.TaskResult;
 import semanal.types.Type;
 
 import java.util.ArrayList;
 
 import static semanal.NodeType.UNARNI_IZRAZ;
-import static semanal.NodeType.UNARNI_OPERATOR;
 import static semanal.TerminalType.OP_DEC;
 import static semanal.TerminalType.OP_INC;
 import static semanal.types.NumberType.INT;
@@ -61,6 +61,15 @@ public class UnarniIzraz extends Node {
                         type = Type.createNumber(INT);
                         leftAssignableExpression = false;
                     });
+                    if (isChildOfTerminalType(0, OP_DEC)) {
+                        tasks.add(() -> {
+                            friscCodeAppender.appendCommand("POP R1");
+                            friscCodeAppender.appendCommand("MOVE 0, R1");
+                            friscCodeAppender.appendCommand("SUB R0,R1,R0");
+                            friscCodeAppender.appendCommand("PUSH R0");
+                            return TaskResult.success(this);
+                        });
+                    }
                 } else {
                     CastIzraz castIzraz = getChild(1);
 
