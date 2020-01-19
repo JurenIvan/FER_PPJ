@@ -65,7 +65,7 @@ public class IzravniDeklarator extends Node {
             }
             case 4: {
                 TerminalNode idn = getChild(0);
-                String functionName = idn.getSourceCode();
+                String name = idn.getSourceCode();
 
                 if (isChildOfTerminalType(2, TerminalType.BROJ)) {
                     TerminalNode broj = getChild(2);
@@ -73,7 +73,7 @@ public class IzravniDeklarator extends Node {
                     // 1.
                     addErrorCheckToTasks(() -> !Type.VOID_TYPE.equals(nType));
                     // 2.
-                    addErrorCheckToTasks(() -> !getVariableMemory().checkInScope(functionName));
+                    addErrorCheckToTasks(() -> !getVariableMemory().checkInScope(name));
                     // 3.
                     addErrorCheckToTasks(() -> ArrayModel.isValidArraySize(broj.getSourceCode()));
                     // 4. & post processing
@@ -81,24 +81,33 @@ public class IzravniDeklarator extends Node {
                     addProcedureToTasks(() -> {
                         numberOfElements = Integer.parseInt(broj.getSourceCode());
                         type = Type.createArray(nType.getNumber(), numberOfElements);
-                        getVariableMemory().define(Variable.AsFunction(functionName, type));
+
+                        if (getVariableMemory().isGlobal()) {
+                            Variable newVariable = Variable.AsLabel(name, type, type.getSize(), frisc.appendConstant(0, name));
+                            getVariableMemory().define(newVariable);
+                            for(int i=0;i<numberOfElements-1;i++){
+                                frisc.appendConstant(0, "\t");
+                            }
+                        } else {
+                            getVariableMemory().define(Variable.AsHeapElement(name, type, type.getSize()));
+                        }
                     });
 
                 } else if (isChildOfTerminalType(2, TerminalType.KR_VOID)) {
 
                     // 1. & 2. & post processing
                     addErrorCheckToTasks(() -> {
-                        if (!getVariableMemory().checkInScope(functionName)) {
+                        if (!getVariableMemory().checkInScope(name)) {
                             try {
                                 type = Type.createFunctionDeclaration(Utils.listOf(Type.VOID_TYPE), Collections.emptyList(), nType);
                             } catch (IllegalArgumentException ex) {
                                 return false;
                             }
-                            getVariableMemory().define(Variable.AsFunction(functionName, type));
+                            getVariableMemory().define(Variable.AsFunction(name, type));
 
                             return true;
                         } else {
-                            Type functionType = getVariableMemory().get(functionName).getElementType();
+                            Type functionType = getVariableMemory().get(name).getElementType();
                             type = functionType;
                             if (functionType.getSubType() == SubType.FUNCTION)
                                 return false;
@@ -114,8 +123,8 @@ public class IzravniDeklarator extends Node {
                     addNodeCheckToTasks(listaParametara);
                     // 2. & 3. & post processing
                     addErrorCheckToTasks(() -> {
-                        if (getVariableMemory().checkInScope(functionName)) {
-                            type = getVariableMemory().get(functionName).getElementType();
+                        if (getVariableMemory().checkInScope(name)) {
+                            type = getVariableMemory().get(name).getElementType();
                             if (type.getSubType() != SubType.FUNCTION)
                                 return false;
 
@@ -131,7 +140,7 @@ public class IzravniDeklarator extends Node {
                             } catch (IllegalArgumentException ex) {
                                 return false;
                             }
-                            getVariableMemory().define(Variable.AsFunction(functionName, type));
+                            getVariableMemory().define(Variable.AsFunction(name, type));
 
                         }
                         return true;
