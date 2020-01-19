@@ -34,8 +34,7 @@ public class InitDeklarator extends Node {
 
      */
 
-    @Override
-    protected void initializeTasks() {
+    @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         switch (getChildrenNumber()) {
@@ -58,11 +57,10 @@ public class InitDeklarator extends Node {
                 IzravniDeklarator izravniDeklarator = getChild(0);
                 Inicijalizator inicijalizator = getChild(2);
 
-                // 1.
+                // 1. && 2.
                 addProcedureToTasks(() -> izravniDeklarator.nType = nType);
-                addNodeCheckToTasks(izravniDeklarator);
-                // 2.
                 addNodeCheckToTasks(inicijalizator);
+                addNodeCheckToTasks(izravniDeklarator);
                 // 3.
                 addErrorCheckToTasks(() -> {
                     if (izravniDeklarator.type.getSubType() == SubType.NUMBER) {
@@ -100,28 +98,36 @@ public class InitDeklarator extends Node {
                     switch (result.getVariableType()) {
                         case LABEL_ELEMENT: {
                             if (nType.getSubType() == SubType.NUMBER) {
-                                friscCodeAppender.append("POP R0", INIT);
-                                friscCodeAppender.append(format("STORE R0, (%s)", result.getLabelName()), INIT);
+                                frisc.append("POP R0", INIT);
+                                frisc.append(format("STORE R0, (%s)", result.getLabelName()), INIT);
                             } else {
                                 int count = result.getElementType().getArray().getNumberOfElements();
                                 for (int i = count - 1; i >= 0; i--) {
-                                    friscCodeAppender.append("POP R0", INIT);
-                                    friscCodeAppender.append(format("STORE R0, (%s + %d)", result.getLabelName(), 4 * i), INIT);
+                                    frisc.append("POP R0", INIT);
+                                    frisc.append(format("STORE R0, (%s - %d)", result.getLabelName(), result.getPositionInBytes() + 4 * i), INIT);
+                                    frisc.append("", whereTo());
+
                                 }
                             }
+                            frisc.append("", whereTo());
                             break;
                         }
                         case HEAP_ELEMENT: {
                             if (nType.getSubType() == SubType.NUMBER) {
-                                friscCodeAppender.append("POP R0", WhereTo.MAIN);
-                                friscCodeAppender.append(format("STORE R0, (R5 + %%D %d)", result.getPosition()), WhereTo.MAIN);
+                                frisc.append("POP R0", WhereTo.MAIN);
+                                frisc.append("ADD R5, 4, R5", whereTo());
+                                frisc.append(format("STORE R0, (R5 - %%D %d)", result.getPositionInBytes()), WhereTo.MAIN);
                             } else {
                                 int count = result.getElementType().getArray().getNumberOfElements();
                                 for (int i = count - 1; i >= 0; i--) {
-                                    friscCodeAppender.append("POP R0", WhereTo.MAIN);
-                                    friscCodeAppender.append(format("STORE R0, (R5 - %%D %d)", 4 * i), WhereTo.MAIN);
+                                    frisc.append("POP R0", WhereTo.MAIN);
+                                    frisc.append("ADD R5, 4, R5", whereTo());
+                                    frisc.append(format("STORE R0, (R5 - %%D %d)", 4 * i + result.getPositionInBytes()), WhereTo.MAIN);
+                                    frisc.append("", whereTo());
                                 }
                             }
+                            frisc.append("", whereTo());
+                            frisc.append("", whereTo());
                             break;
                         }
                         case FUNCTION: {
@@ -131,7 +137,6 @@ public class InitDeklarator extends Node {
                     }
                     return TaskResult.success(this);
                 });
-
 
                 break;
             }

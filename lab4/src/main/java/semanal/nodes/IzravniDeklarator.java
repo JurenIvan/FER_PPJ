@@ -54,7 +54,7 @@ public class IzravniDeklarator extends Node {
                 addProcedureToTasks(() -> {
                     type = nType;
                     if (getVariableMemory().isGlobal()) {
-                        Variable newVariable = Variable.AsLabel(variableName, nType, nType.getSize(), friscCodeAppender.appendConstant(0, variableName));
+                        Variable newVariable = Variable.AsLabel(variableName, nType, nType.getSize(), frisc.appendConstant(0, variableName));
                         getVariableMemory().define(newVariable);
                     } else {
                         getVariableMemory().define(Variable.AsHeapElement(variableName, nType, nType.getSize()));

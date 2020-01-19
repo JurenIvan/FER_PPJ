@@ -26,8 +26,7 @@ public class PrimarniIzraz extends Node {
         super(parent, PRIMARNI_IZRAZ);
     }
 
-    @Override
-    protected void initializeTasks() {
+    @Override protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -66,26 +65,28 @@ public class PrimarniIzraz extends Node {
                         switch (result.getVariableType()) {
                             case LABEL_ELEMENT: {
                                 if (result.getElementType().getSubType() == SubType.NUMBER) {
-                                    friscCodeAppender.append(format("LOAD R0, (%s)", result.getLabelName()), whereTo);
-                                    friscCodeAppender.append("PUSH R0", whereTo);
+                                    frisc.append(format("LOAD R0, (%s)", result.getLabelName()), whereTo);
+                                    frisc.append("PUSH R0", whereTo);
                                 } else {
                                     int count = result.getElementType().getArray().getNumberOfElements();
                                     for (int i = count - 1; i >= 0; i--) {
-                                        friscCodeAppender.append(format("LOAD R0, (%s + %d)", result.getLabelName(), 4 * i), whereTo);
-                                        friscCodeAppender.append("PUSH R0", whereTo);
+                                        frisc.append(format("LOAD R0, (%s - %d)", result.getLabelName(),
+                                                4 * i + result.getPositionInBytes()), whereTo);
+                                        frisc.append("PUSH R0", whereTo);
                                     }
                                 }
                                 break;
                             }
                             case HEAP_ELEMENT: {
                                 if (result.getElementType().getSubType() == SubType.NUMBER) {
-                                    friscCodeAppender.append(format("LOAD R0, (R5 + %%D %d)", result.getPosition()), whereTo);
-                                    friscCodeAppender.append("PUSH R0", whereTo);
+                                    frisc.append(format("LOAD R0, (R5 - %%D %d)", result.getPositionInBytes()), whereTo);
+                                    frisc.append("PUSH R0", whereTo);
                                 } else {
                                     int count = result.getElementType().getArray().getNumberOfElements();
                                     for (int i = count - 1; i >= 0; i--) {
-                                        friscCodeAppender.append(format("LOAD R0, (R5 - %%D %d)", 4 * i), whereTo);
-                                        friscCodeAppender.append("PUSH R0", whereTo);
+                                        frisc.append(format("LOAD R0, (R5 - %%D %d)", 4 * i + result.getPositionInBytes()
+                                        ), whereTo);
+                                        frisc.append("PUSH R0", whereTo);
                                     }
                                 }
                                 break;
@@ -95,57 +96,43 @@ public class PrimarniIzraz extends Node {
                             }
                         }
                     });
-                    //same as:
-                    // addErrorCheckToTasks(() -> check_if_variable_in_scope);
-                    // addProcedureToTasks(()->{ tip = "int"; lIzraz = false; });
 
                 } else if (firstChild.getTerminalType() == TerminalType.BROJ || firstChild.getTerminalType() == TerminalType.ZNAK) {
-
-                    NumberType numberType;
-                    if (firstChild.getTerminalType() == TerminalType.BROJ) {
-                        numberType = NumberType.INT;
-                        tasks.add(() -> {
-                            int number = -99999999;
+                    addErrorCheckToTasks(() -> {
+                        NumberType numberType;
+                        int value = -99999999;
+                        if (firstChild.getTerminalType() == TerminalType.BROJ) {
+                            numberType = NumberType.INT;
                             try {
-                                number = Integer.parseInt(firstChild.getSourceCode());
+                                value = Integer.parseInt(firstChild.getSourceCode());
                             } catch (NumberFormatException ignored) {
                             }
-                            if (number < Math.pow(2, 16)) {
-                                if (getVariableMemory().isGlobal()) {
-                                    friscCodeAppender.append(format("MOVE %%D %d, R0", number), INIT);
-                                    friscCodeAppender.append("PUSH R0", INIT);
-                                } else {
-                                    friscCodeAppender.append(format("MOVE %%D %d, R0", number), WhereTo.MAIN);
-                                    friscCodeAppender.append("PUSH R0", WhereTo.MAIN);
-                                }
-                                return TaskResult.success(this);
+                        } else {
+                            numberType = NumberType.CHAR;
+                            try {
+                                value = firstChild.getSourceCode().charAt(1);
+                            } catch (NumberFormatException ignored) {
                             }
-                            String labela = friscCodeAppender.appendConstant(number);
-                            if (getVariableMemory().isGlobal()) {
-                                friscCodeAppender.append(format("LOAD R0, (%s)", labela), INIT);
-                                friscCodeAppender.append("PUSH R0", INIT);
-                            } else {
-                                friscCodeAppender.append(format("LOAD R0, (%s)", labela), WhereTo.MAIN);
-                                friscCodeAppender.append("PUSH R0", WhereTo.MAIN);
-                            }
-                            return TaskResult.success(this);
-                        });
-                    } else {
-                        numberType = NumberType.CHAR;
-                    }
-                    Type number = Type.createNumber(numberType);
+                        }
 
-                    tasks.add(() -> {
+                        if (value < Math.pow(2, 16)) {
+                            frisc.append(format("MOVE %%D %d, R0", value), whereTo());
+                            frisc.append("PUSH R0", whereTo());
+                        } else {
+                            String label = frisc.appendConstant(value);
+                            frisc.append(format("LOAD R0, (%s)", label), whereTo());
+                            frisc.append("PUSH R0", whereTo());
+                        }
+                        frisc.append("", whereTo());
+
+                        Type number = Type.createNumber(numberType);
                         if (!number.getNumber().checkIfValidValue(firstChild.getSourceCode())) {
-                            return TaskResult.failure(this);
+                            return false;
                         }
                         type = number;
                         leftAssignableExpression = false;
-                        return TaskResult.success(this);
+                        return true;
                     });
-                    //same as:
-                    // addErrorCheckToTasks(number.getNumber().checkIfValidValue(firstChild.getSourceCode()));
-                    // addProcedureToTasks(()->{ type = number; leftAssignableExpression = false; });
 
                 } else if (firstChild.getTerminalType() == TerminalType.NIZ_ZNAKOVA) {
 
@@ -161,9 +148,6 @@ public class PrimarniIzraz extends Node {
                         leftAssignableExpression = false;
                         return TaskResult.success(this);
                     });
-                    // same as:
-                    // addErrorCheckToTasks(ArrayModel.isValidCharArray(firstChild.getSourceCode()));
-                    // addProcedureToTasks(()->{type = array; leftAssignableExpression = false;});
                 }
                 break;
             }
@@ -176,7 +160,7 @@ public class PrimarniIzraz extends Node {
                     type = izraz.type;
                     leftAssignableExpression = izraz.leftAssignableExpression;
                     return TaskResult.success(this);
-                }); // same as: addProcedureToTasks(()->{ type = izraz.type; leftAssignableExpression = izraz.leftAssignableExpression; });
+                });
                 break;
             }
             default: {

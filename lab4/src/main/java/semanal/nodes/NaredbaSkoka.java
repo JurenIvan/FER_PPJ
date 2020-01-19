@@ -10,6 +10,7 @@ import semanal.types.Type;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static java.lang.String.format;
 import static semanal.NodeType.*;
 
 public class NaredbaSkoka extends Node {
@@ -38,6 +39,11 @@ public class NaredbaSkoka extends Node {
             case 2: {
                 TerminalNode firstChild = getChild(0);
                 if (firstChild.getTerminalType() == TerminalType.KR_RETURN) {
+                    int heapReduce = getVariableMemory().getSizeOfLocalScopeInBytes();
+                    if (heapReduce > 0) {
+                        frisc.append(format("SUB R5, %d, R5", heapReduce), whereTo());
+                        frisc.append("", whereTo());
+                    }
                     addErrorCheckToTasks(() -> Type.VOID_TYPE.equals(this.getFunctionIfNodeNestedInADefinition().getReturnValueType()));
                 } else {
                     addErrorCheckToTasks(this::isNodeNestedInALoopNode);
@@ -55,14 +61,19 @@ public class NaredbaSkoka extends Node {
                     return izraz.type.implicitConvertInto(function.getReturnValueType());
                 });
                 tasks.add(() -> {
-//                    friscCodeAppender.append("MOVE R0, R6", WhereTo.MAIN);
-                    friscCodeAppender.append("POP R6", WhereTo.MAIN);
-//                    friscCodeAppender.append("PUSH R6", WhereTo.MAIN);
-//                    friscCodeAppender.append("PUSH R4", WhereTo.MAIN);
-                    friscCodeAppender.append("RET", WhereTo.MAIN);
+                    //                    friscCodeAppender.append("MOVE R0, R6", WhereTo.MAIN);
+                    frisc.append("POP R6", WhereTo.MAIN);
+                    //                    friscCodeAppender.append("PUSH R6", WhereTo.MAIN);
+                    //                    friscCodeAppender.append("PUSH R4", WhereTo.MAIN);
+                    int heapReduce = getVariableMemory().getSizeOfLocalScopeInBytes();
+                    if (heapReduce > 0) {
+                        frisc.append(format("SUB R5, %d, R5", heapReduce), whereTo());
+                    }
+                    frisc.append("RET", WhereTo.MAIN);
+                    frisc.append("", whereTo());
                     return TaskResult.success(this);
                 });
-                
+
                 break;
             }
             default:

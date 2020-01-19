@@ -38,7 +38,7 @@ public class DefinicijaFunkcije extends Node {
          */
 
         tasks.add(() -> {
-            friscCodeAppender.append(((TerminalNode) getChild(1)).getSourceCode(), "", MAIN);
+            frisc.append(((TerminalNode) getChild(1)).getSourceCode(), "", MAIN);
             return TaskResult.success(this);
         });
 

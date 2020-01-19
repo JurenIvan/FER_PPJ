@@ -2,14 +2,12 @@ package semanal.nodes;
 
 import semanal.Node;
 import semanal.TaskResult;
-import semanal.WhereTo;
 import semanal.types.Type;
 
 import java.util.ArrayList;
 
 import static semanal.NodeType.UNARNI_IZRAZ;
 import static semanal.TerminalType.*;
-import static semanal.WhereTo.*;
 import static semanal.types.NumberType.INT;
 
 public class UnarniIzraz extends Node {
@@ -77,10 +75,10 @@ public class UnarniIzraz extends Node {
 
                     if (unarniOperator.isChildOfTerminalType(0, MINUS)) {
                         tasks.add(() -> {
-                            friscCodeAppender.append("POP R1", whereTo());
-                            friscCodeAppender.append("MOVE 0, R1", whereTo());
-                            friscCodeAppender.append("SUB R1,R0,R0", whereTo());
-                            friscCodeAppender.append("PUSH R0", whereTo());
+                            frisc.append("POP R1", whereTo());
+                            frisc.append("MOVE 0, R1", whereTo());
+                            frisc.append("SUB R1,R0,R0", whereTo());
+                            frisc.append("PUSH R0", whereTo());
                             return TaskResult.success(this);
                         });
                     }

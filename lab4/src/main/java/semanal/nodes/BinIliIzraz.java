@@ -63,10 +63,10 @@ public class BinIliIzraz extends Node {
 
                 addProcedureToTasks(() -> {
                     WhereTo whereTo = getVariableMemory().isGlobal() ? INIT : MAIN;
-                    friscCodeAppender.append("POP R0", whereTo);
-                    friscCodeAppender.append("POP R1", whereTo);
-                    friscCodeAppender.append("OR R1, R0, R0", whereTo);
-                    friscCodeAppender.append("PUSH R0", whereTo);
+                    frisc.append("POP R0", whereTo);
+                    frisc.append("POP R1", whereTo);
+                    frisc.append("OR R1, R0, R0", whereTo);
+                    frisc.append("PUSH R0", whereTo);
                 });
                 break;
             }

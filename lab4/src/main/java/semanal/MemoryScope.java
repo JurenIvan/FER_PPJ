@@ -106,7 +106,7 @@ public class MemoryScope<OF extends Variable> {
             }
         }
         if (previous != null) {
-            return previous.get(variableName, heapPosition);
+            return previous.get(variableName, heapPosition + getSizeInBytes());
         }
         throw new IllegalArgumentException("Variable not in memory.");
     }
@@ -142,5 +142,17 @@ public class MemoryScope<OF extends Variable> {
 
     public boolean isGlobal() {
         return previous == null;
+    }
+
+    public int getSizeInBytes() {
+        int result = 0;
+        for (Variable var : memory) {
+            result += var.getSize();
+        }
+        return result;
+    }
+
+    public int getSizeOfLocalScopeInBytes() {
+        return getSizeInBytes() + (previous != null && !previous.isGlobal() ? previous.getSizeOfLocalScopeInBytes() : 0);
     }
 }

@@ -59,7 +59,7 @@ public class VariableResult {
         return labelName;
     }
 
-    public Integer getPosition() {
+    public Integer getPositionInBytes() {
         return position;
     }
 

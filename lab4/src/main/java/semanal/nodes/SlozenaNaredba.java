@@ -4,6 +4,8 @@ import semanal.Node;
 
 import java.util.ArrayList;
 
+import static java.lang.String.format;
+import static semanal.NodeType.DEFINICIJA_FUNKCIJE;
 import static semanal.NodeType.SLOZENA_NAREDBA;
 
 public class SlozenaNaredba extends Node {
@@ -47,6 +49,16 @@ public class SlozenaNaredba extends Node {
             default:
                 throw new IllegalStateException("Invalid syntax tree structure.");
         }
+
+        addProcedureToTasks(() -> {
+            if (getParent().getNodeType() != DEFINICIJA_FUNKCIJE) {
+                int heapReduce = getVariableMemory().getSizeInBytes();
+                if (heapReduce > 0) {
+                    frisc.append(format("SUB R5, %d, R5", heapReduce), whereTo());
+                    frisc.append("", whereTo());
+                }
+            }
+        });
 
     }
 }

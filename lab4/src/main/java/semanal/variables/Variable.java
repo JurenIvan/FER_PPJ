@@ -9,7 +9,7 @@ import static semanal.variables.VariableType.*;
 public class Variable {
     private final String name;
     private final VariableType variableType;
-    private final int size; // in memory locations, size=1 means 32b aka 4B
+    private final int size; // in bytes, size=4 means 32b aka 1 memory locations
     private final Type elementType;
     private final String labelName;
 

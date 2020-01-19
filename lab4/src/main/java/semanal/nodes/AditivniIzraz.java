@@ -66,10 +66,10 @@ public class AditivniIzraz extends Node {
 
                 addProcedureToTasks(()->{
                     WhereTo whereTo = getVariableMemory().isGlobal()? INIT: MAIN;
-                    friscCodeAppender.append("POP R0", whereTo);
-                    friscCodeAppender.append("POP R1", whereTo);
-                    friscCodeAppender.append(format("%s R1, R0, R0", terminal==PLUS?"ADD":"SUB"), whereTo);
-                    friscCodeAppender.append("PUSH R0", whereTo);
+                    frisc.append("POP R0", whereTo);
+                    frisc.append("POP R1", whereTo);
+                    frisc.append(format("%s R1, R0, R0", terminal==PLUS?"ADD":"SUB"), whereTo);
+                    frisc.append("PUSH R0", whereTo);
                 });
                 break;
             }

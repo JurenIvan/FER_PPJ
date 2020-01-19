@@ -6,7 +6,6 @@ import semanal.WhereTo;
 import semanal.types.NumberType;
 import semanal.types.SubType;
 import semanal.types.Type;
-import semanal.variables.Variable;
 import semanal.variables.VariableResult;
 
 import java.util.ArrayList;
@@ -94,9 +93,9 @@ public class PostfiksIzraz extends Node {
                 tasks.add(() -> {
                     TerminalNode terminalNode = ((TerminalNode)((PostfiksIzraz)getChild(0)).getChild(0).getChild(0));
                     VariableResult result = getVariableMemory().get(terminalNode.getSourceCode());
-                    friscCodeAppender.append("CALL " + terminalNode.getSourceCode(), WhereTo.MAIN);
+                    frisc.append("CALL " + terminalNode.getSourceCode(), WhereTo.MAIN);
 //                    friscCodeAppender.append("POP R6", WhereTo.MAIN);
-                    friscCodeAppender.append("PUSH R6", WhereTo.MAIN);
+                    frisc.append("PUSH R6", WhereTo.MAIN);
                     return TaskResult.success(this);
                 });
                 break;
@@ -144,9 +143,9 @@ public class PostfiksIzraz extends Node {
                             switch (type.getSubType()) {
                                 case NUMBER:
                                 case FUNCTION: {
-                                    friscCodeAppender.append("ADD R5, 4, R5", whereTo());
-                                    friscCodeAppender.append("POP R0", whereTo());
-                                    friscCodeAppender.append("STORE R0, (R5)", whereTo());
+                                    frisc.append("ADD R5, 4, R5", whereTo());
+                                    frisc.append("POP R0", whereTo());
+                                    frisc.append("STORE R0, (R5)", whereTo());
                                     break;
                                 }
                                 case ARRAY: {
@@ -157,13 +156,15 @@ public class PostfiksIzraz extends Node {
 //                            friscCodeAppender.append("POP R6", WhereTo.MAIN);
 //                            friscCodeAppender.append("PUSH R6", WhereTo.MAIN);
                         }
+                        frisc.append("", whereTo());
+
 
                         // Second, call the function
-                        friscCodeAppender.append("CALL " + ((TerminalNode)((PostfiksIzraz)getChild(0)).getChild(0).getChild(0)).getSourceCode(), WhereTo.MAIN);
+                        frisc.append("CALL " + ((TerminalNode)((PostfiksIzraz)getChild(0)).getChild(0).getChild(0)).getSourceCode(), WhereTo.MAIN);
 
                         // Third, clean heap
                         listaArgumenata.argumentTypes.forEach(e->{
-                            friscCodeAppender.append("SUB R5, 4, R5", whereTo());
+                            frisc.append("SUB R5, 4, R5", whereTo());
                         });
 //                        for (Type type: listaArgumenata.argumentTypes) {
 //                            switch (type.getSubType()) {
@@ -178,9 +179,13 @@ public class PostfiksIzraz extends Node {
 //                                }
 //                            }
 //                        }
+                        frisc.append("", whereTo());
+
 
                         // Fourth, store the result in R6
-                        friscCodeAppender.append("PUSH R6", whereTo());
+                        frisc.append("PUSH R6", whereTo());
+                        frisc.append("", whereTo());
+
 
                     });
                 }

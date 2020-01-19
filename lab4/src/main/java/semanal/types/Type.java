@@ -72,9 +72,9 @@ public class Type {
 
     public int getSize() {
         if (subType == SubType.NUMBER) {
-            return 1;
+            return 4;
         } else if (subType == SubType.ARRAY) {
-            return array.getNumberOfElements();
+            return 4 * array.getNumberOfElements();
         } else {
             return 0;
         }

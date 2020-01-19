@@ -59,10 +59,10 @@ public class BinIIzraz extends Node {
                 });
 
                 addProcedureToTasks(() -> {
-                    friscCodeAppender.append("POP R0", whereTo());
-                    friscCodeAppender.append("POP R1", whereTo());
-                    friscCodeAppender.append("AND R1, R0, R0", whereTo());
-                    friscCodeAppender.append("PUSH R0", whereTo());
+                    frisc.append("POP R0", whereTo());
+                    frisc.append("POP R1", whereTo());
+                    frisc.append("AND R1, R0, R0", whereTo());
+                    frisc.append("PUSH R0", whereTo());
                 });
                 break;
             }
