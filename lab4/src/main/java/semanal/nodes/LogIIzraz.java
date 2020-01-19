@@ -1,5 +1,6 @@
 package semanal.nodes;
 
+import semanal.FriscCodeAppender;
 import semanal.Node;
 import semanal.types.Type;
 
@@ -51,8 +52,22 @@ public class LogIIzraz extends Node {
 
                 addNodeCheckToTasks(logIIzraz);
                 addErrorCheckToTasks(() -> logIIzraz.type.implicitConvertInto(INT));
+
+                String label= FriscCodeAppender.generateLabel();
+                addProcedureToTasks(() -> {
+                    frisc.append("POP R0", whereTo());
+                    frisc.append("AND R0,R0,R0", whereTo());
+                    frisc.append("CMP R0, 0", whereTo());
+                    frisc.append("JP_EQ " + label, whereTo());
+                });
+
                 addNodeCheckToTasks(binIliIzraz);
                 addErrorCheckToTasks(() -> binIliIzraz.type.implicitConvertInto(INT));
+
+                addProcedureToTasks(() -> {
+                    frisc.append("POP R0", whereTo());
+                    frisc.append(label,"PUSH R0", whereTo());
+                });
 
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);
