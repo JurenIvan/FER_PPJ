@@ -8,7 +8,7 @@ import semanal.variables.VariableResult;
 import java.util.ArrayList;
 
 import static java.lang.String.format;
-import static semanal.NodeType.IZRAZ_PRIDRUZIVANJA;
+import static semanal.NodeType.*;
 import static semanal.variables.VariableType.HEAP_ELEMENT;
 
 public class IzrazPridruzivanja extends Node {
@@ -44,6 +44,11 @@ public class IzrazPridruzivanja extends Node {
                     type = logIliIzraz.type;
                     leftAssignableExpression = logIliIzraz.leftAssignableExpression;
                 });
+
+                if (getParent().getNodeType() == IZRAZ && getParent().getParent().getNodeType() == IZRAZ_NAREDBA) {
+                    addProcedureToTasks(() -> frisc.append("POP R1", whereTo()));
+                }
+
                 break;
             }
             case 3: {

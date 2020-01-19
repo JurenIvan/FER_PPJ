@@ -10,8 +10,10 @@ import semanal.variables.VariableResult;
 
 import java.util.ArrayList;
 
+import static java.lang.String.format;
 import static semanal.NodeType.IZRAZ;
 import static semanal.NodeType.POSTFIKS_IZRAZ;
+import static semanal.TerminalType.OP_INC;
 
 public class PostfiksIzraz extends Node {
 
@@ -57,6 +59,7 @@ public class PostfiksIzraz extends Node {
             }
             case 2: {
                 PostfiksIzraz postfiksIzraz = getChild(0);
+                TerminalNode terminalNode = getChild(1);
 
                 // 1.
                 addNodeCheckToTasks(postfiksIzraz);
@@ -69,6 +72,14 @@ public class PostfiksIzraz extends Node {
                     type = postfiksIzraz.type;
                     leftAssignableExpression = false;
                 });
+
+                addProcedureToTasks(() -> {
+//                    frisc.append("POP R0", whereTo());
+//                    frisc.append(format("%s R0 , 1 , R0", terminalNode.getTerminalType() == OP_INC ? "ADD" : "SUB"), whereTo());
+//                    frisc.append("PUSH R0", whereTo());
+            //        frisc.append("STORE R0, ("+getVariableMemory().get(getChild(0).)+")");
+                });
+
                 break;
             }
             case 3: {
@@ -91,7 +102,7 @@ public class PostfiksIzraz extends Node {
                 });
 
                 tasks.add(() -> {
-                    TerminalNode terminalNode = ((TerminalNode)((PostfiksIzraz)getChild(0)).getChild(0).getChild(0));
+                    TerminalNode terminalNode = ((TerminalNode) ((PostfiksIzraz) getChild(0)).getChild(0).getChild(0));
                     VariableResult result = getVariableMemory().get(terminalNode.getSourceCode());
                     frisc.append("CALL " + terminalNode.getSourceCode(), WhereTo.MAIN);
 //                    friscCodeAppender.append("POP R6", WhereTo.MAIN);
@@ -120,6 +131,12 @@ public class PostfiksIzraz extends Node {
                         type = postfiksIzraz.type.getArray().getElementType();
                         leftAssignableExpression = type.getNumber().isNotConst();
                     });
+
+                    addProcedureToTasks(() -> {
+                        frisc.append("POP R0", whereTo());
+                        VariableResult var = getVariableMemory().get(postfiksIzraz.getChild(0).getChild(0).toTerminalNode().getSourceCode());
+                    });
+
                 } else {
                     ListaArgumenata listaArgumenata = getChild(2);
 
@@ -139,7 +156,7 @@ public class PostfiksIzraz extends Node {
 
                     addProcedureToTasks(() -> {
                         // First, prepare heap
-                        for (Type type: listaArgumenata.argumentTypes) {
+                        for (Type type : listaArgumenata.argumentTypes) {
                             switch (type.getSubType()) {
                                 case NUMBER:
                                 case FUNCTION: {
@@ -160,11 +177,11 @@ public class PostfiksIzraz extends Node {
 
 
                         // Second, call the function
-                        frisc.append("CALL " + ((TerminalNode)((PostfiksIzraz)getChild(0)).getChild(0).getChild(0)).getSourceCode(), WhereTo.MAIN);
+                        frisc.append("CALL " + ((TerminalNode) ((PostfiksIzraz) getChild(0)).getChild(0).getChild(0)).getSourceCode(), WhereTo.MAIN);
 
                         // Third, clean heap
-                        listaArgumenata.argumentTypes.forEach(e->{
-                            frisc.append("SUB R5, 4, R5", whereTo());
+                        listaArgumenata.argumentTypes.forEach(e -> {
+//                            frisc.append("SUB R5, 4, R5", whereTo());
                         });
 //                        for (Type type: listaArgumenata.argumentTypes) {
 //                            switch (type.getSubType()) {

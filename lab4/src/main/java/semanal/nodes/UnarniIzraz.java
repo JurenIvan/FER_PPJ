@@ -3,9 +3,11 @@ package semanal.nodes;
 import semanal.Node;
 import semanal.TaskResult;
 import semanal.types.Type;
+import semanal.variables.Variable;
 
 import java.util.ArrayList;
 
+import static java.lang.String.format;
 import static semanal.NodeType.UNARNI_IZRAZ;
 import static semanal.TerminalType.*;
 import static semanal.types.NumberType.INT;
@@ -60,6 +62,17 @@ public class UnarniIzraz extends Node {
                         type = Type.createNumber(INT);
                         leftAssignableExpression = false;
                     });
+
+
+//
+//                    addProcedureToTasks(() -> {
+////                        Variable variable=getVariableMemory().get(getChild(1).getChild())
+//                        frisc.append("POP R0", whereTo());
+//                        frisc.append(format("%s R0 , 1 , R0", terminalNode.getTerminalType() == OP_INC ? "ADD" : "SUB"), whereTo());
+//
+//                        frisc.append("STORE R0, ("+1+")",whereTo());
+//                        frisc.append("PUSH R0", whereTo());
+//                    });
 
                 } else {
                     UnarniOperator unarniOperator = getChild(0);
