@@ -13,6 +13,7 @@ import java.util.Collections;
 
 import static semanal.NodeType.DEFINICIJA_FUNKCIJE;
 import static semanal.NodeType.TERMINAL;
+import static semanal.WhereTo.MAIN;
 
 public class DefinicijaFunkcije extends Node {
 
@@ -37,7 +38,7 @@ public class DefinicijaFunkcije extends Node {
          */
 
         tasks.add(() -> {
-            friscCodeAppender.appendCommand(((TerminalNode) getChild(1)).getSourceCode(), "POP R4");
+            friscCodeAppender.append(((TerminalNode) getChild(1)).getSourceCode(), "", MAIN);
             return TaskResult.success(this);
         });
 
@@ -135,8 +136,9 @@ public class DefinicijaFunkcije extends Node {
                 addProcedureToTasks(() -> {
                     createLocalVariableMemory();
                     slozenaNaredba.createLocalScope = false;
-                    for (int i = 0; i < listaParametara.types.size(); i++) {
-                        getVariableMemory().define(Variable.AsFunction(listaParametara.names.get(i), listaParametara.types.get(i)));
+                    for (int i = listaParametara.types.size() - 1; i >= 0; i--) {
+                        Variable var = Variable.AsHeapElement(listaParametara.names.get(i), listaParametara.types.get(i), listaParametara.types.get(i).getSize());
+                        getVariableMemory().define(var);
                     }
                 });
                 addNodeCheckToTasks(slozenaNaredba);

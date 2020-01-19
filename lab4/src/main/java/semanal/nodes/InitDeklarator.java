@@ -1,13 +1,18 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.TaskResult;
+import semanal.WhereTo;
 import semanal.types.NumberType;
 import semanal.types.SubType;
 import semanal.types.Type;
+import semanal.variables.VariableResult;
 
 import java.util.ArrayList;
 
+import static java.lang.String.format;
 import static semanal.NodeType.INIT_DEKLARATOR;
+import static semanal.WhereTo.INIT;
 
 public class InitDeklarator extends Node {
 
@@ -29,7 +34,8 @@ public class InitDeklarator extends Node {
 
      */
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         switch (getChildrenNumber()) {
@@ -88,6 +94,45 @@ public class InitDeklarator extends Node {
                         return false;
                     }
                 });
+
+                tasks.add(() -> {
+                    VariableResult result = getVariableMemory().get(izravniDeklarator.getChild(0).toTerminalNode().getSourceCode());
+                    switch (result.getVariableType()) {
+                        case LABEL_ELEMENT: {
+                            if (nType.getSubType() == SubType.NUMBER) {
+                                friscCodeAppender.append("POP R0", INIT);
+                                friscCodeAppender.append(format("STORE R0, (%s)", result.getLabelName()), INIT);
+                            } else {
+                                int count = result.getElementType().getArray().getNumberOfElements();
+                                for (int i = count - 1; i >= 0; i--) {
+                                    friscCodeAppender.append("POP R0", INIT);
+                                    friscCodeAppender.append(format("STORE R0, (%s + %d)", result.getLabelName(), 4 * i), INIT);
+                                }
+                            }
+                            break;
+                        }
+                        case HEAP_ELEMENT: {
+                            if (nType.getSubType() == SubType.NUMBER) {
+                                friscCodeAppender.append("POP R0", WhereTo.MAIN);
+                                friscCodeAppender.append(format("STORE R0, (R5 + %%D %d)", result.getPosition()), WhereTo.MAIN);
+                            } else {
+                                int count = result.getElementType().getArray().getNumberOfElements();
+                                for (int i = count - 1; i >= 0; i--) {
+                                    friscCodeAppender.append("POP R0", WhereTo.MAIN);
+                                    friscCodeAppender.append(format("STORE R0, (R5 - %%D %d)", 4 * i), WhereTo.MAIN);
+                                }
+                            }
+                            break;
+                        }
+                        case FUNCTION: {
+                            // do nothing
+                            break;
+                        }
+                    }
+                    return TaskResult.success(this);
+                });
+
+
                 break;
             }
             default:

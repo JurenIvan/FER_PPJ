@@ -1,12 +1,14 @@
 package semanal;
 
 import semanal.nodes.TerminalNode;
-import semanal.types.Type;
 import semanal.variables.Variable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
+
+import static semanal.WhereTo.INIT;
+import static semanal.WhereTo.MAIN;
 
 public abstract class Node {
     protected List<Supplier<TaskResult>> tasks;
@@ -151,5 +153,9 @@ public abstract class Node {
 
     public List<Node> getChildren() {
         return children;
+    }
+
+    public WhereTo whereTo() {
+        return getVariableMemory().isGlobal() ? INIT : MAIN;
     }
 }

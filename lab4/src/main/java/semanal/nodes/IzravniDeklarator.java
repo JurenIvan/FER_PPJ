@@ -24,7 +24,8 @@ public class IzravniDeklarator extends Node {
         super(parent, IZRAVNI_DEKLARATOR);
     }
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -53,8 +54,8 @@ public class IzravniDeklarator extends Node {
                 addProcedureToTasks(() -> {
                     type = nType;
                     if (getVariableMemory().isGlobal()) {
-                        getVariableMemory().define(Variable
-                                .AsLabel(variableName, nType, nType.getSize(), friscCodeAppender.appendConstant(0, variableName)));
+                        Variable newVariable = Variable.AsLabel(variableName, nType, nType.getSize(), friscCodeAppender.appendConstant(0, variableName));
+                        getVariableMemory().define(newVariable);
                     } else {
                         getVariableMemory().define(Variable.AsHeapElement(variableName, nType, nType.getSize()));
                     }

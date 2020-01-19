@@ -1,11 +1,14 @@
 package semanal.nodes;
 
 import semanal.Node;
+import semanal.WhereTo;
 import semanal.types.Type;
 
 import java.util.ArrayList;
 
 import static semanal.NodeType.BIN_XILI_IZRAZ;
+import static semanal.WhereTo.INIT;
+import static semanal.WhereTo.MAIN;
 import static semanal.types.NumberType.INT;
 
 public class BinXiliIzraz extends Node {
@@ -56,6 +59,14 @@ public class BinXiliIzraz extends Node {
                 addProcedureToTasks(() -> {
                     type = Type.createNumber(INT);
                     leftAssignableExpression = false;
+                });
+
+                addProcedureToTasks(() -> {
+                    WhereTo whereTo = getVariableMemory().isGlobal() ? INIT : MAIN;
+                    friscCodeAppender.append("POP R0", whereTo);
+                    friscCodeAppender.append("POP R1", whereTo);
+                    friscCodeAppender.append("XOR R1, R0, R0", whereTo);
+                    friscCodeAppender.append("PUSH R0", whereTo);
                 });
                 break;
             }

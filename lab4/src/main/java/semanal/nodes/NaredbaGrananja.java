@@ -2,10 +2,12 @@ package semanal.nodes;
 
 import semanal.Node;
 import semanal.TaskResult;
+import semanal.WhereTo;
 import semanal.types.NumberType;
 
 import java.util.ArrayList;
 
+import static semanal.FriscCodeAppender.*;
 import static semanal.NodeType.NAREDBA_GRANANJA;
 
 public class NaredbaGrananja extends Node {
@@ -35,18 +37,18 @@ public class NaredbaGrananja extends Node {
 
                 addNodeCheckToTasks(izraz);
                 addErrorCheckToTasks(() -> izraz.type.implicitConvertInto(NumberType.INT));
-                String label = friscCodeAppender.generateLabel();
+                String label = generateLabel();
                 tasks.add(() -> {
-                    friscCodeAppender.appendCommand("POP R0");
-                    friscCodeAppender.appendCommand("CMP R0, 0");
-                    friscCodeAppender.appendCommand("JP_EQ " + label);
+                    friscCodeAppender.append("POP R0", WhereTo.MAIN);
+                    friscCodeAppender.append("CMP R0, 0", WhereTo.MAIN);
+                    friscCodeAppender.append("JP_EQ " + label, WhereTo.MAIN);
                     return TaskResult.success(this);
                 });
 
                 addNodeCheckToTasks(getChild(4));
 
                 tasks.add(() -> {
-                    friscCodeAppender.appendLabel(label);
+                    friscCodeAppender.appendLabelToMain(label);
                     return TaskResult.success(this);
                 });
 
@@ -58,25 +60,25 @@ public class NaredbaGrananja extends Node {
                 addNodeCheckToTasks(izraz);
                 addErrorCheckToTasks(() -> izraz.type.implicitConvertInto(NumberType.INT));
 
-                String label1 = friscCodeAppender.generateLabel();
-                String label2 = friscCodeAppender.generateLabel();
+                String label1 = generateLabel();
+                String label2 = generateLabel();
                 tasks.add(() -> {
-                    friscCodeAppender.appendCommand("POP R0");
-                    friscCodeAppender.appendCommand("CMP R0, 0");
-                    friscCodeAppender.appendCommand("JP_EQ " + label1);
+                    friscCodeAppender.append("POP R0", WhereTo.MAIN);
+                    friscCodeAppender.append("CMP R0, 0", WhereTo.MAIN);
+                    friscCodeAppender.append("JP_EQ " + label1, WhereTo.MAIN);
                     return TaskResult.success(this);
                 });
 
 
                 addNodeCheckToTasks(getChild(4));
                 tasks.add(() -> {
-                    friscCodeAppender.appendCommand("JP " + label2);
-                    friscCodeAppender.appendLabel(label1);
+                    friscCodeAppender.append("JP " + label2, WhereTo.MAIN);
+                    friscCodeAppender.appendLabelToMain(label1);
                     return TaskResult.success(this);
                 });
                 addNodeCheckToTasks(getChild(6));
                 tasks.add(() -> {
-                    friscCodeAppender.appendLabel(label2);
+                    friscCodeAppender.appendLabelToMain(label2);
                     return TaskResult.success(this);
                 });
                 break;

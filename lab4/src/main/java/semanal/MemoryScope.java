@@ -121,7 +121,7 @@ public class MemoryScope<OF extends Variable> {
             if (variable.getVariableType() == VariableType.LABEL_ELEMENT && !isGlobal()) {
                 throw new IllegalArgumentException("Can only add global variables to global scope, not " + variable.getVariableType());
             }
-            memory.add(variable);
+            memory.addFirst(variable);
         }
     }
 

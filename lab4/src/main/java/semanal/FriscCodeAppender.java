@@ -15,11 +15,14 @@ public class FriscCodeAppender {
 
     private static final String initBlock =
             "\t\tMOVE 40000, R7\n" +
+                    "\t\tMOVE HEAP, R5\n" +
+                    "\t\tCALL init\n" +
                     "\t\tCALL main\n" +
                     "\t\tHALT\n";
 
     private StringBuilder init = new StringBuilder();
     private StringBuilder main = new StringBuilder();
+    private StringBuilder labels = new StringBuilder();
 
     private FriscCodeAppender() {
     }
@@ -30,64 +33,78 @@ public class FriscCodeAppender {
         return friscCodeAppender;
     }
 
-    /**
-     * Returns label to value
-     *
-     * @param value to be saved
-     * @return labes
-     */
     public String appendConstant(int value) {
         String label = generateLabel();
-        init.append(label).append("\tDW %D ").append(value).append("\n");
+        labels.append(label).append("\tDW %D ").append(value).append("\n");
         return label;
     }
 
-    public String generateLabel() {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < LABEL_LENGTH; i++)
-            sb.append(ALPHABET.charAt(random.nextInt(ALPHABET.length())));
+    public String appendConstantArray(int[] values) {
+        String label = generateLabel();
+        labels.append(label).append("\tDW %D ").append(values[0]).append("\n");
 
-        return sb.toString();
+        for (int i = 1; i < values.length; i++)
+            labels.append("\t\t").append("DW %D ").append(values[i]).append("\n");
+
+        return label;
     }
 
     public String appendConstant(int value, String name) {
-        init.append(name).append("\tDW %D ").append(value).append("\n");
+        labels.append(name).append("\tDW %D ").append(value).append("\n");
         return name;
     }
 
-    public void appendCommand(String command) {
-        main.append("\t\t").append(command).append("\n");
-    }
-
-    public void appendLabel(String label) {
+    public void appendLabelToMain(String label) {
         main.append(label).append("\n");
     }
 
-    public void appendCommand(String label, String command) {
-        main.append(label).append("\t").append(command).append("\n");
+    public void append(String command, WhereTo whereTo) {
+        switch (whereTo) {
+            case INIT:
+                init.append("\t\t").append(command).append("\n");
+                break;
+            case MAIN:
+                main.append("\t\t").append(command).append("\n");
+                break;
+        }
     }
 
-
-    public String toStringInit() {
-        return init.toString();
+    public void append(String label, String command, WhereTo whereTo) {
+        switch (whereTo) {
+            case INIT:
+                init.append(label).append("\t").append(command).append("\n");
+                break;
+            case MAIN:
+                main.append(label).append("\t").append(command).append("\n");
+                break;
+        }
     }
 
-    public String toStringMain() {
+    private String toStringLabels() {
+        return labels.toString();
+    }
+
+    private String toStringMain() {
         return main.toString();
+    }
+
+    private String toStringInit() {
+        return init.toString();
     }
 
     public String getCode() {
         return new StringBuilder()
                 .append(initBlock).append("\n")
+                .append("init").append("\n").append(toStringInit()).append("\t\tRET\n").append("\n")
                 .append(toStringMain()).append("\n")
-                .append(toStringInit()).append("\n")
+                .append(toStringLabels()).append("\n")
+                .append("HEAP").append("\n")
                 .toString();
     }
 
     public void writeToFile(String filename) {
-        Writer writter = null;
         try {
-            writter = (new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), UTF_8)));
+            Writer writter = (new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filename), UTF_8)));
             writter.write(getCode());
             writter.close();
         } catch (IOException e) {
@@ -96,8 +113,11 @@ public class FriscCodeAppender {
         }
     }
 
-    public void reset() {
-        init = new StringBuilder();
-        main = new StringBuilder();
+    public static String generateLabel() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < LABEL_LENGTH; i++)
+            sb.append(ALPHABET.charAt(random.nextInt(ALPHABET.length())));
+
+        return sb.toString();
     }
 }

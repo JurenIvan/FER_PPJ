@@ -3,6 +3,7 @@ package semanal.nodes;
 import semanal.Node;
 import semanal.TaskResult;
 import semanal.TerminalType;
+import semanal.WhereTo;
 import semanal.types.FunctionModel;
 import semanal.types.Type;
 
@@ -54,10 +55,11 @@ public class NaredbaSkoka extends Node {
                     return izraz.type.implicitConvertInto(function.getReturnValueType());
                 });
                 tasks.add(() -> {
-                    friscCodeAppender.appendCommand("POP R6");
-                    friscCodeAppender.appendCommand("PUSH R6");
-                    friscCodeAppender.appendCommand("PUSH R4");
-                    friscCodeAppender.appendCommand("RET");
+//                    friscCodeAppender.append("MOVE R0, R6", WhereTo.MAIN);
+                    friscCodeAppender.append("POP R6", WhereTo.MAIN);
+//                    friscCodeAppender.append("PUSH R6", WhereTo.MAIN);
+//                    friscCodeAppender.append("PUSH R4", WhereTo.MAIN);
+                    friscCodeAppender.append("RET", WhereTo.MAIN);
                     return TaskResult.success(this);
                 });
                 
