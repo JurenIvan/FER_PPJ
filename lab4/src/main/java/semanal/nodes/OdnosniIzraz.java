@@ -1,6 +1,8 @@
 package semanal.nodes;
 
+import semanal.FriscCodeAppender;
 import semanal.Node;
+import semanal.TerminalType;
 import semanal.types.Type;
 
 import java.util.ArrayList;
@@ -49,6 +51,7 @@ public class OdnosniIzraz extends Node {
             }
             case 3: {
                 OdnosniIzraz odnosniIzraz = getChild(0);
+                TerminalType terminal = getChild(1).toTerminalNode().getTerminalType();
                 AditivniIzraz aditivniIzraz = getChild(2);
 
                 addNodeCheckToTasks(odnosniIzraz);
@@ -60,6 +63,37 @@ public class OdnosniIzraz extends Node {
                     type = Type.createNumber(INT);
                     leftAssignableExpression = false;
                 });
+
+                String labela = FriscCodeAppender.generateLabel();
+                String labelaElse = FriscCodeAppender.generateLabel();
+
+                addProcedureToTasks(() -> {
+                    frisc.append("POP R0", whereTo());
+                    frisc.append("POP R1", whereTo());
+                    frisc.append("CMP R1, R0", whereTo());
+
+                    switch (terminal) {
+                        case OP_LT:
+                            frisc.append("JP_SLT " + labela, whereTo());
+                            break;
+                        case OP_GT:
+                            frisc.append("JP_SGT " + labela, whereTo());
+                            break;
+                        case OP_LTE:
+                            frisc.append("JP_SLE " + labela, whereTo());
+                            break;
+                        case OP_GTE:
+                            frisc.append("JP_SGE " + labela, whereTo());
+                            break;
+                    }
+
+                    frisc.append("MOVE 0, R0", whereTo());
+                    frisc.append("JP " + labelaElse, whereTo());
+                    frisc.append(labela, "MOVE 1, R0", whereTo());
+                    frisc.append(labelaElse, "PUSH R0", whereTo());
+
+                });
+
                 break;
             }
             default:
