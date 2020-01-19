@@ -2,7 +2,6 @@ package semanal.nodes;
 
 import semanal.Node;
 import semanal.TaskResult;
-import semanal.WhereTo;
 import semanal.types.NumberType;
 import semanal.types.SubType;
 import semanal.types.Type;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 
 import static java.lang.String.format;
 import static semanal.NodeType.INIT_DEKLARATOR;
-import static semanal.WhereTo.INIT;
 
 public class InitDeklarator extends Node {
 
@@ -34,7 +32,8 @@ public class InitDeklarator extends Node {
 
      */
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         switch (getChildrenNumber()) {
@@ -98,15 +97,15 @@ public class InitDeklarator extends Node {
                     switch (result.getVariableType()) {
                         case LABEL_ELEMENT: {
                             if (nType.getSubType() == SubType.NUMBER) {
-                                frisc.append("POP R0", INIT);
-                                frisc.append(format("STORE R0, (%s)", result.getLabelName()), INIT);
+                                frisc.append("POP R0", whereTo());
+                                frisc.append(format("STORE R0, (%s)", result.getLabelName()), whereTo());
                             } else {
                                 int count = result.getElementType().getArray().getNumberOfElements();
+                                frisc.append(format("MOVE %s, R1", result.getLabelName()), whereTo());
                                 for (int i = count - 1; i >= 0; i--) {
-                                    frisc.append("POP R0", INIT);
-                                    frisc.append(format("STORE R0, (%s - %d)", result.getLabelName(), result.getPositionInBytes() + 4 * i), INIT);
+                                    frisc.append("POP R0", whereTo());
+                                    frisc.append(format("STORE R0, (R1 - %d)", result.getPositionInBytes() + 4 * i), whereTo());
                                     frisc.append("", whereTo());
-
                                 }
                             }
                             frisc.append("", whereTo());
@@ -114,15 +113,15 @@ public class InitDeklarator extends Node {
                         }
                         case HEAP_ELEMENT: {
                             if (nType.getSubType() == SubType.NUMBER) {
-                                frisc.append("POP R0", WhereTo.MAIN);
+                                frisc.append("POP R0", whereTo());
                                 frisc.append("ADD R5, 4, R5", whereTo());
-                                frisc.append(format("STORE R0, (R5 - %%D %d)", result.getPositionInBytes()), WhereTo.MAIN);
+                                frisc.append(format("STORE R0, (R5 - %%D %d)", result.getPositionInBytes()), whereTo());
                             } else {
                                 int count = result.getElementType().getArray().getNumberOfElements();
                                 for (int i = count - 1; i >= 0; i--) {
-                                    frisc.append("POP R0", WhereTo.MAIN);
+                                    frisc.append("POP R0", whereTo());
                                     frisc.append("ADD R5, 4, R5", whereTo());
-                                    frisc.append(format("STORE R0, (R5 - %%D %d)", 4 * i + result.getPositionInBytes()), WhereTo.MAIN);
+                                    frisc.append(format("STORE R0, (R5 - %%D %d)", 4 * i + result.getPositionInBytes()), whereTo());
                                     frisc.append("", whereTo());
                                 }
                             }
