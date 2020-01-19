@@ -1,5 +1,6 @@
 package semanal.nodes;
 
+import semanal.FriscCodeAppender;
 import semanal.Node;
 import semanal.types.NumberType;
 
@@ -31,12 +32,28 @@ public class NaredbaPetlje extends Node {
 
         switch (getChildrenNumber()) {
             case 5: {
+
+                String labela1 = FriscCodeAppender.generateLabel();
+                String labela2 = FriscCodeAppender.generateLabel();
+
                 Izraz izraz = getChild(2);
 
+                addProcedureToTasks(() -> {
+                    frisc.appendLabelToMain(labela1);
+                });
                 addNodeCheckToTasks(izraz);
+                addProcedureToTasks(() -> {
+                    frisc.append("POP R0", whereTo());
+                    frisc.append("CMP R0, 0", whereTo());
+                    frisc.append("JP_EQ " + labela2, whereTo());
+                });
                 addErrorCheckToTasks(() -> izraz.type.implicitConvertInto(NumberType.INT));
 
                 addNodeCheckToTasks(getChild(4));
+                addProcedureToTasks(() -> {
+                    frisc.append("JP " + labela1, whereTo());
+                    frisc.appendLabelToMain(labela2);
+                });
                 break;
             }
             case 6: {
