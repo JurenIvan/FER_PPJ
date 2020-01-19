@@ -39,12 +39,13 @@ public class NaredbaSkoka extends Node {
             case 2: {
                 TerminalNode firstChild = getChild(0);
                 if (firstChild.getTerminalType() == TerminalType.KR_RETURN) {
+                    addErrorCheckToTasks(() -> Type.VOID_TYPE.equals(this.getFunctionIfNodeNestedInADefinition().getReturnValueType()));
                     int heapReduce = getVariableMemory().getSizeOfLocalScopeInBytes();
                     if (heapReduce > 0) {
                         frisc.append(format("SUB R5, %d, R5", heapReduce), whereTo());
                         frisc.append("", whereTo());
                     }
-                    addErrorCheckToTasks(() -> Type.VOID_TYPE.equals(this.getFunctionIfNodeNestedInADefinition().getReturnValueType()));
+                    frisc.append("RET", whereTo());
                 } else {
                     addErrorCheckToTasks(this::isNodeNestedInALoopNode);
                 }
