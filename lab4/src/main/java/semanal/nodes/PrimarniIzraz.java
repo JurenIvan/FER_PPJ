@@ -3,7 +3,6 @@ package semanal.nodes;
 import semanal.Node;
 import semanal.TaskResult;
 import semanal.TerminalType;
-import semanal.WhereTo;
 import semanal.types.ArrayModel;
 import semanal.types.NumberType;
 import semanal.types.SubType;
@@ -14,8 +13,6 @@ import java.util.ArrayList;
 
 import static java.lang.String.format;
 import static semanal.NodeType.PRIMARNI_IZRAZ;
-import static semanal.WhereTo.INIT;
-import static semanal.WhereTo.MAIN;
 
 public class PrimarniIzraz extends Node {
 
@@ -26,7 +23,8 @@ public class PrimarniIzraz extends Node {
         super(parent, PRIMARNI_IZRAZ);
     }
 
-    @Override protected void initializeTasks() {
+    @Override
+    protected void initializeTasks() {
         tasks = new ArrayList<>();
 
         /*
@@ -61,32 +59,30 @@ public class PrimarniIzraz extends Node {
 
                     addProcedureToTasks(() -> {
                         VariableResult result = getVariableMemory().get(firstChild.getSourceCode());
-                        WhereTo whereTo = getVariableMemory().isGlobal() ? INIT : MAIN;
                         switch (result.getVariableType()) {
                             case LABEL_ELEMENT: {
                                 if (result.getElementType().getSubType() == SubType.NUMBER) {
-                                    frisc.append(format("LOAD R0, (%s)", result.getLabelName()), whereTo);
-                                    frisc.append("PUSH R0", whereTo);
+                                    frisc.append(format("LOAD R0, (%s)", result.getLabelName()), whereTo());
+                                    frisc.append("PUSH R0", whereTo());
                                 } else {
                                     int count = result.getElementType().getArray().getNumberOfElements();
                                     for (int i = count - 1; i >= 0; i--) {
-                                        frisc.append(format("LOAD R0, (%s - %d)", result.getLabelName(),
-                                                4 * i + result.getPositionInBytes()), whereTo);
-                                        frisc.append("PUSH R0", whereTo);
+                                        frisc.append(format("MOVE %s, R1", result.getLabelName()), whereTo());
+                                        frisc.append(format("LOAD R0, (R1 + %%D %d)", 4 * i), whereTo());
+                                        frisc.append("PUSH R0", whereTo());
                                     }
                                 }
                                 break;
                             }
                             case HEAP_ELEMENT: {
                                 if (result.getElementType().getSubType() == SubType.NUMBER) {
-                                    frisc.append(format("LOAD R0, (R5 - %%D %d)", result.getPositionInBytes()), whereTo);
-                                    frisc.append("PUSH R0", whereTo);
+                                    frisc.append(format("LOAD R0, (R5 - %%D %d)", result.getPositionInBytes()), whereTo());
+                                    frisc.append("PUSH R0", whereTo());
                                 } else {
                                     int count = result.getElementType().getArray().getNumberOfElements();
                                     for (int i = count - 1; i >= 0; i--) {
-                                        frisc.append(format("LOAD R0, (R5 - %%D %d)", 4 * i + result.getPositionInBytes()
-                                        ), whereTo);
-                                        frisc.append("PUSH R0", whereTo);
+                                        frisc.append(format("LOAD R0, (R5 - %%D %d)", 4 * i + result.getPositionInBytes()), whereTo());
+                                        frisc.append("PUSH R0", whereTo());
                                     }
                                 }
                                 break;
