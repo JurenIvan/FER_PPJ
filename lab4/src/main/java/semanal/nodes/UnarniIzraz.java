@@ -3,7 +3,7 @@ package semanal.nodes;
 import semanal.Node;
 import semanal.TaskResult;
 import semanal.types.Type;
-import semanal.variables.Variable;
+import semanal.variables.VariableResult;
 
 import java.util.ArrayList;
 
@@ -64,15 +64,13 @@ public class UnarniIzraz extends Node {
                     });
 
 
-//
-//                    addProcedureToTasks(() -> {
-////                        Variable variable=getVariableMemory().get(getChild(1).getChild())
-//                        frisc.append("POP R0", whereTo());
-//                        frisc.append(format("%s R0 , 1 , R0", terminalNode.getTerminalType() == OP_INC ? "ADD" : "SUB"), whereTo());
-//
-//                        frisc.append("STORE R0, ("+1+")",whereTo());
-//                        frisc.append("PUSH R0", whereTo());
-//                    });
+                    addProcedureToTasks(() -> {
+                        VariableResult result = getVariableMemory().get(unarniIzraz.getChild(0).getChild(0).getChild(0).toTerminalNode().getSourceCode());
+                        frisc.append("POP R0", whereTo());
+                        frisc.append(format("%s R0 , 1 , R0", terminalNode.getTerminalType() == OP_INC ? "ADD" : "SUB"), whereTo());
+                        frisc.append("STORE R0, (R5 - %D " + result.getPositionInBytes() + ")", whereTo());
+                        frisc.append("PUSH R0", whereTo());
+                    });
 
                 } else {
                     UnarniOperator unarniOperator = getChild(0);

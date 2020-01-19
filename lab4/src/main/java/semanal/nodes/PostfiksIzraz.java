@@ -74,10 +74,11 @@ public class PostfiksIzraz extends Node {
                 });
 
                 addProcedureToTasks(() -> {
-//                    frisc.append("POP R0", whereTo());
-//                    frisc.append(format("%s R0 , 1 , R0", terminalNode.getTerminalType() == OP_INC ? "ADD" : "SUB"), whereTo());
-//                    frisc.append("PUSH R0", whereTo());
-            //        frisc.append("STORE R0, ("+getVariableMemory().get(getChild(0).)+")");
+                    VariableResult result = getVariableMemory().get(getChild(0).getChild(0).getChild(0).toTerminalNode().getSourceCode());
+                    frisc.append("POP R0", whereTo());
+                    frisc.append("PUSH R0", whereTo());
+                    frisc.append(format("%s R0 , 1 , R0", terminalNode.getTerminalType() == OP_INC ? "ADD" : "SUB"), whereTo());
+                    frisc.append("STORE R0, (R5 - %D " + result.getPositionInBytes() + ")", whereTo());
                 });
 
                 break;
