@@ -39,16 +39,6 @@ public class FriscCodeAppender {
         return label;
     }
 
-    public String appendConstantArray(int[] values) {
-        String label = generateLabel();
-        labels.append(label).append("\tDW %D ").append(values[0]).append("\n");
-
-        for (int i = 1; i < values.length; i++)
-            labels.append("\t\t").append("DW %D ").append(values[i]).append("\n");
-
-        return label;
-    }
-
     public String appendConstant(int value, String name) {
         labels.append(name).append("\tDW %D ").append(value).append("\n");
         return name;
